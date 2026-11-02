@@ -1,0 +1,1718 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Writing Tool" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="icon" type="image/png" href="apple-touch-icon.png" />
+<link rel="manifest" href='data:application/manifest+json,{"name":"Writing Tool","short_name":"Writing Tool","display":"standalone","start_url":".","icons":[{"src":"apple-touch-icon.png","sizes":"180x180","type":"image/png"}]}' />
+<title>Standalone Writing Tool</title>
+<style>
+:root{
+  --bg:#f7f4ec; --surface:#fffdf8; --surface2:#efe9db; --ink:#1c1a16; --ink2:#5a544a;
+  --line:#d8d0bd; --accent:#7c2d2d; --accent-ink:#fff8f0; --good:#2f5d3a; --warn:#8a5a12;
+  --warn-bg:#fdf3d7; --chip:#e9e2cf; --shadow:0 1px 3px rgba(28,26,22,.12);
+  --note-bg:#f6ead2; --note-line:#b98a2f;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#171512; --surface:#211e1a; --surface2:#2a2721; --ink:#ece6d8; --ink2:#b3ab9a;
+    --line:#3d382f; --accent:#d98a7a; --accent-ink:#1c1210; --good:#8fc79b; --warn:#e8c47a;
+    --warn-bg:#3a2f16; --chip:#322e27; --shadow:0 1px 3px rgba(0,0,0,.5);
+    --note-bg:#3d3421; --note-line:#c9a24d;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55;overflow-x:clip;max-width:100%}
+h1,h2,h3,.serif{font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px;width:100%}
+@media(min-width:768px){.wrap{padding:0 24px 48px}}
+/* Slim sticky bar: hamburger + project title + Export ONLY. Everything else scrolls. */
+.topbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);margin:0 -16px;padding:5px 16px;padding-top:calc(5px + env(safe-area-inset-top,0px))}
+@media(min-width:768px){.topbar{margin:0 -24px;padding-left:24px;padding-right:24px}}
+.bar-row{display:flex;gap:10px;align-items:flex-start;min-height:52px}
+.iconbtn{flex:0 0 48px;width:48px;height:48px;min-height:48px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:1.3rem;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
+.bar-title-block{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;line-height:1.15;padding:2px 0}
+.bar-title{min-width:0;font-family:Georgia,"Iowan Old Style",serif;font-weight:700;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-crumb{min-width:0;font-size:.76rem;font-weight:600;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.bar-export{flex:0 0 auto}
+.btn{min-height:48px;padding:10px 16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);font-weight:600}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.small{min-height:44px;padding:8px 14px;font-size:.92rem}
+.btn.danger{color:var(--accent)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.45;cursor:default}
+.saved{font-size:.85rem;color:var(--ink2);padding:8px 0 0;min-height:1.2em}
+/* Hamburger drawer */
+.drawerback{position:fixed;inset:0;background:rgba(10,8,6,.5);display:none;z-index:70}
+.drawerback.open{display:block}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(330px,88vw);background:var(--surface);z-index:71;transform:translateX(-106%);visibility:hidden;transition:transform .25s ease,visibility 0s linear .25s;overflow-y:auto;padding:14px 14px 32px;padding-top:calc(14px + env(safe-area-inset-top,0px));box-shadow:var(--shadow)}
+.drawer.open{transform:none;visibility:visible;transition:transform .25s ease}
+@media (prefers-reduced-motion: reduce){.drawer{transition:none}.toast{transition:none}}
+.drawer-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.drawer-head .dt{flex:1;min-width:0;font-family:Georgia,serif;font-weight:700;font-size:1.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drawer-sec{font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2);margin:18px 4px 6px}
+.navitem{display:flex;width:100%;min-height:52px;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:10px;background:none;font-weight:600;text-align:left;font-size:1rem;color:inherit}
+.navitem[aria-current="page"]{background:var(--surface2);border-color:var(--line)}
+.navitem:disabled{opacity:.45}
+.drawer .newproj{width:100%;margin-top:18px}
+section.view{display:none;padding-top:18px;align-items:flex-start;align-content:flex-start;vertical-align:top}
+section.view.active{display:block}
+h2.sec{font-size:1.45rem;margin:0 0 4px}
+.lede{color:var(--ink2);margin:0 0 16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px;vertical-align:top;align-self:flex-start}
+label.flabel{display:block;font-weight:700;font-size:.85rem;letter-spacing:.02em;margin:14px 0 6px}
+label.flabel:first-child{margin-top:0}
+.hint{font-weight:400;color:var(--ink2);font-size:.82rem;display:block;margin-top:2px}
+textarea,input[type="text"],input[type="number"]{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-height:48px;font-size:16px;scroll-margin-top:72px;scroll-margin-bottom:48vh}
+textarea{min-height:112px;resize:vertical;line-height:1.5}
+textarea.tall{min-height:190px}
+textarea.xtall{min-height:260px}
+textarea:focus,input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.grid2{display:grid;grid-template-columns:1fr;gap:0;min-width:0;align-items:start;align-content:start}
+.grid2>*{min-width:0}
+@media(min-width:700px){.grid2{grid-template-columns:1fr 1fr;gap:16px}}
+/* Project list */
+.proj{display:flex;gap:10px;align-items:flex-start;align-content:flex-start;flex-wrap:wrap;vertical-align:top}
+.proj .grow{flex:1;min-width:160px}
+.proj .pname{font-family:Georgia,serif;font-size:1.15rem;font-weight:700;word-break:break-word}
+.proj .pmeta{color:var(--ink2);font-size:.85rem}
+.empty{border:1.5px dashed var(--line);border-radius:var(--radius);padding:28px 18px;text-align:left;color:var(--ink2);vertical-align:top}
+.empty strong{color:var(--ink);display:block;font-family:Georgia,serif;font-size:1.15rem;margin-bottom:6px}
+/* Flowchart */
+.flow{position:relative;margin:6px 0 4px;padding-left:22px}
+.flow::before{content:"";position:absolute;left:9px;top:14px;bottom:14px;width:2px;background:var(--line)}
+.node{position:relative;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:0;margin-bottom:12px;box-shadow:var(--shadow);display:block;vertical-align:top;align-self:flex-start}
+.node::before{content:"";position:absolute;left:-18px;top:24px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.node-head{width:100%;text-align:left;background:none;border:0;padding:14px 16px;display:block;min-height:52px;color:inherit}
+.node-body{padding:0 16px 16px}
+.node .ntitle{font-family:Georgia,serif;font-weight:700;font-size:1.08rem;display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.node .nsub{color:var(--ink2);font-size:.92rem;margin-top:2px;display:block}
+.node .nprev{margin-top:8px;font-size:.95rem;white-space:pre-wrap;word-break:break-word;display:block}
+.node .nprev.empty-t{color:var(--ink2);font-style:italic}
+.badge{display:inline-block;background:var(--chip);border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700;font-family:-apple-system,sans-serif;white-space:nowrap}
+.badge.done{background:var(--good);color:#fff}
+@media (prefers-color-scheme: dark){.badge.done{color:#10160f}}
+/* Editor lives INSIDE the same node/card that was tapped — never a separate block. */
+.editor{border-top:1px dashed var(--line);margin:0;padding:4px 16px 16px}
+/* A user's own note: its own block, own line, clearly not template text. */
+.your-note{margin-top:12px;background:var(--note-bg);border:1.5px solid var(--note-line);border-radius:8px;padding:10px 12px;display:block}
+.yn-label{display:block;font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--warn);margin-bottom:4px}
+.your-note p{margin:0;white-space:pre-wrap;word-break:break-word;font-size:.98rem}
+/* Loop flowchart inside scene */
+.loop{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0}
+@media(min-width:560px){.loop{grid-template-columns:repeat(3,1fr)}}
+.loopnode{min-height:56px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);text-align:left;width:100%}
+.loopnode b{display:block;font-family:Georgia,serif}
+.loopnode span{font-size:.8rem;color:var(--ink2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.loopnode.filled{border-color:var(--good)}
+.looparrow{text-align:center;color:var(--ink2);font-size:.8rem;font-weight:700}
+@media(min-width:560px){.looparrow{display:none}}
+/* Tags */
+.tagrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tagbtn{min-height:44px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600}
+.tagbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tagpill{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.75rem;font-weight:700;background:var(--chip)}
+.tagpill.bless{background:#dcebd9;color:#234d2a}
+.tagpill.set{background:#f3d9d2;color:#7c2d2d}
+@media (prefers-color-scheme: dark){.tagpill.bless{background:#24402a;color:#a9d6ae}.tagpill.set{background:#4a2721;color:#f0b3a4}}
+.warnbox{background:var(--warn-bg);border:1px solid var(--warn);color:var(--ink);border-radius:var(--radius);padding:12px 14px;margin:12px 0;font-size:.95rem}
+.okbox{background:var(--surface2);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin:12px 0;font-size:.95rem}
+.bigstat{font-family:Georgia,serif;font-size:2rem;font-weight:700;line-height:1.1}
+@media(max-width:480px){.bigstat{font-size:1.45rem}}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.statgrid>*{min-width:0}
+/* Project Overview — completion status */
+.ov-grid{display:grid;grid-template-columns:1fr;gap:12px;align-items:start;align-content:start}
+@media(min-width:640px){.ov-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1024px){.ov-grid{grid-template-columns:repeat(3,1fr)}}
+.ov-card{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;display:block;color:inherit;min-height:52px;vertical-align:top;align-self:start}
+.ov-card h3{margin:0 0 2px;font-size:1.15rem;display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.ov-card .ov-count{color:var(--ink2);font-size:.92rem;margin:0}
+.progress{height:10px;background:var(--surface2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:10px}
+.progress i{display:block;height:100%;background:var(--good)}
+.checks{list-style:none;margin:10px 0 0;padding:0}
+.checks li{display:flex;gap:9px;align-items:flex-start;padding:3px 0;font-size:.95rem}
+.checks .ck{flex:0 0 22px;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;background:var(--surface2)}
+.checks li.done .ck{background:var(--good);border-color:var(--good);color:#fff}
+.checks li.done{color:var(--ink)}
+.checks li.todo{color:var(--ink2)}
+.statgrid .lab{font-size:.78rem;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+table.scale{width:100%;border-collapse:collapse;font-size:.92rem}
+table.scale th,table.scale td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+table.scale th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2)}
+table.scale tr.hl td{background:var(--surface2);font-weight:600}
+.stacktable td{display:block;border-bottom:none;padding:2px 8px}
+@media(max-width:700px){
+  table.scale thead{display:none}
+  table.scale tr{display:block;border-bottom:1px solid var(--line);padding:8px 0}
+  table.scale td{display:block;border-bottom:none;padding:3px 8px}
+  table.scale td::before{content:attr(data-l);display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2);font-weight:700}
+}
+/* Editing passes */
+.pass{display:flex;gap:12px;align-items:flex-start}
+.passnum{flex:0 0 40px;width:40px;height:40px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;background:var(--surface2)}
+.node.done .passnum{background:var(--good);border-color:var(--good);color:#fff}
+.checkline{margin-top:10px}
+ol.steps,ul.plain{margin:8px 0;padding-left:22px}
+ol.steps li,ul.plain li{margin-bottom:8px}
+code{background:var(--surface2);padding:1px 6px;border-radius:5px;font-size:.88em;word-break:break-all}
+.kbd-note{font-size:.9rem;color:var(--ink2)}
+.footer-note{color:var(--ink2);font-size:.85rem;margin-top:28px;border-top:1px solid var(--line);padding-top:14px}
+/* Modal */
+.modalback{position:fixed;inset:0;background:rgba(10,8,6,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modalback.open{display:flex}
+.modal{background:var(--surface);border-radius:12px;padding:20px;max-width:420px;width:100%;box-shadow:var(--shadow);max-height:92dvh;overflow-y:auto}
+.modal input[type="text"]{font-size:16px;scroll-margin-top:72px;scroll-margin-bottom:48vh}
+.modal h3{margin:0 0 8px;font-size:1.2rem}
+.modal .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+/* Top toast: sits just below the slim sticky bar, never at the bottom, never blocks taps. */
+.toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));bottom:auto;transform:translateX(-50%) translateY(-10px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:9px 13px;border-radius:8px;font-weight:600;font-size:.84rem;line-height:1.35;z-index:90;transition:transform .25s ease,opacity .25s ease;max-width:min(92vw,480px);text-align:center;box-shadow:var(--shadow)}
+.prevnext{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.prevnext .spacer{flex:1}
+.prevnext .btn{white-space:normal;text-align:left}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+.fieldwrap{margin-top:16px}
+.fieldwrap:first-of-type{margin-top:0}
+.arcdot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.swatch{width:40px;height:40px;min-height:40px;border-radius:50%;border:2px solid var(--line);padding:0;cursor:pointer}
+.swatch[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink)}
+.colorinput{width:52px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:2px}
+.maptoggle{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.mapscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);max-width:100%}
+.mapgrid{display:grid;min-width:min-content}
+.mapcell{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:8px;min-height:54px;min-width:0}
+.maphead{font-weight:700;font-size:.82rem;background:var(--surface2)}
+.stickycol{position:sticky;left:0;background:var(--surface);z-index:2;box-shadow:1px 0 0 var(--line)}
+.maphead.stickycol{background:var(--surface2);z-index:3}
+.maplabel{font-size:.9rem}
+.mapcell.droptarget{background:var(--surface2);outline:2px dashed var(--accent);outline-offset:-4px}
+.beatcard{border:2px solid var(--line);border-radius:8px;background:var(--bg);padding:8px;margin-bottom:8px}
+.beatcard:last-child{margin-bottom:0}
+.beatcard.dragging{opacity:.45}
+.beatcard-head{cursor:pointer;min-height:40px}
+.beatcard-head strong{display:block;font-family:Georgia,serif;font-size:.92rem}
+.beatcard-head span{display:block;font-size:.85rem;margin-top:2px;white-space:pre-wrap;word-break:break-word}
+.beatcard-head .empty-t{color:var(--ink2);font-style:italic}
+.beatnav{display:flex;gap:6px;margin-top:6px}
+.beatnav button{min-width:42px;min-height:38px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-weight:700}
+.beatnav button:disabled{opacity:.35;cursor:default}
+.beatcard-ed{border-top:1px dashed var(--line);margin-top:8px;padding-top:2px}
+.scenebar{display:flex;gap:8px;align-items:center;padding:10px 12px 0;flex-wrap:wrap}
+.draghandle{cursor:grab;padding:7px 12px;border:1px dashed var(--line);border-radius:8px;background:var(--surface2);font-weight:700;font-size:.85rem;user-select:none;-webkit-user-select:none}
+.barhint{font-size:.8rem;color:var(--ink2);font-weight:600}
+.scenebar .btn{min-height:40px;padding:6px 12px}
+.node.dragging{opacity:.5}
+.node.droptarget{outline:2px dashed var(--accent);outline-offset:-2px}
+input[type="file"]{display:none}
+.noproject{text-align:left;padding:24px 10px 40px;color:var(--ink2);vertical-align:top}
+</style>
+</head>
+<body>
+<div class="drawerback" id="drawerBack"></div>
+<nav class="drawer" id="drawer" aria-label="Menu" aria-hidden="true">
+  <div class="drawer-head">
+    <span class="dt" id="drawerTitle">Menu</span>
+    <button class="iconbtn" id="drawerClose" type="button" aria-label="Close menu">×</button>
+  </div>
+  <button class="navitem" type="button" data-nav="projects">All Projects</button>
+  <div class="drawer-sec">This project</div>
+  <button class="navitem" type="button" data-nav="overview">Overview</button>
+  <button class="navitem" type="button" data-nav="intake">Intake</button>
+  <button class="navitem" type="button" data-nav="map">Story Map</button>
+  <button class="navitem" type="button" data-nav="scenes">Scenes</button>
+  <button class="navitem" type="button" data-nav="characters">Characters</button>
+  <button class="navitem" type="button" data-nav="editing">Editing</button>
+  <button class="navitem" type="button" data-nav="setup">Setup &amp; Backup</button>
+  <button class="btn primary newproj" id="drawerNewBtn" type="button">+ New project</button>
+</nav>
+<div class="wrap">
+  <div class="topbar">
+    <div class="bar-row">
+      <button class="iconbtn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      <div class="bar-title-block">
+        <div class="bar-title" id="barTitle">Your projects</div>
+        <div class="bar-crumb" id="barCrumb">Projects</div>
+      </div>
+      <button class="btn small primary bar-export" id="barExportBtn" type="button">Export</button>
+    </div>
+  </div>
+  <div class="saved" id="savedNote" aria-live="polite"></div>
+
+  <!-- PROJECTS (homepage) -->
+  <section class="view" id="view-projects">
+    <h2 class="sec">Your projects</h2>
+    <p class="lede">Stored only in this browser, on this device. Use Export in Setup &amp; Backup to move a project to another device or keep a backup copy.</p>
+    <div id="projectList"></div>
+    <button class="btn primary" id="newProjBtn" type="button" style="margin-top:6px">+ New project</button>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section class="view" id="view-overview">
+    <h2 class="sec">Project overview</h2>
+    <p class="lede">Filled in vs. still blank, phase by phase. Tap any phase to work on it.</p>
+    <div id="overviewBody"></div>
+    <div id="overviewFinalLengthBox" style="margin-top:14px"></div>
+    <div class="prevnext" data-pn="overview"></div>
+  </section>
+
+  <!-- INTAKE -->
+  <section class="view" id="view-intake">
+    <h2 class="sec">Intake — premise + length first</h2>
+    <div id="intakeBody"></div>
+
+    <h3 class="serif" style="margin-top:26px">Gate 1 — choose the length</h3>
+    <div class="flow" id="gate1Slot"></div>
+
+    <h3 class="serif" style="margin-top:26px">Scene budget</h3>
+    <div id="budgetBox"></div>
+
+    <h3 class="serif" style="margin-top:26px">Scale — same skeleton, different depth</h3>
+    <p class="lede">Your row is highlighted once you set a target.</p>
+    <div class="card" style="padding:6px 8px;overflow:hidden">
+      <table class="scale" id="scaleTable">
+        <thead><tr><th>Target</th><th>Threads</th><th>POVs</th><th>Scenes</th><th>Expand synopsis to…</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="prevnext" data-pn="intake"></div>
+  </section>
+
+  <!-- CHARACTERS -->
+  <section class="view" id="view-characters">
+    <h2 class="sec">Characters</h2>
+    <p class="lede">Write these before you expand the synopsis.</p>
+    <div id="charList"></div>
+    <button class="btn primary" id="addCharBtn" type="button">+ Add character</button>
+    <div class="prevnext" data-pn="characters"></div>
+  </section>
+
+  <!-- STORY MAP -->
+  <section class="view" id="view-map">
+    <h2 class="sec">Story Map — arcs &amp; Seven-Point beats</h2>
+    <p class="lede">Every arc gets its own Seven-Point map (Dan Wells): build backwards — Resolution first, then Hook, Midpoint, Turns, Pinches. Tap an arc to rename it, recolour it, or set its question. Tap any beat card on the visual map to edit that beat in place.</p>
+    <div id="arcList"></div>
+    <button class="btn primary" id="addArcBtn" type="button">+ Add arc</button>
+    <h3 class="serif" style="margin-top:26px">Visual map</h3>
+    <div id="mapGridWrap"></div>
+    <div class="prevnext" data-pn="map"></div>
+  </section>
+
+  <!-- SCENES -->
+  <section class="view" id="view-scenes">
+    <h2 class="sec">Scenes</h2>
+    <p class="lede">Skeleton only — no prose is written here. Plan each scene here, then draft the prose in Evernote from the reference sheets in Setup &amp; Backup.</p>
+    <h3 class="serif" style="margin-top:6px">Gate 2 — check the scene budget</h3>
+    <div class="flow" id="gate2Slot"></div>
+    <div id="sceneBudgetNote"></div>
+    <div id="pacingNote"></div>
+    <div id="sceneList"></div>
+    <button class="btn primary" id="addSceneBtn" type="button">+ Add scene</button>
+    <div class="prevnext" data-pn="scenes"></div>
+  </section>
+
+  <!-- EDITING -->
+  <section class="view" id="view-editing">
+    <h2 class="sec">Editing — big to small</h2>
+    <p class="lede">One kind of edit at a time, in this order. Tap a pass to mark it done.</p>
+    <div class="flow" id="editFlow"></div>
+    <div id="finalLengthBox" style="margin-top:22px"></div>
+    <div class="prevnext" data-pn="editing"></div>
+  </section>
+
+  <!-- SETUP -->
+  <section class="view" id="view-setup">
+    <h2 class="sec">Setup &amp; Backup</h2>
+    <p class="lede">This tool is one self-contained web page. No server, no account, nothing you type leaves the device unless you export it yourself.</p>
+
+    <div class="card">
+      <h3 class="serif" style="margin-top:0">Back up &amp; move projects</h3>
+      <p>Projects save automatically in this browser's storage on this device only — clearing browser data or using a private tab can erase them, so export regularly.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" id="exportOneBtn" type="button">Export this project (.json)</button>
+        <button class="btn" id="exportAllBtn" type="button">Export all projects (.json)</button>
+        <button class="btn" id="importBtn" type="button">Import projects (.json)</button>
+        <input type="file" id="importFile" accept=".json,application/json" />
+      </div>
+      <p class="kbd-note">On iPhone / iPad, Export opens the share sheet — tap <strong>Save to Files</strong> and choose a folder (for example iCloud Drive or On My iPhone). The file is named like <code>writing-tool-your-project-2026-11-01.json</code>, so searching Files for “json” or “writing-tool” finds it. If you close the share sheet without saving, no file is saved. Where file sharing isn't available, Export starts a download instead — look in Files › Downloads. Move a project: Export on one device → save the file to Files / iCloud Drive → open this tool on the other device → Import. Importing never overwrites: a project with the same name arrives as a copy.</p>
+    </div>
+
+    <div class="card">
+      <h3 class="serif" style="margin-top:0">Reference sheets for Evernote</h3>
+      <p>This tool holds the skeleton only — there is no prose field. Draft prose in Evernote, using one of these Markdown sheets for the current project. Both open the same share sheet / download flow as the JSON exports above.</p>
+      <p><strong>Overall story sheet</strong> — one sheet for the whole story: premise, key question, theme, framing, characters, the Seven-Point map, then every scene in order — grouped under chapter headings when you have set a Chapter on scenes.</p>
+      <p><strong>Scene sheets</strong> — one section per scene to copy into its own Evernote note. Stage instructions appear in [brackets] with a blank space underneath for your prose, so you can delete the brackets or keep them above the prose. Copy finished scenes together into a chapter note in Evernote, then paste a chapter into your publishing tool.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" id="exportOverallBtn" type="button">Overall story sheet (.md)</button>
+        <button class="btn" id="exportSceneSheetsBtn" type="button">Scene sheets (.md)</button>
+      </div>
+      <p class="kbd-note">Set the optional Chapter field on a scene (for example “Chapter 1”) to group scenes for assembly. Leave it blank if you are not grouping yet — scenes then stay in plain scene order.</p>
+    </div>
+
+    <div class="card">
+      <h3 class="serif" style="margin-top:0">Use it on your iPad (or phone) like an app</h3>
+      <ol class="steps">
+        <li>Open this page in <strong>Safari</strong> on the iPad.</li>
+        <li>Tap the <strong>Share</strong> button (square with an arrow pointing up).</li>
+        <li>Scroll and tap <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li>
+        <li>It now opens full-screen from its own icon, and works offline once loaded. Your projects stay in that device's browser storage — Export a backup before switching devices or clearing Safari data.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3 class="serif" style="margin-top:0">Works offline — planes included</h3>
+      <p>This tool is client-side only: it makes no server calls, needs no account, and everything you type is saved in this browser on this device. Once the page has loaded, editing, saving, and Export (share sheet / Save to Files) all work with no connection — including in airplane mode.</p>
+      <ol class="steps">
+        <li>Open the site <strong>once while online</strong> so the whole page loads.</li>
+        <li>Add it to your Home Screen (Share → Add to Home Screen) and open it from that icon.</li>
+        <li>After that it opens and works offline — write on the plane, export when you land.</li>
+      </ol>
+      <p class="kbd-note">About service workers: this tool ships as a single self-contained HTML file, so it can't install a separate service-worker file; the home-screen copy iOS keeps after an online load is what makes offline work. If a fresh offline load ever fails, connect once, reopen the site online, then reopen it from the home-screen icon — that refreshes the copy. Your projects are never uploaded anywhere; they only move when you Export them yourself.</p>
+    </div>
+
+    <div class="card">
+      <h3 class="serif" style="margin-top:0">Host your own copy (optional)</h3>
+      <p>You only need this if you want your own web address for the tool, reachable from any device without Muse. The tool is a single <code>index.html</code> file — ask for the exported HTML file of this page, then pick either host:</p>
+      <p><strong>Easiest — Netlify Drop (no account setup up front, ~2 minutes):</strong></p>
+      <ol class="steps">
+        <li>On a computer, put the <code>index.html</code> file in a new folder (any name).</li>
+        <li>Go to <code>app.netlify.com/drop</code> and drag the folder onto the page.</li>
+        <li>Netlify gives you a web address (like <code>your-name.netlify.app</code>). Open it on any device, then Add to Home Screen as above. Create a free Netlify account to claim and keep the address.</li>
+        <li>To update the tool later, drag the new folder onto the same site in your Netlify dashboard.</li>
+      </ol>
+      <p><strong>GitHub Pages (free, if you already use GitHub):</strong></p>
+      <ol class="steps">
+        <li>Create a new public repository, e.g. <code>writing-tool</code>.</li>
+        <li>Upload <code>index.html</code> to the repository (Add file → Upload files).</li>
+        <li>In the repo: Settings → Pages → Source: “Deploy from a branch”, branch <code>main</code>, folder <code>/ (root)</code> → Save.</li>
+        <li>After a minute your tool is at <code>https://your-username.github.io/writing-tool/</code>.</li>
+      </ol>
+      <p class="kbd-note">Either way, hosting only serves the empty tool — your stories are never uploaded. They live in each device's browser storage until you Export them yourself.</p>
+    </div>
+
+    <div class="card">
+      <h3 class="serif" style="margin-top:0">The systems behind this tool</h3>
+      <ul class="plain">
+        <li><strong>Seven-Point Structure</strong> — Dan Wells (LTUE / Writing Excuses), adapted from the <em>Star Trek Roleplaying Game Narrator's Guide</em>.</li>
+        <li><strong>Scene &amp; Sequel</strong> — Dwight V. Swain, <em>Techniques of the Selling Writer</em> (1965).</li>
+        <li><strong>Snowflake Method</strong> — Randy Ingermanson: sentence → paragraph → character summaries → synopsis → scene list.</li>
+        <li><strong>Hero's Journey</strong> — used here only as an arc check on Seven-Point, never as a second outline.</li>
+      </ul>
+    </div>
+    <div class="prevnext" data-pn="setup"></div>
+  </section>
+
+</div>
+
+<div class="modalback" id="modalBack">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="modalTitle"></h3>
+    <p id="modalText"></p>
+    <div id="modalInputWrap"><input type="text" id="modalInput" placeholder="Type here…" /></div>
+    <div class="row">
+      <button class="btn" id="modalCancel" type="button">Cancel</button>
+      <button class="btn primary" id="modalOk" type="button">OK</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+var LS_KEY = "standalone-writing-tool-v1";
+
+var BEATS = [
+  {key:"keyQuestion", title:"Key Question", build:"Phase 0", sub:"The yes/no question the ending answers. Plus one question per character."},
+  {key:"hook", title:"Hook", build:"Build step 2", sub:"Hero in the opposite state to their end state. World, characters, and arc introduced."},
+  {key:"plotTurn1", title:"Plot Turn 1", build:"Build step 4", sub:"World changes from status quo to conflict. The inciting incident draws the hero in."},
+  {key:"pinch1", title:"Pinch 1", build:"Build step 6", sub:"Something goes wrong, forcing the hero into action. Stakes rise; the antagonist appears."},
+  {key:"midpoint", title:"Midpoint", build:"Build step 3", sub:"Hero shifts from reaction to action. A conscious decision. Revisit the theme here."},
+  {key:"pinch2", title:"Pinch 2", build:"Build step 7", sub:"Something fails; all seems hopeless. Dark night of the soul."},
+  {key:"plotTurn2", title:"Plot Turn 2", build:"Build step 5", sub:"Hero obtains the last thing needed to resolve the conflict."},
+  {key:"resolution", title:"Resolution", build:"Build step 1 — start here", sub:"Hero follows through on the Midpoint decision. Conflict resolved. Build this first, then the Hook as its opposite."}
+];
+var GATES = [
+  {n:"Gate 1", t:"After the premise, before threads & synopsis", d:"Length decides how many threads you can track and how far you expand the synopsis. This is the last cheap moment to choose it.", k:"gate1"},
+  {n:"Gate 2", t:"Just before the scene list", d:"Length becomes a scene budget: target words ÷ average scene length. If the list doesn't fit, merge or cut here — not mid-draft.", k:"gate2"}
+];
+var SCALE = [
+  {label:"Flash — under 1,000 words", min:0, max:999, threads:"1", povs:"1", scenes:"1–2", depth:"One-sentence summary only. Compress Seven-Point to Hook → Turn → Resolution."},
+  {label:"Short story — 1,000–7,500 words", min:1000, max:7500, threads:"1", povs:"1", scenes:"3–6", depth:"One-paragraph summary. A scene list is enough — no four-page synopsis."},
+  {label:"Novelette — 7,500–17,500 words", min:7501, max:17500, threads:"1 + at most 1 subplot", povs:"1 (2 at most)", scenes:"~10–15", depth:"One-page synopsis."},
+  {label:"Novella — 17,500–40,000 words", min:17501, max:40000, threads:"1 main + 1 subplot", povs:"1 (2 at most)", scenes:"~15–30", depth:"One-page synopsis, lightly expanded. Chapters optional."},
+  {label:"Novel — 40,000–100,000+ words", min:40001, max:Infinity, threads:"2–4 (Matrix-style)", povs:"1–5", scenes:"~60–90", depth:"Full Snowflake: four-page synopsis, character charts, scene spreadsheet."}
+];
+var PASSES = [
+  {key:"rest", title:"Rest", sub:"Step away so you read what's on the page, not what you meant. Stephen King suggests six weeks; one to two weeks is common. Make the page strange on return: print it, change the font, or have it read aloud."},
+  {key:"structural", title:"Pass 1 — Structural", sub:"Reverse outline: one sentence per scene (what happens, what changes), stacked to find gaps, repeats, and wandering scenes. Check the Scene & Sequel lens here: missing disasters and missing sequels are the usual sagging-middle problems. Rewrite, move, add, or cut in this pass."},
+  {key:"beta", title:"Pass 2 — Beta readers", sub:"Only after your structural pass. Ask specifics, not “did you like it?”: where were you lost or bored, where did belief break, which question were you most invested in? Look for patterns — you don't have to take every note."},
+  {key:"line", title:"Pass 3 — Line edit", sub:"Clarity, rhythm, word choice, voice, dialogue. Read aloud and mark stumbles. Cut vagueness; split tangled sentences."},
+  {key:"copy", title:"Pass 4 — Copyedit", sub:"Grammar, spelling, punctuation, usage. Keep a style sheet: name spellings, timelines, ages, places, recurring details. The text is basically final here — no new scenes."},
+  {key:"proof", title:"Pass 5 — Proofread", sub:"Last, and only on the formatted final version: typos, bad breaks, headers, page numbers. Not a time to revise — a structural problem found here goes back to Pass 1."}
+];
+var LOOP = [
+  {key:"goal", title:"Goal", group:"Scene"},
+  {key:"conflict", title:"Conflict", group:"Scene"},
+  {key:"disaster", title:"Disaster", group:"Scene"},
+  {key:"reaction", title:"Reaction", group:"Sequel"},
+  {key:"dilemma", title:"Dilemma", group:"Sequel"},
+  {key:"decision", title:"Decision → next Goal", group:"Sequel"}
+];
+var TAGS = ["none","blessing","setback","both"];
+var TAG_LABEL = {none:"No tag", blessing:"Blessing", setback:"Setback", both:"Both"};
+
+function uid(){ return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function blankBeats(){ var o={}; BEATS.forEach(function(b){ o[b.key]={text:"",question:""}; }); return o; }
+function blankEdit(){ var o={}; PASSES.forEach(function(p){ o[p.key]={done:false,notes:""}; }); return o; }
+var ARC_COLORS = ["#7c2d2d","#2f5d8a","#2f5d3a","#8a5a12","#5b3a8a","#a03a5e","#20666e","#6e4a20"];
+var BEAT_ORDER = ["hook","plotTurn1","pinch1","midpoint","pinch2","plotTurn2","resolution"];
+var BEAT_BY_KEY = {}; BEATS.forEach(function(b){ BEAT_BY_KEY[b.key] = b; });
+function makeArc(name, idx, beats){
+  return { id:uid(), name:name || "Main story", color:ARC_COLORS[(idx||0) % ARC_COLORS.length], question:"", beats: beats || blankBeats() };
+}
+function syncBeatsMirror(p){
+  if(!p || !p.arcs || !p.arcs.length) return;
+  var m = blankBeats();
+  if(p.beats && p.beats.keyQuestion) m.keyQuestion = p.beats.keyQuestion;
+  BEAT_ORDER.forEach(function(k){ if(p.arcs[0].beats[k]) m[k] = p.arcs[0].beats[k]; });
+  p.beats = m;
+}
+function ensureArcs(p){
+  if(!p) return;
+  if(!Array.isArray(p.arcs) || !p.arcs.length){
+    var b = blankBeats();
+    BEAT_ORDER.forEach(function(k){
+      if(p.beats && p.beats[k]) b[k] = { text:p.beats[k].text || "", question:p.beats[k].question || "", pos:(typeof p.beats[k].pos === "number" ? p.beats[k].pos : -1) };
+    });
+    p.arcs = [makeArc("Main story", 0, b)];
+  }
+  p.arcs.forEach(function(a, i){
+    if(!a.id) a.id = uid();
+    if(typeof a.name !== "string" || !a.name) a.name = i === 0 ? "Main story" : "Arc " + (i+1);
+    if(typeof a.color !== "string" || !a.color) a.color = ARC_COLORS[i % ARC_COLORS.length];
+    if(typeof a.question !== "string") a.question = "";
+    if(!a.beats) a.beats = blankBeats();
+    BEAT_ORDER.forEach(function(k){
+      if(!a.beats[k]) a.beats[k] = {text:"", question:"", pos:-1};
+      if(typeof a.beats[k].text !== "string") a.beats[k].text = "";
+      if(typeof a.beats[k].question !== "string") a.beats[k].question = "";
+      if(typeof a.beats[k].pos !== "number") a.beats[k].pos = -1;
+    });
+  });
+  syncBeatsMirror(p);
+}
+function beatData(arc, key){
+  if(!arc.beats[key]) arc.beats[key] = {text:"", question:"", pos:-1};
+  return arc.beats[key];
+}
+function effPos(arc, key, cols){
+  var d = beatData(arc, key);
+  var idx = BEAT_ORDER.indexOf(key);
+  if(typeof d.pos === "number" && d.pos >= 0) return Math.min(d.pos, cols - 1);
+  if(cols <= 1) return 0;
+  return Math.round(idx * (cols - 1) / 6);
+}
+function moveScene(p, from, to){
+  if(!p || from < 0 || to < 0 || from >= p.scenes.length || to >= p.scenes.length || from === to) return;
+  var item = p.scenes.splice(from, 1)[0];
+  p.scenes.splice(to, 0, item);
+  p.scenes.forEach(function(s2, i2){ if(/^Scene \d+$/.test(s2.title || "")) s2.title = "Scene " + (i2 + 1); });
+  touch(p); save(); renderScenes();
+}
+function newProject(title){
+  var beats0 = blankBeats();
+  var arc0 = makeArc("Main story", 0, beats0);
+  return { id:uid(), title:title||"Untitled project", createdAt:Date.now(), updatedAt:Date.now(),
+    intake:{premise:"", targetWords:"", avgScene:"1300", keyQuestion:"", theme:"", framing:"", keyIdeas:"", synopsis:"", finalLength:"", gateNotes:{gate1:"",gate2:""}},
+    characters:[], beats:beats0, arcs:[arc0], scenes:[], editing:blankEdit() };
+}
+function blankScene(n){
+  return { id:uid(), title:"Scene " + n, chapter:"", pov:"", what:"", feelStart:"", feelEnd:"", stage:"", tag:"none",
+    sequel:{goal:"",conflict:"",disaster:"",reaction:"",dilemma:"",decision:""} };
+}
+function blankChar(){
+  return { id:uid(), name:"", question:"", goal:"", motivation:"", conflict:"", epiphany:"", storyline:"" };
+}
+
+var state = { projects:[], currentId:null };
+var ui = { view:"projects", openBeat:null, openScene:null, openChar:null, openPass:null, openGate:null, openArc:null, openBeatCard:null, mapMode:"beat", dragSceneId:null };
+var SECTION_LABELS = { projects:"Projects", overview:"Overview", intake:"Intake", map:"Story Map", scenes:"Scenes", characters:"Characters", editing:"Editing", setup:"Setup & Backup" };
+
+function load(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    if(raw){ var d = JSON.parse(raw); if(d && d.projects){ state = d; } }
+  }catch(e){}
+  /* Migration: the tool is skeleton only — drop any old prose field, and
+     make sure every scene has the optional Chapter field. */
+  state.projects.forEach(function(p){
+    if(!p) return;
+    if(p.intake && typeof p.intake.finalLength !== "string") p.intake.finalLength = "";
+    if(p.intake && p.intake.gateNotes && "gate3" in p.intake.gateNotes) delete p.intake.gateNotes.gate3;
+    if(!Array.isArray(p.scenes)) return;
+    p.scenes.forEach(function(s){ if(!s) return; if("prose" in s) delete s.prose; if(typeof s.chapter !== "string") s.chapter = ""; });
+    ensureArcs(p);
+  });
+  if(!state.currentId && state.projects.length) state.currentId = state.projects[0].id;
+}
+var saveTimer = null;
+function save(){
+  state.projects.forEach(function(p){ /* keep updatedAt fresh on current */ });
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+  var el = document.getElementById("savedNote");
+  if(el) el.textContent = "Saved on this device · " + new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+}
+function saveSoon(){ if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(save, 300); }
+function cur(){
+  for(var i=0;i<state.projects.length;i++) if(state.projects[i].id===state.currentId) return state.projects[i];
+  return null;
+}
+function touch(p){ p.updatedAt = Date.now(); }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function fmtDate(t){ try{ return new Date(t).toLocaleDateString([], {month:"short", day:"numeric", year:"numeric"}); }catch(e){ return ""; } }
+var toastTimer = null;
+function toast(msg, ms){
+  var t = document.getElementById("toast"); if(!t) return;
+  t.textContent = msg; t.classList.add("show");
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove("show"); }, ms || 3000);
+}
+
+/* ---------- modal ---------- */
+var modalCb = null;
+function showModal(title, text, inputVal, okLabel, cb){
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalText").textContent = text || "";
+  var wrap = document.getElementById("modalInputWrap");
+  var inp = document.getElementById("modalInput");
+  if(inputVal === null){ wrap.style.display = "none"; } else { wrap.style.display = "block"; inp.value = inputVal; }
+  document.getElementById("modalOk").textContent = okLabel || "OK";
+  modalCb = cb;
+  document.getElementById("modalBack").classList.add("open");
+  if(inputVal !== null) setTimeout(function(){ inp.focus(); inp.select(); }, 50);
+}
+function hideModal(){ document.getElementById("modalBack").classList.remove("open"); modalCb = null; }
+document.getElementById("modalCancel").addEventListener("click", hideModal);
+document.getElementById("modalOk").addEventListener("click", function(){
+  var v = document.getElementById("modalInput").value;
+  var cb = modalCb; hideModal(); if(cb) cb(v);
+});
+
+/* ---------- navigation: hamburger drawer; Projects is the homepage ---------- */
+function updateBar(){
+  var p = cur();
+  var bt = document.getElementById("barTitle");
+  if(bt) bt.textContent = (ui.view !== "projects" && p) ? p.title : "Your projects";
+  var crumb = document.getElementById("barCrumb");
+  if(crumb){
+    if(ui.view === "projects") crumb.textContent = "Projects";
+    else if(p) crumb.textContent = SECTION_LABELS[ui.view] || "";
+    else crumb.textContent = SECTION_LABELS[ui.view] || "";
+  }
+  var dt = document.getElementById("drawerTitle");
+  if(dt) dt.textContent = p ? p.title : "Menu";
+  document.querySelectorAll(".navitem").forEach(function(n){
+    var v = n.getAttribute("data-nav");
+    n.setAttribute("aria-current", v===ui.view ? "page" : "false");
+    if(v !== "projects") n.disabled = !p;
+  });
+  var eb = document.getElementById("barExportBtn");
+  if(eb) eb.disabled = !p;
+}
+function openDrawer(){
+  document.getElementById("drawer").classList.add("open");
+  document.getElementById("drawer").setAttribute("aria-hidden","false");
+  document.getElementById("drawerBack").classList.add("open");
+  document.getElementById("menuBtn").setAttribute("aria-expanded","true");
+  updateBar();
+}
+function closeDrawer(){
+  document.getElementById("drawer").classList.remove("open");
+  document.getElementById("drawer").setAttribute("aria-hidden","true");
+  document.getElementById("drawerBack").classList.remove("open");
+  document.getElementById("menuBtn").setAttribute("aria-expanded","false");
+}
+document.getElementById("menuBtn").addEventListener("click", openDrawer);
+document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+document.getElementById("drawerBack").addEventListener("click", closeDrawer);
+document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeDrawer(); });
+function setView(v){
+  if(v !== "projects" && !cur()){ toast("Create a project first"); v = "projects"; }
+  ui.view = v;
+  document.querySelectorAll("section.view").forEach(function(s){ s.classList.remove("active"); });
+  var sec = document.getElementById("view-"+v); if(sec) sec.classList.add("active");
+  closeDrawer();
+  updateBar();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll(".navitem").forEach(function(n){
+  n.addEventListener("click", function(){ setView(n.getAttribute("data-nav")); });
+});
+/* Keep a focused field visible above the on-screen keyboard. */
+document.addEventListener("focusin", function(e){
+  var t = e.target;
+  if(t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")){
+    setTimeout(function(){ try{ t.scrollIntoView({block:"center", behavior:"smooth"}); }catch(err){} }, 320);
+  }
+});
+
+/* ---------- projects ---------- */
+function renderProjects(){
+  var list = document.getElementById("projectList");
+  if(!state.projects.length){
+    list.innerHTML = '<div class="empty"><strong>Nothing here yet</strong>This tool starts empty — no sample stories. Create your first project to begin with the premise + length intake.</div>';
+    return;
+  }
+  list.innerHTML = "";
+  state.projects.forEach(function(p){
+    var div = document.createElement("div"); div.className = "card proj";
+    var counts = p.characters.length + " characters · " + p.scenes.length + " scenes";
+    div.innerHTML = '<div class="grow"><div class="pname">'+esc(p.title)+'</div><div class="pmeta">'+counts+' · updated '+fmtDate(p.updatedAt)+'</div></div>';
+    var open = document.createElement("button"); open.className="btn primary small"; open.type="button"; open.textContent = "Open";
+    open.addEventListener("click", function(){ state.currentId = p.id; save(); renderAll(); setView("overview"); });
+    var ren = document.createElement("button"); ren.className="btn small"; ren.type="button"; ren.textContent="Rename";
+    ren.addEventListener("click", function(){
+      showModal("Rename project", "", p.title, "Rename", function(v){ if(v && v.trim()){ p.title = v.trim(); touch(p); save(); renderAll(); } });
+    });
+    var del = document.createElement("button"); del.className="btn small danger"; del.type="button"; del.textContent="Delete";
+    del.addEventListener("click", function(){
+      showModal("Delete this project?", "“"+p.title+"” will be permanently deleted from this device. Export it first if you want a backup.", null, "Delete", function(){
+        state.projects = state.projects.filter(function(x){ return x.id!==p.id; });
+        if(state.currentId===p.id) state.currentId = state.projects.length ? state.projects[0].id : null;
+        save(); renderAll(); toast("Project deleted");
+      });
+    });
+    var exp = document.createElement("button"); exp.className="btn small"; exp.type="button"; exp.textContent="Export";
+    exp.addEventListener("click", function(){ exportProjects([p], exportFileName(slugify(p.title))); });
+    div.appendChild(open); div.appendChild(ren); div.appendChild(exp); div.appendChild(del);
+    list.appendChild(div);
+  });
+}
+function slugify(s){ return (s||"project").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "project"; }
+function createProject(){
+  showModal("New project", "Give it a working title — you can rename it any time.", "", "Create", function(v){
+    var p = newProject(v && v.trim() ? v.trim() : "Untitled project");
+    state.projects.unshift(p); state.currentId = p.id; save(); renderAll(); setView("overview");
+    toast("Project created — start with the premise in Intake");
+  });
+}
+document.getElementById("newProjBtn").addEventListener("click", createProject);
+document.getElementById("drawerNewBtn").addEventListener("click", createProject);
+document.getElementById("barExportBtn").addEventListener("click", function(){
+  var p = cur(); if(!p){ toast("No project to export yet"); return; }
+  exportProjects([p], exportFileName(slugify(p.title)));
+});
+
+/* ---------- intake ---------- */
+function field(label, hint, val, oninput, opts){
+  opts = opts || {};
+  var id = "f" + Math.random().toString(36).slice(2,9);
+  var wrap = document.createElement("div");
+  wrap.className = "fieldwrap";
+  var lab = document.createElement("label"); lab.className="flabel"; lab.setAttribute("for", id);
+  lab.innerHTML = esc(label) + (hint ? '<span class="hint">'+esc(hint)+'</span>' : "");
+  wrap.appendChild(lab);
+  var el;
+  if(opts.type === "number"){ el = document.createElement("input"); el.type="number"; el.min="0"; el.inputMode="numeric"; }
+  else if(opts.rows){ el = document.createElement("textarea"); el.rows = opts.rows; if(opts.tall) el.classList.add("tall"); if(opts.xtall) el.classList.add("xtall"); }
+  else { el = document.createElement("input"); el.type="text"; }
+  el.id = id; el.value = val || ""; el.placeholder = opts.placeholder || "";
+  el.addEventListener("input", function(){ oninput(el.value); });
+  wrap.appendChild(el);
+  return wrap;
+}
+function renderIntake(){
+  var body = document.getElementById("intakeBody");
+  body.innerHTML = "";
+  var p = cur();
+  if(!p){ body.innerHTML = '<div class="noproject">No project selected. Create one from the Projects homepage.</div>'; renderGates(); renderBudget(); renderScale(); return; }
+  var card = document.createElement("div"); card.className="card";
+  card.appendChild(field("Project title", "", p.title, function(v){ p.title=v; touch(p); saveSoon(); updateBar(); }, {placeholder:"Working title"}));
+  card.appendChild(field("Premise — one sentence", "Snowflake Step 1: under 15 words if you can, no character names if you can. Who + situation + conflict + stakes. If you can't say it in one sentence, fix the sentence before the outline.", p.intake.premise, function(v){ p.intake.premise=v; touch(p); saveSoon(); }, {rows:2, placeholder:"[Who] + [situation] + [conflict] + [stakes] — one sentence only"}));
+  var g2 = document.createElement("div"); g2.className="grid2";
+  var left = document.createElement("div"), right = document.createElement("div");
+  left.appendChild(field("Target length (words) — Gate 1", "Chosen right after the premise, before threads and synopsis expansion.", p.intake.targetWords, function(v){ p.intake.targetWords=v; touch(p); saveSoon(); renderBudget(); renderScale(); }, {type:"number", placeholder:"e.g. 30000"}));
+  right.appendChild(field("Average scene length (words)", "Short story ≈ 800 · novella / novel ≈ 1,200–1,500.", p.intake.avgScene, function(v){ p.intake.avgScene=v; touch(p); saveSoon(); renderBudget(); }, {type:"number", placeholder:"1300"}));
+  g2.appendChild(left); g2.appendChild(right); card.appendChild(g2);
+  card.appendChild(field("Key question", "Central dramatic question — yes/no, answerable at the end (yes, no, or yes-but).", p.intake.keyQuestion, function(v){ p.intake.keyQuestion=v; touch(p); saveSoon(); syncKeyBeat(p, v); }, {rows:2, placeholder:"Will [character] …? / Does [character] …?"}));
+  card.appendChild(field("Theme", "What the story is about underneath the plot, in one sentence — the argument the key question tests. Revisit it at the Midpoint.", p.intake.theme, function(v){ p.intake.theme=v; touch(p); saveSoon(); }, {rows:2, placeholder:"This story argues that … — one sentence"}));
+  card.appendChild(field("Narrative framing — sketch now, lock at the scene list", "Who tells it? POV, tense, time distance, any frame (looking back, found document, story-within-a-story)?", p.intake.framing, function(v){ p.intake.framing=v; touch(p); saveSoon(); }, {rows:2, placeholder:"Who tells it? POV / tense / time distance / frame?"}));
+  card.appendChild(field("Key ideas", "Images, moments, lines you know you want. Raw material, not outline.", p.intake.keyIdeas, function(v){ p.intake.keyIdeas=v; touch(p); saveSoon(); }, {rows:5, tall:true, placeholder:"An image, a moment, a line you know you want…"}));
+  card.appendChild(field("Synopsis expansion", "Expand only as far as your length requires (see the scale table below): sentence → paragraph (setup + three disasters + ending) → one page → four pages (novel only).", p.intake.synopsis, function(v){ p.intake.synopsis=v; touch(p); saveSoon(); }, {rows:9, xtall:true, placeholder:"Setup → disaster 1 → disaster 2 → disaster 3 → ending"}));
+  body.appendChild(card);
+
+  var qc = document.createElement("div"); qc.className="card";
+  qc.innerHTML = "<h3 class='serif' style='margin-top:0'>Per-character questions</h3>";
+  if(!p.characters.length){
+    qc.innerHTML += "<p style='margin:0;color:var(--ink2)'>No characters yet. Add them in the Characters section — each one gets their own answerable question (does she redeem herself? will they confront their past?).</p>";
+  } else {
+    var ul = document.createElement("ul"); ul.className="plain";
+    p.characters.forEach(function(c){
+      var li = document.createElement("li");
+      li.innerHTML = "<strong>"+esc(c.name||"Unnamed character")+"</strong> — " + (c.question ? esc(c.question) : "<em style='color:var(--ink2)'>no question yet — add it in Characters</em>");
+      ul.appendChild(li);
+    });
+    qc.appendChild(ul);
+  }
+  body.appendChild(qc);
+  renderGates(); renderBudget(); renderScale();
+}
+function syncKeyBeat(p, v){ if(p.beats.keyQuestion && !p.beats.keyQuestion.text) p.beats.keyQuestion.text = v; }
+
+function renderGateInto(g, slot){
+  if(!slot) return;
+  slot.innerHTML = "";
+  var p = cur();
+  var note = p && p.intake.gateNotes ? (p.intake.gateNotes[g.k]||"") : "";
+  var open = !!p && ui.openGate===g.k;
+  var node = document.createElement("div"); node.className="node";
+  var head = document.createElement("button"); head.type="button"; head.className="node-head";
+  head.innerHTML = '<span class="ntitle"><span>'+esc(g.n)+' — '+esc(g.t)+'</span><span class="badge">'+(open?"tap to close":(note?"done — tap to edit":"tap to add decision"))+'</span></span>';
+  head.addEventListener("click", function(){
+    if(!p){ toast("Create a project first"); return; }
+    ui.openGate = open ? null : g.k; renderGates();
+  });
+  node.appendChild(head);
+  var bodyEl = document.createElement("div"); bodyEl.className="node-body";
+  var desc = document.createElement("span"); desc.className="nsub"; desc.textContent = g.d;
+  bodyEl.appendChild(desc);
+  if(note){
+    var yn = document.createElement("div"); yn.className="your-note";
+    yn.innerHTML = '<span class="yn-label">Your note</span><p>'+esc(note)+'</p>';
+    bodyEl.appendChild(yn);
+  }
+  node.appendChild(bodyEl);
+  if(open){
+    var ed = document.createElement("div"); ed.className="editor";
+    ed.appendChild(field("Your note — "+g.n, "What did you decide at this gate? This is your text, kept separate from the gate description above.", note, function(v){ p.intake.gateNotes[g.k]=v; touch(p); saveSoon(); }, {rows:3, placeholder:"What did you decide at this gate? Decision + date"}));
+    node.appendChild(ed);
+  }
+  slot.appendChild(node);
+}
+function renderGates(){
+  var slots = {gate1:"gate1Slot", gate2:"gate2Slot"};
+  GATES.forEach(function(g){
+    renderGateInto(g, document.getElementById(slots[g.k]));
+  });
+}
+function scaleRowFor(words){
+  if(!words || isNaN(words)) return null;
+  for(var i=0;i<SCALE.length;i++) if(words>=SCALE[i].min && words<=SCALE[i].max) return i;
+  return null;
+}
+function renderScale(){
+  var tb = document.querySelector("#scaleTable tbody"); if(!tb) return;
+  tb.innerHTML = "";
+  var p = cur();
+  var words = p ? parseInt(p.intake.targetWords,10) : NaN;
+  var hl = scaleRowFor(words);
+  SCALE.forEach(function(r, i){
+    var tr = document.createElement("tr"); if(i===hl) tr.className="hl";
+    tr.innerHTML = "<td data-l='Target'>"+esc(r.label)+(i===hl?" ← yours":"")+"</td><td data-l='Threads'>"+esc(r.threads)+"</td><td data-l='POVs'>"+esc(r.povs)+"</td><td data-l='Scenes'>"+esc(r.scenes)+"</td><td data-l='Expand to'>"+esc(r.depth)+"</td>";
+    tb.appendChild(tr);
+  });
+}
+function budgetCalc(p){
+  var words = parseInt(p.intake.targetWords,10), avg = parseInt(p.intake.avgScene,10);
+  if(!words || !avg) return null;
+  return { words:words, avg:avg, afford: Math.max(1, Math.round(words/avg)), have: p.scenes.length };
+}
+function renderBudgetInto(el){
+  var p = cur();
+  if(!p){ el.innerHTML=""; return; }
+  var b = budgetCalc(p);
+  if(!b){ el.innerHTML = '<div class="okbox">Set a <strong>target length</strong> and an <strong>average scene length</strong> in Intake, and this will work out how many scenes that length can afford (Gate 2).</div>'; return; }
+  var over = b.have > b.afford;
+  var html = '<div class="card"><div class="statgrid">'
+    + '<div><div class="bigstat">'+b.words.toLocaleString()+'</div><div class="lab">Target words</div></div>'
+    + '<div><div class="bigstat">≈ '+b.afford+'</div><div class="lab">Scenes you can afford</div></div>'
+    + '<div><div class="bigstat">'+b.have+'</div><div class="lab">Scenes planned</div></div></div>'
+    + '<p class="kbd-note" style="text-align:center;margin:10px 0 0">'+b.words.toLocaleString()+' words ÷ '+b.avg.toLocaleString()+' words per scene ≈ '+b.afford+' scenes. Budgets are planning guides, not hard rules.</p></div>';
+  if(over) html += '<div class="warnbox"><strong>Over budget at Gate 2:</strong> you have '+b.have+' scenes for a length that affords about '+b.afford+'. Merge scenes so each does plot + character + theme at once, cut a thread, or raise the target — don\'t just write thinner scenes.</div>';
+  else if(b.have>0) html += '<div class="okbox">Within budget: '+b.have+' of about '+b.afford+' scenes planned.</div>';
+  el.innerHTML = html;
+}
+function renderBudget(){ renderBudgetInto(document.getElementById("budgetBox")); renderBudgetInto(document.getElementById("sceneBudgetNote")); }
+
+/* ---------- characters ---------- */
+function renderCharacters(){
+  var list = document.getElementById("charList"); list.innerHTML = "";
+  var p = cur();
+  document.getElementById("addCharBtn").style.display = p ? "" : "none";
+  if(!p){ list.innerHTML = '<div class="noproject">No project selected.</div>'; return; }
+  if(!p.characters.length){ list.innerHTML = '<div class="empty"><strong>No characters yet</strong>Add a character to give them a goal, a conflict, an epiphany — and the question the story answers about them.</div>'; return; }
+  p.characters.forEach(function(c, idx){
+    var open = ui.openChar === c.id;
+    var node = document.createElement("div"); node.className="node";
+    var b = document.createElement("button"); b.type="button"; b.className="node-head";
+    b.innerHTML = '<span class="ntitle"><span>'+esc(c.name||"Unnamed character")+'</span><span class="badge">'+(open?"editing":"tap to edit")+'</span></span>'
+      + (c.question ? '<span class="nprev">'+esc(c.question)+'</span>' : '<span class="nprev empty-t">No question yet — every major character needs one the ending answers.</span>');
+    b.addEventListener("click", function(){ ui.openChar = open ? null : c.id; renderCharacters(); });
+    node.appendChild(b);
+    if(open){
+      var ed = document.createElement("div"); ed.className="editor";
+      ed.appendChild(field("Name", "", c.name, function(v){ c.name=v; touch(p); saveSoon(); }, {placeholder:"Character name"}));
+      ed.appendChild(field("Their question", "One answerable question the ending answers about them.", c.question, function(v){ c.question=v; touch(p); saveSoon(); }, {rows:2, placeholder:"Will [character] …? / Does [character] …?"}));
+      var g = document.createElement("div"); g.className="grid2";
+      var l=document.createElement("div"), r=document.createElement("div");
+      l.appendChild(field("Goal", "What they want.", c.goal, function(v){ c.goal=v; touch(p); saveSoon(); }, {rows:2, placeholder:"What does this character want?"}));
+      l.appendChild(field("Motivation", "Why they want it.", c.motivation, function(v){ c.motivation=v; touch(p); saveSoon(); }, {rows:2, placeholder:"Why do they want it? What drives it?"}));
+      r.appendChild(field("Conflict", "What stands in the way, inside and out.", c.conflict, function(v){ c.conflict=v; touch(p); saveSoon(); }, {rows:2, placeholder:"What stands in the way — inside and out?"}));
+      r.appendChild(field("Epiphany", "What they learn — the change the arc has to earn.", c.epiphany, function(v){ c.epiphany=v; touch(p); saveSoon(); }, {rows:2, placeholder:"What do they learn? What changes?"}));
+      g.appendChild(l); g.appendChild(r); ed.appendChild(g);
+      ed.appendChild(field("Storyline", "A one-paragraph summary of their arc.", c.storyline, function(v){ c.storyline=v; touch(p); saveSoon(); }, {rows:6, tall:true, placeholder:"Their arc in one paragraph: start state → pressure → end state"}));
+      var row = document.createElement("div"); row.style.marginTop="14px";
+      var del = document.createElement("button"); del.className="btn danger"; del.type="button"; del.textContent="Delete character";
+      del.addEventListener("click", function(){
+        showModal("Delete this character?", "“"+(c.name||"Unnamed")+"” will be removed from this project.", null, "Delete", function(){
+          p.characters = p.characters.filter(function(x){ return x.id!==c.id; }); ui.openChar=null; touch(p); save(); renderCharacters(); renderIntake();
+        });
+      });
+      row.appendChild(del); ed.appendChild(row);
+      node.appendChild(ed);
+    }
+    list.appendChild(node);
+    void idx;
+  });
+}
+document.getElementById("addCharBtn").addEventListener("click", function(){
+  var p = cur(); if(!p) return;
+  var c = blankChar(); p.characters.push(c); ui.openChar = c.id; touch(p); save(); renderCharacters();
+});
+
+/* ---------- story map: arcs, each with its own seven-point map ---------- */
+function swapBeats(arc, k1, k2){
+  if(k1 === k2) return;
+  var a = beatData(arc, k1), b = beatData(arc, k2);
+  var t = {text:a.text, question:a.question, pos:a.pos};
+  a.text = b.text; a.question = b.question; a.pos = b.pos;
+  b.text = t.text; b.question = t.question; b.pos = t.pos;
+}
+function makeBeatCard(p, arc, key, sceneMode, cols){
+  var bt = BEAT_BY_KEY[key];
+  var d = beatData(arc, key);
+  var openKey = arc.id + "|" + key;
+  var open = ui.openBeatCard === openKey;
+  var posNow = sceneMode ? effPos(arc, key, cols) : BEAT_ORDER.indexOf(key);
+  var maxPos = sceneMode ? cols - 1 : BEAT_ORDER.length - 1;
+  var card = document.createElement("div"); card.className = "beatcard"; card.style.borderColor = arc.color;
+  card.draggable = !open;
+  card.addEventListener("dragstart", function(e){
+    try{ e.dataTransfer.setData("text/plain", "beat|" + arc.id + "|" + key); e.dataTransfer.effectAllowed = "move"; }catch(err){}
+    card.classList.add("dragging");
+  });
+  card.addEventListener("dragend", function(){ card.classList.remove("dragging"); });
+  var head = document.createElement("div"); head.className = "beatcard-head";
+  head.setAttribute("role", "button"); head.setAttribute("tabindex", "0");
+  head.innerHTML = "<strong>" + esc(bt.title) + "</strong>"
+    + (d.text ? "<span>" + esc(d.text) + "</span>" : "<span class='empty-t'>Not written yet — tap to edit.</span>");
+  head.addEventListener("click", function(){ ui.openBeatCard = open ? null : openKey; renderBeats(); });
+  card.appendChild(head);
+  var nav = document.createElement("div"); nav.className = "beatnav";
+  var left = document.createElement("button"); left.type = "button"; left.textContent = "◀";
+  left.setAttribute("aria-label", "Move " + bt.title + " earlier");
+  left.disabled = posNow <= 0;
+  left.addEventListener("click", function(){
+    if(sceneMode){ d.pos = effPos(arc, key, cols) - 1; }
+    else { swapBeats(arc, key, BEAT_ORDER[BEAT_ORDER.indexOf(key) - 1]); }
+    touch(p); save(); renderBeats();
+  });
+  var right = document.createElement("button"); right.type = "button"; right.textContent = "▶";
+  right.setAttribute("aria-label", "Move " + bt.title + " later");
+  right.disabled = posNow >= maxPos;
+  right.addEventListener("click", function(){
+    if(sceneMode){ d.pos = effPos(arc, key, cols) + 1; }
+    else { swapBeats(arc, key, BEAT_ORDER[BEAT_ORDER.indexOf(key) + 1]); }
+    touch(p); save(); renderBeats();
+  });
+  nav.appendChild(left); nav.appendChild(right);
+  card.appendChild(nav);
+  if(open){
+    var ed = document.createElement("div"); ed.className = "beatcard-ed";
+    ed.appendChild(field(bt.title, bt.sub, d.text, function(v){ d.text = v; syncBeatsMirror(p); touch(p); saveSoon(); }, {rows:3, placeholder:"What happens here, and what question does it move?"}));
+    ed.appendChild(field("Question moved", "Which question does this beat move, and in which direction? If none — give it a job, merge it, or cut it.", d.question, function(v){ d.question = v; syncBeatsMirror(p); touch(p); saveSoon(); }, {rows:2, placeholder:"Which question moves, and which way? e.g. Key question → closer to yes / no"}));
+    card.appendChild(ed);
+  }
+  return card;
+}
+function renderMapGrid(p, wrap){
+  if(!wrap) return;
+  var toggle = document.createElement("div"); toggle.className = "maptoggle";
+  [["beat","By beat"],["scene","By scene"]].forEach(function(m){
+    var tb = document.createElement("button"); tb.type = "button"; tb.className = "tagbtn"; tb.textContent = m[1];
+    tb.setAttribute("aria-pressed", ui.mapMode === m[0] ? "true" : "false");
+    tb.addEventListener("click", function(){ ui.mapMode = m[0]; renderBeats(); });
+    toggle.appendChild(tb);
+  });
+  wrap.appendChild(toggle);
+  var sceneMode = ui.mapMode === "scene";
+  var cols, colLabels = [];
+  if(sceneMode){
+    if(p.scenes.length){ cols = p.scenes.length; p.scenes.forEach(function(s, i){ colLabels.push((i + 1) + ". " + (s.title || "Untitled scene")); }); }
+    else { cols = 7; for(var ci = 0; ci < 7; ci++) colLabels.push("Position " + (ci + 1)); }
+  } else {
+    cols = 7;
+    BEAT_ORDER.forEach(function(k){ colLabels.push(BEAT_BY_KEY[k].title); });
+  }
+  var scroll = document.createElement("div"); scroll.className = "mapscroll";
+  var grid = document.createElement("div"); grid.className = "mapgrid";
+  grid.style.gridTemplateColumns = "104px repeat(" + cols + ", minmax(132px, 1fr))";
+  var corner = document.createElement("div"); corner.className = "mapcell maphead stickycol";
+  corner.textContent = sceneMode ? "Arc \\ Scene →" : "Arc \\ Beat →";
+  grid.appendChild(corner);
+  colLabels.forEach(function(lab){
+    var h = document.createElement("div"); h.className = "mapcell maphead"; h.textContent = lab; grid.appendChild(h);
+  });
+  p.arcs.forEach(function(arc){
+    var lab = document.createElement("div"); lab.className = "mapcell maplabel stickycol";
+    lab.style.borderLeft = "6px solid " + arc.color;
+    lab.innerHTML = "<strong>" + esc(arc.name) + "</strong>";
+    grid.appendChild(lab);
+    var cells = [];
+    for(var c = 0; c < cols; c++){
+      var cell = document.createElement("div"); cell.className = "mapcell";
+      cells.push(cell); grid.appendChild(cell);
+    }
+    BEAT_ORDER.forEach(function(key){
+      var targetCol = sceneMode ? effPos(arc, key, cols) : BEAT_ORDER.indexOf(key);
+      cells[targetCol].appendChild(makeBeatCard(p, arc, key, sceneMode, cols));
+    });
+    cells.forEach(function(cell, cidx){
+      cell.addEventListener("dragover", function(e){ e.preventDefault(); cell.classList.add("droptarget"); });
+      cell.addEventListener("dragleave", function(){ cell.classList.remove("droptarget"); });
+      cell.addEventListener("drop", function(e){
+        e.preventDefault(); cell.classList.remove("droptarget");
+        var raw = ""; try{ raw = e.dataTransfer.getData("text/plain"); }catch(err){}
+        var parts = raw.split("|");
+        if(parts.length !== 3 || parts[0] !== "beat") return;
+        var srcArc = null;
+        p.arcs.forEach(function(a){ if(a.id === parts[1]) srcArc = a; });
+        if(!srcArc || srcArc !== arc) return; /* dragging never changes which arc a beat belongs to */
+        var srcKey = parts[2];
+        if(BEAT_ORDER.indexOf(srcKey) < 0) return;
+        if(sceneMode){ beatData(srcArc, srcKey).pos = cidx; }
+        else { swapBeats(srcArc, srcKey, BEAT_ORDER[cidx]); }
+        touch(p); save(); renderBeats();
+      });
+    });
+  });
+  scroll.appendChild(grid); wrap.appendChild(scroll);
+  var hint = document.createElement("p"); hint.className = "kbd-note";
+  if(sceneMode){
+    hint.textContent = "Columns are your scenes in story order. Drag a card left or right — or use its ◀ ▶ buttons — to move where that beat falls in the story. Tap a card to edit its text, right inside the card.";
+    if(!p.scenes.length) hint.textContent += " You have no scenes yet, so the columns are seven story positions for now — once you add scenes, the columns become your scene list.";
+  } else {
+    hint.textContent = "Columns are the seven beats. Drag a card left or right — or use its ◀ ▶ buttons — to swap it with the beat beside it along the timeline. Tap a card to edit its text, right inside the card.";
+  }
+  wrap.appendChild(hint);
+}
+function renderBeats(){
+  var arcList = document.getElementById("arcList");
+  var wrap = document.getElementById("mapGridWrap");
+  if(arcList) arcList.innerHTML = "";
+  if(wrap) wrap.innerHTML = "";
+  var p = cur();
+  var addBtn = document.getElementById("addArcBtn");
+  if(addBtn) addBtn.style.display = p ? "" : "none";
+  if(!p){ if(arcList) arcList.innerHTML = '<div class="noproject">No project selected.</div>'; return; }
+  ensureArcs(p);
+  p.arcs.forEach(function(arc){
+    var open = ui.openArc === arc.id;
+    var node = document.createElement("div"); node.className = "node";
+    var b = document.createElement("button"); b.type = "button"; b.className = "node-head";
+    var filled = BEAT_ORDER.filter(function(k){ return filledStr(arc.beats[k].text); }).length;
+    b.innerHTML = '<span class="ntitle"><span><span class="arcdot" style="background:' + esc(arc.color) + '"></span>' + esc(arc.name) + '</span><span class="badge">' + filled + ' / 7 beats</span></span>'
+      + (arc.question ? '<span class="nprev">' + esc(arc.question) + '</span>' : '<span class="nprev empty-t">No arc question yet — tap to edit name, colour, and question.</span>');
+    b.addEventListener("click", function(){ ui.openArc = open ? null : arc.id; renderBeats(); });
+    node.appendChild(b);
+    if(open){
+      var ed = document.createElement("div"); ed.className = "editor";
+      ed.appendChild(field("Arc name", "", arc.name, function(v){ arc.name = v; touch(p); saveSoon(); }, {placeholder:"e.g. Main story, Romance, Betrayal"}));
+      var cw = document.createElement("div"); cw.className = "fieldwrap";
+      var cl = document.createElement("label"); cl.className = "flabel";
+      cl.innerHTML = "Arc colour <span class='hint'>Colours this arc's row and beat cards on the visual map below.</span>";
+      cw.appendChild(cl);
+      var srow = document.createElement("div"); srow.className = "swatches";
+      ARC_COLORS.forEach(function(col){
+        var sw = document.createElement("button"); sw.type = "button"; sw.className = "swatch"; sw.style.background = col;
+        sw.setAttribute("aria-pressed", arc.color === col ? "true" : "false");
+        sw.setAttribute("aria-label", "Use this colour for the arc");
+        sw.addEventListener("click", function(){ arc.color = col; touch(p); save(); renderBeats(); });
+        srow.appendChild(sw);
+      });
+      var custom = document.createElement("input"); custom.type = "color"; custom.className = "colorinput";
+      try{ custom.value = arc.color; }catch(e){}
+      custom.setAttribute("aria-label", "Custom arc colour");
+      custom.addEventListener("input", function(){ arc.color = custom.value; touch(p); saveSoon(); });
+      custom.addEventListener("change", function(){ renderBeats(); });
+      srow.appendChild(custom);
+      cw.appendChild(srow); ed.appendChild(cw);
+      ed.appendChild(field("Arc question", "The question this arc asks — the one its own Resolution answers.", arc.question, function(v){ arc.question = v; touch(p); saveSoon(); }, {rows:2, placeholder:"Will …? / Does …? — for this arc"}));
+      var note = document.createElement("p"); note.className = "kbd-note";
+      note.textContent = "Edit this arc's seven beats in the visual map below — tap any card in this arc's row.";
+      ed.appendChild(note);
+      if(p.arcs.length > 1){
+        var del = document.createElement("button"); del.className = "btn danger"; del.type = "button"; del.textContent = "Delete arc";
+        del.addEventListener("click", function(){
+          showModal("Delete this arc?", "“" + arc.name + "” and its seven beats will be removed from this project.", null, "Delete", function(){
+            p.arcs = p.arcs.filter(function(x){ return x.id !== arc.id; });
+            ui.openArc = null; syncBeatsMirror(p); touch(p); save(); renderBeats(); renderOverview();
+          });
+        });
+        ed.appendChild(del);
+      }
+      node.appendChild(ed);
+    }
+    arcList.appendChild(node);
+  });
+  renderMapGrid(p, wrap);
+}
+document.getElementById("addArcBtn").addEventListener("click", function(){
+  var p = cur(); if(!p) return;
+  ensureArcs(p);
+  var a = makeArc("Arc " + (p.arcs.length + 1), p.arcs.length, blankBeats());
+  p.arcs.push(a); ui.openArc = a.id; touch(p); save(); renderBeats();
+});
+
+/* ---------- scenes ---------- */
+function renderPacing(){
+  var el = document.getElementById("pacingNote"); el.innerHTML = "";
+  var p = cur(); if(!p) return;
+  var tagged = p.scenes.filter(function(s){ return s.tag==="blessing"||s.tag==="setback"||s.tag==="both"; });
+  if(tagged.length < 3) return;
+  var run = 1, maxRun = 1, last = null, allSame = true, firstTag = tagged[0].tag;
+  tagged.forEach(function(s){ if(s.tag!==firstTag) allSame=false; });
+  p.scenes.forEach(function(s){
+    if(s.tag==="none"){ run = 1; last = null; return; }
+    if(s.tag===last) run++; else run = 1;
+    last = s.tag; if(run>maxRun) maxRun = run;
+  });
+  if(allSame && tagged.length>=3){
+    el.innerHTML = '<div class="warnbox"><strong>Pacing check:</strong> every tagged scene is “'+esc(TAG_LABEL[firstTag])+'”. A chain of only Blessings kills tension; only Setbacks becomes a slog. Mix the try/fail chain between beats.</div>';
+  } else if(maxRun>=3){
+    el.innerHTML = '<div class="warnbox"><strong>Pacing check:</strong> '+maxRun+' scenes in a row carry the same Blessing/Setback tag. Consider breaking the run so progress and pressure alternate.</div>';
+  }
+}
+function renderScenes(){
+  var list = document.getElementById("sceneList"); list.innerHTML = "";
+  var p = cur();
+  document.getElementById("addSceneBtn").style.display = p ? "" : "none";
+  renderBudget(); renderPacing();
+  if(!p){ list.innerHTML = '<div class="noproject">No project selected.</div>'; return; }
+  if(!p.scenes.length){ list.innerHTML = '<div class="empty"><strong>No scenes yet</strong>Build the scene list from your synopsis — one scene per row, with a POV and a what-happens. Lock your narrative framing here: if a scene needs a POV you don\'t have, change the framing now, not mid-draft.</div>'; return; }
+  p.scenes.forEach(function(s, i){
+    var open = ui.openScene === s.id;
+    var node = document.createElement("div"); node.className="node";
+    var bar = document.createElement("div"); bar.className="scenebar";
+    var handle = document.createElement("span"); handle.className="draghandle"; handle.draggable = true;
+    handle.textContent = "⠿ Drag"; handle.title = "Drag to reorder this scene";
+    handle.setAttribute("aria-label", "Drag to reorder scene " + (i + 1));
+    handle.addEventListener("dragstart", function(e){
+      ui.dragSceneId = s.id; node.classList.add("dragging");
+      try{ e.dataTransfer.setData("text/plain", "scene|" + s.id); e.dataTransfer.effectAllowed = "move"; }catch(err){}
+    });
+    handle.addEventListener("dragend", function(){ node.classList.remove("dragging"); ui.dragSceneId = null; });
+    bar.appendChild(handle);
+    var upB = document.createElement("button"); upB.type = "button"; upB.className = "btn small"; upB.textContent = "↑";
+    upB.setAttribute("aria-label", "Move scene up"); upB.disabled = i === 0;
+    upB.addEventListener("click", function(){ moveScene(p, i, i - 1); });
+    var dnB = document.createElement("button"); dnB.type = "button"; dnB.className = "btn small"; dnB.textContent = "↓";
+    dnB.setAttribute("aria-label", "Move scene down"); dnB.disabled = i === p.scenes.length - 1;
+    dnB.addEventListener("click", function(){ moveScene(p, i, i + 1); });
+    bar.appendChild(upB); bar.appendChild(dnB);
+    var barHint = document.createElement("span"); barHint.className = "barhint";
+    barHint.textContent = "Scene " + (i + 1) + " of " + p.scenes.length;
+    bar.appendChild(barHint);
+    node.appendChild(bar);
+    node.addEventListener("dragover", function(e){ if(ui.dragSceneId && ui.dragSceneId !== s.id){ e.preventDefault(); node.classList.add("droptarget"); } });
+    node.addEventListener("dragleave", function(){ node.classList.remove("droptarget"); });
+    node.addEventListener("drop", function(e){
+      e.preventDefault(); node.classList.remove("droptarget");
+      var from = -1;
+      p.scenes.forEach(function(x, xi){ if(x.id === ui.dragSceneId) from = xi; });
+      ui.dragSceneId = null;
+      if(from >= 0 && from !== i) moveScene(p, from, i);
+    });
+    var b = document.createElement("button"); b.type="button"; b.className="node-head";
+    if(typeof s.chapter !== "string") s.chapter = "";
+    var pill = s.tag!=="none" ? ' <span class="tagpill '+(s.tag==="blessing"?"bless":s.tag==="setback"?"set":"")+'">'+esc(TAG_LABEL[s.tag])+'</span>' : "";
+    b.innerHTML = '<span class="ntitle"><span>'+(i+1)+'. '+esc(s.title||"Untitled scene")+'</span><span class="badge">'+(open?"editing":"tap to open")+'</span></span>'
+      + '<span class="nsub">'+esc(s.chapter ? "Chapter: "+s.chapter+" · " : "")+esc(s.pov ? "POV: "+s.pov+" · " : "")+esc(s.what ? "" : "What happens not written yet")+'</span>'
+      + (s.what ? '<span class="nprev">'+esc(s.what)+'</span>' : '') + (pill ? '<span class="nprev">'+pill+'</span>' : '');
+    b.addEventListener("click", function(){ ui.openScene = open ? null : s.id; renderScenes(); });
+    node.appendChild(b);
+    if(open){
+      var ed = document.createElement("div"); ed.className="editor";
+      ed.appendChild(field("Scene title", "", s.title, function(v){ s.title=v; touch(p); saveSoon(); }, {placeholder:"Short label for this scene"}));
+      ed.appendChild(field("Chapter (optional)", "Scenes with the same chapter name group together in the reference sheets, for assembling chapters in Evernote. Leave blank if you are not grouping yet.", s.chapter || "", function(v){ s.chapter=v; touch(p); saveSoon(); }, {placeholder:"e.g. Chapter 1 — or leave blank"}));
+      var g = document.createElement("div"); g.className="grid2";
+      var l=document.createElement("div"), r=document.createElement("div");
+      l.appendChild(field("POV", "Whose eyes are we in? Locked by your narrative framing.", s.pov, function(v){ s.pov=v; touch(p); saveSoon(); }, {placeholder:"Whose eyes are we in?"}));
+      r.appendChild(field("Feeling: start → end", "How the POV character feels at the beginning vs. the end of this scene.", "", function(){}, {placeholder:"Feeling at start → feeling at end"}));
+      r.lastChild.querySelector("input,textarea").value = (s.feelStart||"") + (s.feelEnd ? " → "+s.feelEnd : "");
+      r.lastChild.querySelector("input,textarea").addEventListener("input", function(e){
+        var parts = e.target.value.split("→"); s.feelStart = (parts[0]||"").trim(); s.feelEnd = (parts[1]||"").trim(); touch(p); saveSoon();
+      });
+      g.appendChild(l); g.appendChild(r); ed.appendChild(g);
+      ed.appendChild(field("What must happen", "The job of this scene: what happens, what changes, which question it moves, and why now.", s.what, function(v){ s.what=v; touch(p); saveSoon(); }, {rows:7, tall:true, placeholder:"Here's what happens, plainly, as stage instructions — what changes, which question it moves"}));
+
+      var tagWrap = document.createElement("div");
+      var tl = document.createElement("label"); tl.className="flabel"; tl.innerHTML = "Blessing / Setback tag <span class='hint'>Blessing helps progress, Setback hinders and must change the plan — not just be bad news. A tag between beats, not a beat itself.</span>";
+      tagWrap.appendChild(tl);
+      var tr = document.createElement("div"); tr.className="tagrow";
+      TAGS.forEach(function(t){
+        var tb = document.createElement("button"); tb.type="button"; tb.className="tagbtn"; tb.textContent = TAG_LABEL[t];
+        tb.setAttribute("aria-pressed", s.tag===t ? "true":"false");
+        tb.addEventListener("click", function(){ s.tag = t; touch(p); save(); renderScenes(); });
+        tr.appendChild(tb);
+      });
+      tagWrap.appendChild(tr); ed.appendChild(tagWrap);
+
+      var loopTitle = document.createElement("label"); loopTitle.className="flabel";
+      loopTitle.innerHTML = "Scene &amp; Sequel loop — tap a step to edit it <span class='hint'>Dwight Swain: Scene is Goal → Conflict → Disaster; Sequel is Reaction → Dilemma → Decision. The Decision sets the next scene's Goal.</span>";
+      ed.appendChild(loopTitle);
+      var loop = document.createElement("div"); loop.className="loop";
+      LOOP.forEach(function(step, li){
+        var filled = !!(s.sequel[step.key]||"").trim();
+        var ln = document.createElement("button"); ln.type="button"; ln.className="loopnode"+(filled?" filled":"");
+        ln.innerHTML = "<b>"+esc(step.group)+": "+esc(step.title)+"</b><span>"+(filled ? esc(s.sequel[step.key]) : "Tap to write")+"</span>";
+        ln.addEventListener("click", function(){
+          var target = ed.querySelector('[data-loop="'+step.key+'"]');
+          if(target){ target.scrollIntoView({block:"center", behavior:"smooth"}); target.focus(); }
+        });
+        loop.appendChild(ln);
+        if(li===2){
+          var ar = document.createElement("div"); ar.className="looparrow"; ar.textContent="↓ then the Sequel ↓"; loop.appendChild(ar);
+        }
+      });
+      ed.appendChild(loop);
+      var LOOP_PLACEHOLDERS = {goal:"What does the POV character want in this scene?", conflict:"What stands in the way of that goal?", disaster:"How does it fail? Flat no, yes-but, or no-and-furthermore?", reaction:"How do they react — feeling, instinct, body?", dilemma:"What tough choice, with no good options?", decision:"What do they decide? This becomes the next scene's Goal."};
+      LOOP.forEach(function(step){
+        var f = field(step.group+" — "+step.title, step.key==="disaster" ? "Fails: flat no, yes-but, or no-and-furthermore." : step.key==="dilemma" ? "A tough choice with no good options — if one is obviously right, it's a delay, not a dilemma." : step.key==="decision" ? "This choice becomes the next scene's Goal." : "", s.sequel[step.key], function(v){ s.sequel[step.key]=v; touch(p); saveSoon(); }, {rows:2, placeholder:LOOP_PLACEHOLDERS[step.key] || "What happens in this step?"});
+        f.querySelector("textarea,input").setAttribute("data-loop", step.key);
+        ed.appendChild(f);
+      });
+
+      ed.appendChild(field("Stage instructions", "Plain “here's what happens”: who enters, what they do, what changes, how it ends. Readable on its own. In the scene sheets this appears in [brackets] with space underneath for prose in Evernote — prose itself is not written in this tool.", s.stage, function(v){ s.stage=v; touch(p); saveSoon(); }, {rows:10, xtall:true, placeholder:"Here's what happens, plainly: who enters, what they do, what changes, how it ends"}));
+
+      var row = document.createElement("div"); row.style.cssText="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px";
+      var up = document.createElement("button"); up.className="btn small"; up.type="button"; up.textContent="↑ Move up"; up.disabled = i===0;
+      up.addEventListener("click", function(){ moveScene(p, i, i - 1); });
+      var dn = document.createElement("button"); dn.className="btn small"; dn.type="button"; dn.textContent="↓ Move down"; dn.disabled = i===p.scenes.length-1;
+      dn.addEventListener("click", function(){ moveScene(p, i, i + 1); });
+      var del = document.createElement("button"); del.className="btn small danger"; del.type="button"; del.textContent="Delete scene";
+      del.addEventListener("click", function(){
+        showModal("Delete this scene?", "“"+(s.title||"Untitled scene")+"” will be removed from this project.", null, "Delete", function(){
+          p.scenes = p.scenes.filter(function(x){ return x.id!==s.id; }); ui.openScene=null; touch(p); save(); renderScenes();
+        });
+      });
+      row.appendChild(up); row.appendChild(dn); row.appendChild(del); ed.appendChild(row);
+      node.appendChild(ed);
+    }
+    list.appendChild(node);
+  });
+}
+document.getElementById("addSceneBtn").addEventListener("click", function(){
+  var p = cur(); if(!p) return;
+  var s = blankScene(p.scenes.length+1); p.scenes.push(s); ui.openScene = s.id; touch(p); save(); renderScenes();
+});
+
+/* ---------- final length (optional, no gate / no confirmation) ---------- */
+function renderFinalLength(){
+  ["finalLengthBox","overviewFinalLengthBox"].forEach(function(id){
+    var el = document.getElementById(id); if(!el) return;
+    el.innerHTML = "";
+    var p = cur(); if(!p) return;
+    if(!p.intake) return;
+    if(typeof p.intake.finalLength !== "string") p.intake.finalLength = "";
+    var card = document.createElement("div"); card.className = "card";
+    card.style.verticalAlign = "top";
+    var h = document.createElement("h3"); h.className = "serif"; h.style.marginTop = "0"; h.textContent = "Final length";
+    card.appendChild(h);
+    var intro = document.createElement("p");
+    intro.style.cssText = "margin:0 0 6px;color:var(--ink2)";
+    intro.textContent = "Optional — record the length the draft actually turned out to be. No target to confirm and no decision needed; the final length is whatever it turns out to be.";
+    card.appendChild(intro);
+    var flField = field("Final length", "Type the actual count when you know it, e.g. 28400, or a short note like “about 30k”.", p.intake.finalLength, function(v){ p.intake.finalLength = v; touch(p); saveSoon(); document.querySelectorAll("[data-final-length]").forEach(function(other){ if(other.value !== v) other.value = v; }); }, {placeholder:"e.g. 28400 — whatever it turned out to be"});
+    var flInput = flField.querySelector("input,textarea"); if(flInput) flInput.setAttribute("data-final-length","1");
+    card.appendChild(flField);
+    el.appendChild(card);
+  });
+}
+
+/* ---------- editing ---------- */
+function renderEditing(){
+  var flow = document.getElementById("editFlow"); flow.innerHTML = "";
+  var p = cur();
+  if(!p){ flow.innerHTML = '<div class="noproject">No project selected.</div>'; renderFinalLength(); return; }
+  PASSES.forEach(function(ps, i){
+    var data = p.editing[ps.key] || {done:false, notes:""};
+    var open = ui.openPass === ps.key;
+    var node = document.createElement("div"); node.className="node"+(data.done?" done":"");
+    var b = document.createElement("button"); b.type="button"; b.className="node-head";
+    b.innerHTML = '<span class="pass"><span class="passnum">'+(data.done?"✓":(i+1))+'</span><span style="min-width:0"><span class="ntitle"><span>'+esc(ps.title)+'</span><span class="badge '+(data.done?"done":"")+'">'+(data.done?"done":"not started")+'</span></span><span class="nsub">'+esc(ps.sub)+'</span></span></span>';
+    b.addEventListener("click", function(){ ui.openPass = open ? null : ps.key; renderEditing(); });
+    node.appendChild(b);
+    if(open){
+      var ed = document.createElement("div"); ed.className="editor";
+      var toggle = document.createElement("button"); toggle.type="button"; toggle.className="btn"+(data.done?"":" primary");
+      toggle.textContent = data.done ? "Mark as not done" : "Mark this pass done";
+      toggle.addEventListener("click", function(){ data.done = !data.done; touch(p); save(); renderEditing(); });
+      ed.appendChild(toggle);
+      if(data.notes){
+        var yn = document.createElement("div"); yn.className="your-note";
+        yn.innerHTML = '<span class="yn-label">Your note</span><p>'+esc(data.notes)+'</p>';
+        ed.appendChild(yn);
+      }
+      ed.appendChild(field("Notes for this pass", "What you found, what you changed, what's still open.", data.notes, function(v){ data.notes=v; touch(p); saveSoon(); }, {rows:4, placeholder:"What did you find in this pass? What did you change? What's still open?"}));
+      node.appendChild(ed);
+    }
+    flow.appendChild(node);
+  });
+  renderFinalLength();
+}
+
+/* ---------- export / import ---------- */
+function fileDateStr(){
+  var d = new Date();
+  var mm = String(d.getMonth()+1).padStart(2,"0");
+  var dd = String(d.getDate()).padStart(2,"0");
+  return d.getFullYear() + "-" + mm + "-" + dd;
+}
+function exportFileName(slugPart){
+  return "writing-tool-" + (slugPart || "project") + "-" + fileDateStr() + ".json";
+}
+function mdFileName(slugPart, kind){
+  return "writing-tool-" + (slugPart || "project") + "-" + kind + "-" + fileDateStr() + ".md";
+}
+function downloadFallback(name, text, mime){
+  var blob = new Blob([text], {type: mime || "application/json"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a"); a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  /* Only reached after the download has actually been triggered. */
+  toast("Download started: " + name + " — check Files › Downloads", 5000);
+}
+function exportTextFile(fileName, text, mime){
+  var type = mime || "application/json";
+  /* Preferred path on iPhone / iPad / Safari: hand the real file to the
+     system share sheet so the user can tap "Save to Files" and choose
+     where it goes. No success message until the share actually completes. */
+  var canShareFile = false;
+  var file = null;
+  try{
+    if(window.navigator && typeof navigator.share === "function" && typeof navigator.canShare === "function" && typeof File === "function"){
+      file = new File([text], fileName, {type:type});
+      canShareFile = !!navigator.canShare({files:[file]});
+    }
+  }catch(e){ canShareFile = false; file = null; }
+
+  if(canShareFile && file){
+    var shareResult;
+    try{ shareResult = navigator.share({files:[file], title:fileName}); }
+    catch(shareErr){ downloadFallback(fileName, text, type); return; }
+    if(shareResult && typeof shareResult.then === "function"){
+      shareResult.then(function(){
+        toast("Export shared: " + fileName + " — if you tapped Save to Files, look for it in Files", 5000);
+      }).catch(function(err){
+        if(err && err.name === "AbortError"){
+          toast("Export cancelled — no file saved", 4000);
+        } else {
+          /* Share failed for another reason — fall back to a download. */
+          downloadFallback(fileName, text, type);
+        }
+      });
+    }
+    return;
+  }
+
+  /* Fallback: Blob download (desktop browsers and in-app views without file sharing). */
+  downloadFallback(fileName, text, type);
+}
+function exportProjects(list, name){
+  var payload = { app:"standalone-writing-tool", version:1, exportedAt:new Date().toISOString(), projects:list };
+  var text = JSON.stringify(payload, null, 2);
+  exportTextFile(name || exportFileName("project"), text, "application/json");
+}
+/* ---------- reference sheets (Markdown, for Evernote) ---------- */
+function mdText(v){ return (v == null ? "" : String(v)).trim(); }
+function mdOr(v, fallback){ var t = mdText(v); return t ? t : (fallback || "(not written yet)"); }
+function sceneFeelText(s){
+  var a = mdText(s.feelStart), b = mdText(s.feelEnd);
+  if(a && b) return a + " -> " + b;
+  if(a) return a;
+  if(b) return b;
+  return "";
+}
+function sceneChapter(s){ return mdText(s && s.chapter); }
+function bracketStage(stage){
+  var t = mdText(stage);
+  if(!t) return "[(no stage instructions yet)]";
+  return "[" + t + "]";
+}
+function groupScenesByChapter(scenes){
+  var hasChapter = scenes.some(function(s){ return !!sceneChapter(s); });
+  if(!hasChapter) return null;
+  var order = [], groups = {};
+  scenes.forEach(function(s, i){
+    var key = sceneChapter(s) || "__no_chapter__";
+    if(!groups[key]){ groups[key] = {label: sceneChapter(s) || "No chapter yet", items: []}; order.push(key); }
+    groups[key].items.push({scene:s, index:i});
+  });
+  return order.map(function(k){ return groups[k]; });
+}
+function buildOverallSheet(p){
+  var L = [];
+  L.push("# " + mdOr(p.title, "Untitled project") + " — Story Reference Sheet");
+  L.push("");
+  L.push("## Premise");
+  L.push("");
+  L.push(mdOr(p.intake.premise));
+  L.push("");
+  L.push("## Key question");
+  L.push("");
+  L.push(mdOr(p.intake.keyQuestion));
+  L.push("");
+  L.push("## Theme");
+  L.push("");
+  L.push(mdOr(p.intake.theme));
+  L.push("");
+  L.push("## Narrative framing");
+  L.push("");
+  L.push(mdOr(p.intake.framing));
+  L.push("");
+  if(mdText(p.intake.finalLength)){
+    L.push("## Final length");
+    L.push("");
+    L.push(mdText(p.intake.finalLength));
+    L.push("");
+  }
+  if(mdText(p.intake.synopsis)){
+    L.push("## Synopsis");
+    L.push("");
+    L.push(mdText(p.intake.synopsis));
+    L.push("");
+  }
+  L.push("## Characters");
+  L.push("");
+  if(!p.characters.length){ L.push("(no characters yet)"); L.push(""); }
+  p.characters.forEach(function(c){
+    L.push("### " + mdOr(c.name, "Unnamed character"));
+    L.push("");
+    if(mdText(c.question)) L.push("- Question: " + mdText(c.question));
+    if(mdText(c.goal)) L.push("- Goal: " + mdText(c.goal));
+    if(mdText(c.motivation)) L.push("- Motivation: " + mdText(c.motivation));
+    if(mdText(c.conflict)) L.push("- Conflict: " + mdText(c.conflict));
+    if(mdText(c.epiphany)) L.push("- Epiphany: " + mdText(c.epiphany));
+    if(mdText(c.storyline)){ L.push(""); L.push(mdText(c.storyline)); }
+    L.push("");
+  });
+  L.push("## Seven-Point Story Map — by arc");
+  L.push("");
+  ensureArcs(p);
+  p.arcs.forEach(function(a){
+    L.push("### Arc: " + mdOr(a.name, "Arc"));
+    L.push("");
+    if(mdText(a.question)){ L.push("Arc question: " + mdText(a.question)); L.push(""); }
+    BEAT_ORDER.forEach(function(k){
+      var bt = BEAT_BY_KEY[k]; var data = a.beats[k] || {text:"", question:""};
+      L.push("#### " + bt.title);
+      L.push("");
+      L.push(mdOr(data.text));
+      if(mdText(data.question)){ L.push(""); L.push("Moves the question: " + mdText(data.question)); }
+      L.push("");
+    });
+  });
+  L.push("## Scenes");
+  L.push("");
+  if(!p.scenes.length){ L.push("(no scenes yet)"); L.push(""); }
+  else {
+    var pushScene = function(entry, headingLevel){
+      var s = entry.scene, i = entry.index;
+      var h = headingLevel || "###";
+      L.push(h + " " + (i+1) + ". " + mdOr(s.title, "Untitled scene"));
+      L.push("");
+      if(sceneChapter(s)) L.push("- Chapter: " + sceneChapter(s));
+      if(mdText(s.pov)) L.push("- POV: " + mdText(s.pov));
+      var feel = sceneFeelText(s); if(feel) L.push("- Feeling: " + feel);
+      if(s.tag && s.tag !== "none") L.push("- Blessing / Setback: " + (TAG_LABEL[s.tag] || s.tag));
+      if(mdText(s.what)){ L.push(""); L.push("What must happen: " + mdText(s.what)); }
+      var seq = s.sequel || {};
+      var seqLines = [];
+      LOOP.forEach(function(step){ if(mdText(seq[step.key])) seqLines.push("- " + step.group + " — " + step.title + ": " + mdText(seq[step.key])); });
+      if(seqLines.length){ L.push(""); L.push("Scene & Sequel:"); L.push(""); seqLines.forEach(function(x){ L.push(x); }); }
+      if(mdText(s.stage)){ L.push(""); L.push("Stage instructions: " + mdText(s.stage)); }
+      L.push("");
+    };
+    var groups = groupScenesByChapter(p.scenes);
+    if(groups){
+      groups.forEach(function(g){
+        L.push("### " + g.label);
+        L.push("");
+        g.items.forEach(function(entry){ pushScene(entry, "####"); });
+      });
+    } else {
+      p.scenes.forEach(function(s, i){ pushScene({scene:s, index:i}, "###"); });
+    }
+  }
+  return L.join("\n");
+}
+function buildSceneSheets(p){
+  var L = [];
+  L.push("# " + mdOr(p.title, "Untitled project") + " — Scene Sheets");
+  L.push("");
+  L.push("Copy one scene section into its own Evernote note and write the prose underneath the [bracketed] stage instructions. Delete the brackets, or keep them above the prose. Then copy finished scenes together into a chapter note.");
+  L.push("");
+  if(!p.scenes.length){ L.push("(no scenes yet)"); L.push(""); return L.join("\n"); }
+  p.scenes.forEach(function(s, i){
+    L.push("---");
+    L.push("");
+    L.push("## Scene " + (i+1) + " — " + mdOr(s.title, "Untitled scene"));
+    L.push("");
+    if(sceneChapter(s)) L.push("Chapter: " + sceneChapter(s));
+    if(mdText(s.pov)) L.push("POV: " + mdText(s.pov));
+    var feel = sceneFeelText(s); if(feel) L.push("Feeling: " + feel);
+    if(s.tag && s.tag !== "none") L.push("Blessing / Setback: " + (TAG_LABEL[s.tag] || s.tag));
+    if(mdText(s.what)){ L.push(""); L.push("What must happen: " + mdText(s.what)); }
+    var decision = s.sequel ? mdText(s.sequel.decision) : "";
+    if(decision){ L.push(""); L.push("Scene & Sequel — Decision: " + decision); }
+    L.push("");
+    L.push("Stage instructions:");
+    L.push("");
+    L.push(bracketStage(s.stage));
+    L.push("");
+    L.push("Prose:");
+    L.push("");
+    L.push("");
+    L.push("");
+    L.push("");
+  });
+  return L.join("\n");
+}
+document.getElementById("exportOneBtn").addEventListener("click", function(){
+  var p = cur(); if(!p){ toast("No project to export yet"); return; }
+  exportProjects([p], exportFileName(slugify(p.title)));
+});
+document.getElementById("exportAllBtn").addEventListener("click", function(){
+  if(!state.projects.length){ toast("No projects to export yet"); return; }
+  exportProjects(state.projects, exportFileName("all-projects"));
+});
+document.getElementById("exportOverallBtn").addEventListener("click", function(){
+  var p = cur(); if(!p){ toast("No project to export yet"); return; }
+  exportTextFile(mdFileName(slugify(p.title), "reference-sheet"), buildOverallSheet(p), "text/markdown");
+});
+document.getElementById("exportSceneSheetsBtn").addEventListener("click", function(){
+  var p = cur(); if(!p){ toast("No project to export yet"); return; }
+  exportTextFile(mdFileName(slugify(p.title), "scene-sheets"), buildSceneSheets(p), "text/markdown");
+});
+document.getElementById("importBtn").addEventListener("click", function(){ document.getElementById("importFile").click(); });
+document.getElementById("importFile").addEventListener("change", function(e){
+  var file = e.target.files[0]; e.target.value = "";
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    try{
+      var data = JSON.parse(String(reader.result));
+      var incoming = data.projects || (data.id ? [data] : null);
+      if(!incoming || !incoming.length) throw new Error("no projects");
+      var added = 0;
+      incoming.forEach(function(raw){
+        var p = sanitizeProject(raw); if(!p) return;
+        p.id = uid();
+        var base = p.title, n = 2;
+        while(state.projects.some(function(x){ return x.title===p.title; })){ p.title = base + " (copy " + n + ")"; n++; }
+        state.projects.unshift(p); added++;
+      });
+      if(added){ state.currentId = state.projects[0].id; save(); renderAll(); toast("Imported "+added+" project"+(added>1?"s":"")); }
+      else toast("Nothing importable in that file");
+    }catch(err){ toast("That file couldn't be imported — is it a .json export from this tool?"); }
+  };
+  reader.readAsText(file);
+});
+function sanitizeProject(raw){
+  if(!raw || typeof raw !== "object") return null;
+  var p = newProject(typeof raw.title==="string" && raw.title ? raw.title : "Imported project");
+  try{
+    var ri = raw.intake || {};
+    ["premise","targetWords","avgScene","keyQuestion","theme","framing","keyIdeas","synopsis","finalLength"].forEach(function(k){ if(ri[k]!=null) p.intake[k] = String(ri[k]); });
+    if(ri.gateNotes) ["gate1","gate2"].forEach(function(k){ if(ri.gateNotes[k]!=null) p.intake.gateNotes[k] = String(ri.gateNotes[k]); });
+    if(Array.isArray(raw.characters)) raw.characters.forEach(function(rc){
+      if(!rc) return; var c = blankChar();
+      ["name","question","goal","motivation","conflict","epiphany","storyline"].forEach(function(k){ if(rc[k]!=null) c[k]=String(rc[k]); });
+      p.characters.push(c);
+    });
+    if(raw.beats) BEATS.forEach(function(bt){
+      var rb = raw.beats[bt.key]; if(!rb) return;
+      if(rb.text!=null) p.beats[bt.key].text = String(rb.text);
+      if(rb.question!=null) p.beats[bt.key].question = String(rb.question);
+    });
+    if(Array.isArray(raw.arcs)){
+      var parsedArcs = [];
+      raw.arcs.forEach(function(ra, ai){
+        if(!ra) return;
+        var a = makeArc(typeof ra.name === "string" && ra.name ? ra.name : (ai === 0 ? "Main story" : "Arc " + (ai + 1)), ai, blankBeats());
+        if(typeof ra.color === "string" && /^#[0-9a-fA-F]{6}$/.test(ra.color)) a.color = ra.color;
+        if(ra.question != null) a.question = String(ra.question);
+        if(ra.beats) BEAT_ORDER.forEach(function(k){
+          var rb = ra.beats[k]; if(!rb) return;
+          if(rb.text != null) a.beats[k].text = String(rb.text);
+          if(rb.question != null) a.beats[k].question = String(rb.question);
+          if(typeof rb.pos === "number") a.beats[k].pos = rb.pos;
+        });
+        parsedArcs.push(a);
+      });
+      if(parsedArcs.length) p.arcs = parsedArcs;
+    }
+    ensureArcs(p);
+    if(Array.isArray(raw.scenes)) raw.scenes.forEach(function(rs, i){
+      if(!rs) return; var s = blankScene(i+1);
+      ["title","chapter","pov","what","feelStart","feelEnd","stage"].forEach(function(k){ if(rs[k]!=null) s[k]=String(rs[k]); });
+      if(TAGS.indexOf(rs.tag)>=0) s.tag = rs.tag;
+      if(rs.sequel) LOOP.forEach(function(st){ if(rs.sequel[st.key]!=null) s.sequel[st.key]=String(rs.sequel[st.key]); });
+      p.scenes.push(s);
+    });
+    if(raw.editing) PASSES.forEach(function(ps){
+      var re = raw.editing[ps.key]; if(!re) return;
+      p.editing[ps.key].done = !!re.done;
+      if(re.notes!=null) p.editing[ps.key].notes = String(re.notes);
+    });
+  }catch(e){}
+  return p;
+}
+
+/* ---------- overview / completion status ---------- */
+function filledStr(v){ return !!(v && String(v).trim()); }
+function ovCard(title, countLabel, pct, checks, view){
+  var card = document.createElement("button"); card.type="button"; card.className="ov-card";
+  var inner = '<h3><span>'+esc(title)+'</span><span class="badge">'+esc(countLabel)+'</span></h3>';
+  inner += '<div class="progress" aria-hidden="true"><i style="width:'+Math.max(0,Math.min(100,Math.round(pct)))+'%"></i></div>';
+  if(checks && checks.length){
+    inner += '<ul class="checks">';
+    checks.forEach(function(c){
+      inner += '<li class="'+(c.done?"done":"todo")+'"><span class="ck">'+(c.done?"✓":"")+'</span><span>'+esc(c.label)+'</span></li>';
+    });
+    inner += '</ul>';
+  }
+  card.innerHTML = inner;
+  card.addEventListener("click", function(){ setView(view); });
+  return card;
+}
+function renderOverview(){
+  var body = document.getElementById("overviewBody"); if(!body) return;
+  body.innerHTML = "";
+  var p = cur();
+  if(!p){ body.innerHTML = '<div class="noproject">No project selected. Create one from the Projects homepage.</div>'; renderFinalLength(); return; }
+  var head = document.createElement("div"); head.className="card";
+  head.innerHTML = '<div class="pname" style="font-family:Georgia,serif;font-size:1.3rem;font-weight:700;word-break:break-word">'+esc(p.title)+'</div><div class="pmeta" style="color:var(--ink2);font-size:.9rem">Updated '+fmtDate(p.updatedAt)+' · tap a phase below to work on it</div>';
+  body.appendChild(head);
+  var grid = document.createElement("div"); grid.className="ov-grid";
+  /* Intake: premise / length / key question / theme */
+  var intakeChecks = [
+    {label:"Premise", done:filledStr(p.intake.premise)},
+    {label:"Target length", done:!!parseInt(p.intake.targetWords,10)},
+    {label:"Key question", done:filledStr(p.intake.keyQuestion)},
+    {label:"Theme", done:filledStr(p.intake.theme)}
+  ];
+  var intakeDone = intakeChecks.filter(function(c){ return c.done; }).length;
+  grid.appendChild(ovCard("Intake", intakeDone+" / 4 filled", intakeDone/4*100, intakeChecks, "intake"));
+  /* Characters */
+  var withQ = p.characters.filter(function(c){ return filledStr(c.question); }).length;
+  var charChecks = [
+    {label: p.characters.length ? p.characters.length+" character"+(p.characters.length===1?"":"s")+" added" : "No characters yet", done:p.characters.length>0},
+    {label: withQ+" of "+p.characters.length+" have their question", done:p.characters.length>0 && withQ===p.characters.length}
+  ];
+  var charPct = p.characters.length ? (50 + (withQ/p.characters.length)*50) : 0;
+  grid.appendChild(ovCard("Characters", p.characters.length ? p.characters.length+" added" : "not started", charPct, charChecks, "characters"));
+  /* Story Map: every arc has its own 7 beats */
+  ensureArcs(p);
+  var totalBeats = p.arcs.length * 7, allBeatsDone = 0;
+  var beatChecks = p.arcs.map(function(a){
+    var n = BEAT_ORDER.filter(function(k){ return a.beats[k] && filledStr(a.beats[k].text); }).length;
+    allBeatsDone += n;
+    return {label:a.name + " — " + n + " / 7 beats", done:n === 7};
+  });
+  grid.appendChild(ovCard("Story Map — arcs", allBeatsDone + " / " + totalBeats + " beats filled", totalBeats ? allBeatsDone / totalBeats * 100 : 0, beatChecks, "map"));
+  /* Scenes vs budget */
+  var bc = budgetCalc(p);
+  var sceneChecks, scenePct, sceneLabel;
+  if(bc){
+    sceneLabel = bc.have+" of ≈"+bc.afford+" scenes";
+    scenePct = bc.afford ? (bc.have/bc.afford*100) : 0;
+    sceneChecks = [
+      {label: bc.have+" scene"+(bc.have===1?"":"s")+" planned", done:bc.have>0},
+      {label: "Budget ≈"+bc.afford+" scenes ("+bc.words.toLocaleString()+" words ÷ "+bc.avg.toLocaleString()+")", done:true},
+      {label: bc.have>bc.afford ? "Over budget — merge, cut, or raise the target" : "Within budget", done:bc.have>0 && bc.have<=bc.afford}
+    ];
+  } else {
+    sceneLabel = p.scenes.length+" scenes · no budget set";
+    scenePct = p.scenes.length ? 40 : 0;
+    sceneChecks = [
+      {label: p.scenes.length+" scene"+(p.scenes.length===1?"":"s")+" planned", done:p.scenes.length>0},
+      {label:"Set target length + average scene length in Intake for a budget", done:false}
+    ];
+  }
+  grid.appendChild(ovCard("Scenes", sceneLabel, scenePct, sceneChecks, "scenes"));
+  /* Editing: x / 6 passes */
+  var passDone = PASSES.filter(function(ps){ return p.editing[ps.key] && p.editing[ps.key].done; }).length;
+  var passChecks = PASSES.map(function(ps){ return {label:ps.title, done:!!(p.editing[ps.key] && p.editing[ps.key].done)}; });
+  grid.appendChild(ovCard("Editing", passDone+" / 6 passes done", passDone/6*100, passChecks, "editing"));
+  /* Length gates: status lives here too, decisions live where each gate is used. */
+  var gateChecks = GATES.map(function(g){ return {label:g.n+" — "+g.t, done:!!(p.intake.gateNotes && filledStr(p.intake.gateNotes[g.k]))}; });
+  if(filledStr(p.intake.finalLength)) gateChecks.push({label:"Final length recorded: "+p.intake.finalLength, done:true});
+  var gatesDone = GATES.filter(function(g){ return !!(p.intake.gateNotes && filledStr(p.intake.gateNotes[g.k])); }).length;
+  grid.appendChild(ovCard("Length gates", gatesDone+" / 2 decided", gatesDone/2*100, gateChecks, "intake"));
+  body.appendChild(grid);
+  renderFinalLength();
+}
+
+/* ---------- Prev / Next, in page flow at the end of each section ---------- */
+var SECTION_ORDER = ["overview","intake","map","scenes","characters","editing","setup"];
+function renderPrevNext(){
+  document.querySelectorAll(".prevnext").forEach(function(box){
+    var v = box.getAttribute("data-pn");
+    var idx = SECTION_ORDER.indexOf(v);
+    box.innerHTML = "";
+    if(idx < 0) return;
+    if(idx > 0){
+      var prevKey = SECTION_ORDER[idx-1];
+      var pb = document.createElement("button"); pb.type="button"; pb.className="btn";
+      pb.textContent = "← Previous: " + SECTION_LABELS[prevKey];
+      (function(k){ pb.addEventListener("click", function(){ setView(k); }); })(prevKey);
+      box.appendChild(pb);
+    } else {
+      var sp = document.createElement("span"); sp.className="spacer"; box.appendChild(sp);
+    }
+    if(idx < SECTION_ORDER.length-1){
+      var nextKey = SECTION_ORDER[idx+1];
+      var nb = document.createElement("button"); nb.type="button"; nb.className="btn primary";
+      nb.textContent = "Next: " + SECTION_LABELS[nextKey] + " →";
+      (function(k){ nb.addEventListener("click", function(){ setView(k); }); })(nextKey);
+      box.appendChild(nb);
+    }
+  });
+}
+
+/* ---------- render all ---------- */
+function renderAll(){
+  renderProjects(); renderOverview(); renderIntake(); renderCharacters(); renderBeats(); renderScenes(); renderEditing(); renderGates(); renderPrevNext();
+  updateBar();
+}
+load();
+renderAll();
+setView(state.projects.length ? "projects" : "projects");
+if(!state.projects.length){ document.getElementById("savedNote").textContent = "Starts empty — your first project is yours to create."; }
+})();
+</script>
+</body>
+</html>
