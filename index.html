@@ -100,6 +100,27 @@ button{cursor:pointer}
 .icon-xs-btn{border-radius:6px}
 .icon-std-btn:disabled,.icon-sm-btn:disabled,.icon-xs-btn:disabled{opacity:.35;cursor:default}
 .saved{font-size:.85rem;color:var(--ink2);padding:8px 0 0;min-height:1.2em}
+
+.bar-saved{font-size:.72rem;font-weight:600;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;min-height:1em}
+/* Breadcrumbs (iPad layout, >=701px): every page in order as connected
+   buttons, sticky under the header. Rendered by renderCrumbs only when a
+   project is open; the current page is highlighted. */
+.crumbs{position:sticky;top:calc(62px + env(safe-area-inset-top,0px));z-index:38;display:none;background:var(--bg);padding:var(--sp2) 0;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.crumbs::-webkit-scrollbar{display:none;width:0;height:0}
+.crumbs.show{display:flex}
+.crumb-btn{flex:0 0 auto;min-height:36px;padding:6px 12px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:.82rem;color:var(--ink);margin-left:-1px;border-radius:0;white-space:nowrap}
+.crumb-btn:first-child{margin-left:0;border-radius:8px 0 0 8px}
+.crumb-btn:last-child{border-radius:0 8px 8px 0}
+.crumb-btn[aria-current="page"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+/* Tiny info icon beside an input title — an icon, not a button-sized control. */
+.infoicon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;min-width:16px;border-radius:50%;border:1.5px solid var(--ink2);color:var(--ink2);font-family:Georgia,serif;font-style:italic;font-size:10px;font-weight:700;line-height:1;margin-left:6px;vertical-align:2px;cursor:pointer;background:none;padding:0}
+.infoicon:focus{outline:2px solid var(--accent);outline-offset:1px}
+/* In-map beat text editing (iPad layout visual map) */
+.beatcard{position:relative}
+.beatcard-edit{margin-top:var(--sp2)}
+.beatcard-edit textarea{min-height:88px;font-size:16px}
+.beatcard-edit-row{display:flex;gap:var(--sp2);align-items:center;margin-top:var(--sp2)}
+.beat-pencil-tr{position:absolute;top:8px;right:8px;z-index:2}
 /* Hamburger drawer */
 .drawerback{position:fixed;inset:0;background:rgba(10,8,6,.5);display:none;z-index:70}
 .drawerback.open{display:block}
@@ -565,6 +586,7 @@ input[type="file"]{display:none}
   <div class="drawer-sec">This project</div>
   <button class="navitem" type="button" data-nav="overview">Overview</button>
   <button class="navitem" type="button" data-nav="intake">Intake</button>
+  <button class="navitem" type="button" data-nav="world">Worldbuilding</button>
   <button class="navitem" type="button" data-nav="characters">Characters</button>
   <button class="navitem" type="button" data-nav="map">Story Arcs</button>
   <button class="navitem" type="button" data-nav="scenes">Scenes</button>
@@ -577,12 +599,12 @@ input[type="file"]{display:none}
       <button class="iconbtn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
       <div class="bar-title-block">
         <div class="bar-title" id="barTitle">Your projects</div>
-        <div class="bar-crumb" id="barCrumb">Projects</div>
+        <div class="bar-saved" id="savedNote" aria-live="polite"></div>
       </div>
       <button class="btn small primary bar-export" id="barExportBtn" type="button">Export</button>
     </div>
   </div>
-  <div class="saved" id="savedNote" aria-live="polite"></div>
+  <nav class="crumbs" id="crumbBar" aria-label="Pages in order"></nav>
 
   <!-- PROJECTS (homepage) -->
   <section class="view" id="view-projects">
@@ -620,6 +642,14 @@ input[type="file"]{display:none}
     <div class="prevnext" data-pn="intake"></div>
   </section>
 
+  <!-- WORLDBUILDING -->
+  <section class="view" id="view-world">
+    <h2 class="sec">Worldbuilding</h2>
+    <p class="lede">The world behind the story — the parts that influence the plot but can't be planned around scenes or arcs until they're fleshed out. Planning only for now: nothing here drives beats, arcs, or scenes yet.</p>
+    <div id="worldBody"></div>
+    <div class="prevnext" data-pn="world"></div>
+  </section>
+
   <!-- CHARACTERS -->
   <section class="view" id="view-characters">
     <h2 class="sec">Characters</h2>
@@ -647,7 +677,7 @@ input[type="file"]{display:none}
     <div id="sceneRefStrip"></div>
     <div id="sceneCharRefs"></div>
     <h3 class="serif" style="margin-top:6px">Visual map — arcs × scenes</h3>
-    <p class="lede" style="margin-bottom:8px">Arcs are rows, scenes are columns. Tap + to tag a beat.</p>
+    <p class="lede" style="margin-bottom:8px">Arcs are rows, scenes are columns. Tap + to tag a beat. On the iPhone layout you scroll sideways through scenes; on the iPad layout you get the full grid.</p>
     <div id="sceneMapWrap"></div>
     <div id="gate2Slot"></div>
     <h3 class="serif" style="margin-top:26px">Scene list</h3>
@@ -763,6 +793,15 @@ input[type="file"]{display:none}
     <div class="row">
       <button class="btn" id="modalCancel" type="button">Cancel</button>
       <button class="btn primary" id="modalOk" type="button">OK</button>
+    </div>
+  </div>
+</div>
+<div class="modalback" id="infoBack">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+    <h3 id="infoTitle"></h3>
+    <p id="infoText" style="white-space:pre-wrap"></p>
+    <div class="row">
+      <button class="btn primary" id="infoClose" type="button">Got it</button>
     </div>
   </div>
 </div>
@@ -1009,7 +1048,7 @@ function newProject(title){
   var arc0 = makeArc("Main story", 0, beats0);
   return { id:uid(), title:title||"Untitled project", scheme:"ember", titleFont:"serif", createdAt:Date.now(), updatedAt:Date.now(),
     intake:{premise:"", targetWords:"", avgScene:"1300", keyQuestion:"", theme:"", framing:"", keyIdeas:"", synopsis:"", finalLength:"", gateNotes:{gate1:"",gate2:""}},
-    characters:[], beats:beats0, arcs:[arc0], scenes:[], editing:blankEdit() };
+    characters:[], beats:beats0, arcs:[arc0], scenes:[], editing:blankEdit(), world:{template:"", sections:{}} };
 }
 function blankScene(n){
   return { id:uid(), title:"Scene " + n, chapter:"", pov:"", what:"", feelStart:"", feelEnd:"", stage:"", tag:"none", bs:[], beatTags:[],
@@ -1081,6 +1120,39 @@ function cleanBeatTags(p){
    s.tag gets one entry per tagged kind with empty text, so nothing is lost
    and the writer is prompted to fill the text in. s.tag is kept in sync as
    a derived legacy value (none/blessing/setback/both) for old exports. */
+/* Blessing/Setback arc links (Option A): an entry's arcId names the arc
+   it belongs to, or is null when unlinked — every entry written before
+   arc-linking, and any entry whose arc was deleted. Unlinked entries
+   are kept and shown in a small "Unlinked" section in the map and the
+   scene list, never deleted, and can be linked to an arc later from
+   the entry's editor. */
+function cleanBSArcs(p){
+  if(!p || !Array.isArray(p.scenes)) return;
+  var ids = {};
+  (p.arcs || []).forEach(function(a){ ids[a.id] = true; });
+  p.scenes.forEach(function(s){
+    ensureSceneBS(s);
+    (s.bs || []).forEach(function(e){ if(e.arcId && !ids[e.arcId]) e.arcId = null; });
+  });
+}
+function bsArcOf(p, e){
+  if(!p || !e || !e.arcId) return null;
+  var found = null;
+  (p.arcs || []).forEach(function(a){ if(a.id === e.arcId) found = a; });
+  return found;
+}
+/* Create a Blessing/Setback entry (optionally linked to an arc) and open
+   it for in-place text editing in the map, exactly like the old BS add
+   flow: no navigation, no page jump. */
+function addBSEntry(p, s, type, arcId){
+  ensureSceneBS(s);
+  var ne = {id:uid(), type:type, text:"", arcId: arcId || null};
+  s.bs.push(ne);
+  s.tag = deriveTagFromBS(s);
+  ui.bsMapEditId = ne.id;
+  touch(p); save();
+  return ne;
+}
 function deriveTagFromBS(s){
   var hasB = false, hasS = false;
   (s.bs || []).forEach(function(e){ if(e.type === "blessing") hasB = true; if(e.type === "setback") hasS = true; });
@@ -1090,11 +1162,11 @@ function ensureSceneBS(s){
   if(!s) return;
   if(Array.isArray(s.bs)){
     s.bs = s.bs.filter(function(e){ return e && (e.type === "blessing" || e.type === "setback"); });
-    s.bs.forEach(function(e){ if(!e.id) e.id = uid(); if(typeof e.text !== "string") e.text = String(e.text == null ? "" : e.text); });
+    s.bs.forEach(function(e){ if(!e.id) e.id = uid(); if(typeof e.text !== "string") e.text = String(e.text == null ? "" : e.text); if(typeof e.arcId !== "string" || !e.arcId) e.arcId = null; });
   } else {
     s.bs = [];
-    if(s.tag === "blessing" || s.tag === "both") s.bs.push({id:uid(), type:"blessing", text:""});
-    if(s.tag === "setback" || s.tag === "both") s.bs.push({id:uid(), type:"setback", text:""});
+    if(s.tag === "blessing" || s.tag === "both") s.bs.push({id:uid(), type:"blessing", text:"", arcId:null});
+    if(s.tag === "setback" || s.tag === "both") s.bs.push({id:uid(), type:"setback", text:"", arcId:null});
   }
   s.tag = deriveTagFromBS(s);
 }
@@ -1141,17 +1213,94 @@ function moveBSEntry(p, fromIdx, entryId, delta){
   touch(p); save();
   return toIdx;
 }
-function bsExportLines(s){
+function bsExportLines(s, p){
   ensureSceneBS(s);
-  return (s.bs || []).map(function(e){ return bsTypeLabel(e.type) + ": " + (String(e.text || "").trim() || "(not written yet)"); });
+  return (s.bs || []).map(function(e){
+    var arc = bsArcOf(p, e);
+    return bsTypeLabel(e.type) + (arc ? " (" + arc.name + ")" : " (Unlinked)") + ": " + (String(e.text || "").trim() || "(not written yet)");
+  });
 }
 function blankChar(){
   return { id:uid(), name:"", question:"", goal:"", motivation:"", conflict:"", epiphany:"", storyline:"" };
 }
 
+/* ---------- worldbuilding: per-project approach templates ----------
+   Worldbuilding depends on the kind of story, so each project picks its
+   own approach from the dropdown on the Worldbuilding page. The choice
+   is stored per project (p.world.template) and travels in JSON export /
+   import; old projects and old JSONs simply get a blank world.
+   Entries are stored by SECTION KEY (p.world.sections[key] = {text,
+   neededBy}), never by template: switching the dropdown can therefore
+   never delete anything. Sections outside the newly chosen template
+   stay in the project data, shown read-only under "Other notes from a
+   previous template", and are restored in full when switching back.
+   Planning only: worldbuilding drives no beats, arcs, or scenes yet. */
+var WB_BIBLE_SECTIONS = [
+  {key:"geography", title:"Geography", prompt:"The land itself: terrain, climate, distances, the places that matter."},
+  {key:"history", title:"History", prompt:"What happened before the story starts that still shapes it."},
+  {key:"politics", title:"Politics", prompt:"Who holds power, who wants it, and how decisions get made."},
+  {key:"culture", title:"Culture", prompt:"How people live day to day: customs, food, dress, taboos, celebrations."},
+  {key:"religion", title:"Religion", prompt:"What people believe, worship, or fear — and what it makes them do."},
+  {key:"economy", title:"Economy", prompt:"Money, work, trade, scarcity: what things cost and who goes without."},
+  {key:"language", title:"Language", prompt:"Names, slang, forms of address, words that do not translate."},
+  {key:"magicTech", title:"Magic / Technology", prompt:"The system, if there is one: what it can do, what it costs, who controls it."},
+  {key:"notes", title:"Notes", prompt:"Anything that does not fit a section yet."}
+];
+var WB_TEMPLATES = [
+  {id:"bible", name:"Top-down / Story Bible", desc:"Start wide, then narrow: build the whole world as a reference bible, in any order, and look things up while you draft.", sections:WB_BIBLE_SECTIONS},
+  {id:"jit", name:"Story-first / Just-in-time", desc:"Build only what a scene or arc needs, when it needs it — and keep a log so it stays consistent.", sections:[
+    {key:"jitNeeds", title:"What this scene / arc needs", prompt:"World details a specific scene or arc cannot be planned without. Name the scene or arc."},
+    {key:"jitDecisions", title:"Decisions already made", prompt:"A running log: every world fact you have settled, so later scenes stay consistent."},
+    {key:"jitQuestions", title:"Questions the story raises", prompt:"World questions the plot asks but you have not answered yet."},
+    {key:"jitLater", title:"Details to invent later", prompt:"Things you know you will need eventually — parked here so they do not stall the scene in front of you."}
+  ]},
+  {id:"system", name:"System-first", desc:"Start with the magic or technology system — rules, costs, limits — then work out how the world bends around it.", sections:[
+    {key:"sysRules", title:"Magic / Technology rules", prompt:"What the system is and exactly how it works — the rules you would be cheating if you broke."},
+    {key:"sysCosts", title:"Costs and limits", prompt:"What using it costs, what it cannot do, and where it fails."},
+    {key:"sysUsers", title:"Who can use it", prompt:"Who has access, who is excluded, and how someone gains or loses it."},
+    {key:"sysSociety", title:"How society bends around it", prompt:"How the system shapes law, work, status, worship, and daily life."},
+    {key:"sysConflict", title:"Consequences and conflicts", prompt:"The problems the system creates — the ones the plot can feed on."}
+  ]},
+  {id:"culture", name:"Culture / History-first", desc:"Start with a people, a belief, or a historical event, and build outward into daily life.", sections:[
+    {key:"culPeople", title:"A people or group", prompt:"Who they are, where they live, and what holds them together."},
+    {key:"culBeliefs", title:"Beliefs and rituals", prompt:"What they believe, and the rituals that make those beliefs visible."},
+    {key:"culDaily", title:"Daily life — food, work, mourning, celebration", prompt:"An ordinary day: what is eaten, what is made, how grief and joy are marked."},
+    {key:"culEvent", title:"A defining historical event", prompt:"The event this people still lives in the shadow (or light) of."},
+    {key:"culFearValue", title:"What they fear / value", prompt:"What they protect at all costs, and what they dread."}
+  ]},
+  {id:"geo", name:"Map / Geography-first", desc:"Start with place: draw the map, then let rivers, mountains, and borders decide trade, wars, and where people live.", sections:[
+    {key:"geoMapNotes", title:"Map notes", prompt:"The map as you would sketch it: what is where, roughly, before details."},
+    {key:"geoRegions", title:"Regions and places", prompt:"The named places: regions, cities, landmarks, and what each is known for."},
+    {key:"geoFeatures", title:"Rivers, mountains, borders", prompt:"The features that divide and connect: water, high ground, frontiers."},
+    {key:"geoTrade", title:"Trade and travel", prompt:"How people and goods move: routes, seasons, dangers, journey times."},
+    {key:"geoLive", title:"Where people live and why", prompt:"Settlements follow water, food, safety, and work — note which, where."}
+  ]},
+  {id:"hybrid", name:"Hybrid — Story Bible + needed-by", desc:"The Story Bible categories, plus a Needed by (arc / scene) note on every section, ready for linking later.", neededBy:true, sections:WB_BIBLE_SECTIONS}
+];
+var WB_SECTION_INDEX = {};
+WB_TEMPLATES.forEach(function(t){ t.sections.forEach(function(s){ if(!WB_SECTION_INDEX[s.key]) WB_SECTION_INDEX[s.key] = {title:s.title, templateName:t.name}; }); });
+function wbTemplateOf(p){
+  if(!p || !p.world) return null;
+  for(var i=0;i<WB_TEMPLATES.length;i++) if(WB_TEMPLATES[i].id === p.world.template) return WB_TEMPLATES[i];
+  return null;
+}
+function ensureWorld(p){
+  if(!p) return;
+  if(!p.world || typeof p.world !== "object") p.world = {template:"", sections:{}};
+  if(typeof p.world.template !== "string" || (p.world.template !== "" && !WB_TEMPLATES.some(function(x){ return x.id === p.world.template; }))) p.world.template = "";
+  if(!p.world.sections || typeof p.world.sections !== "object") p.world.sections = {};
+  Object.keys(WB_SECTION_INDEX).forEach(function(k){
+    var s = p.world.sections[k];
+    if(!s || typeof s !== "object"){ p.world.sections[k] = {text:"", neededBy:""}; return; }
+    if(typeof s.text !== "string") s.text = s.text == null ? "" : String(s.text);
+    if(typeof s.neededBy !== "string") s.neededBy = s.neededBy == null ? "" : String(s.neededBy);
+  });
+}
+function wbSection(p, key){ ensureWorld(p); return p.world.sections[key]; }
+
 var state = { projects:[], currentId:null };
-var ui = { view:"projects", openBeat:null, openScene:null, openChar:null, openPass:null, openGate:null, openArc:null, openBeatCard:null, openLoopStep:null, beatConflict:null, tagArcSel:null, tagBeatSel:null, dragSceneId:null, mapScrollLeft:0, refOpen:false, openQuestion:null, showFullScale:false, openBSEntry:null, bsMapEditId:null, phoneSceneId:null, phoneTagPicker:null };
-var SECTION_LABELS = { projects:"Projects", overview:"Overview", intake:"Intake", map:"Story Arcs", scenes:"Scenes", characters:"Characters", editing:"Editing", setup:"Setup & Backup" };
+var ui = { view:"projects", openBeat:null, openScene:null, openChar:null, openPass:null, openGate:null, openArc:null, openBeatCard:null, openLoopStep:null, beatConflict:null, tagArcSel:null, tagBeatSel:null, dragSceneId:null, mapScrollLeft:0, refOpen:false, openQuestion:null, showFullScale:false, openBSEntry:null, bsMapEditId:null, phoneSceneId:null, phoneTagPicker:null, mapBeatEdit:null, gridTagPicker:null, openWorld:null };
+var SECTION_LABELS = { projects:"Projects", overview:"Overview", intake:"Intake", world:"Worldbuilding", map:"Story Arcs", scenes:"Scenes", characters:"Characters", editing:"Editing", setup:"Setup & Backup" };
 
 function load(){
   try{
@@ -1169,7 +1318,9 @@ function load(){
     if(!Array.isArray(p.scenes)) return;
     p.scenes.forEach(function(s){ if(!s) return; if("prose" in s) delete s.prose; if(typeof s.chapter !== "string") s.chapter = ""; if(!Array.isArray(s.beatTags)) s.beatTags = []; ensureSceneBS(s); });
     ensureArcs(p);
+    ensureWorld(p);
     cleanBeatTags(p);
+    cleanBSArcs(p);
   });
   if(!state.currentId && state.projects.length) state.currentId = state.projects[0].id;
 }
@@ -1271,16 +1422,55 @@ document.getElementById("modalOk").addEventListener("click", function(){
 });
 
 /* ---------- navigation: hamburger drawer; Projects is the homepage ---------- */
+/* ---------- info overlay: writing tips for an input, opened from the
+   tiny info icon beside its title ---------- */
+function showInfo(title, text){
+  var t = document.getElementById("infoTitle"), x = document.getElementById("infoText"), b = document.getElementById("infoBack");
+  if(!t || !x || !b) return;
+  t.textContent = title; x.textContent = text; b.classList.add("open");
+}
+function hideInfo(){ var b = document.getElementById("infoBack"); if(b) b.classList.remove("open"); }
+function makeInfoIcon(title, text){
+  var s = document.createElement("span");
+  s.className = "infoicon"; s.textContent = "i";
+  s.setAttribute("role", "button"); s.setAttribute("tabindex", "0");
+  s.setAttribute("aria-label", "More information and tips: " + title);
+  s.title = "Tips: " + title;
+  s.addEventListener("click", function(ev){ ev.stopPropagation(); showInfo(title, text); });
+  s.addEventListener("keydown", function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); ev.stopPropagation(); showInfo(title, text); } });
+  return s;
+}
+document.getElementById("infoClose").addEventListener("click", hideInfo);
+document.getElementById("infoBack").addEventListener("click", function(e){ if(e.target === this) hideInfo(); });
+/* Breadcrumbs (iPad layout only, >=701px wide): all pages in order as
+   connected buttons under the header, sticky, current page highlighted.
+   They carry the page name now; the header itself carries the project
+   name and the "Saved on this device" note under it. */
+function renderCrumbs(){
+  var bar = document.getElementById("crumbBar"); if(!bar) return;
+  var p = cur();
+  var wide = false;
+  try{ wide = window.matchMedia ? window.matchMedia("(min-width: 701px)").matches : (window.innerWidth || 0) >= 701; }catch(e){ wide = (window.innerWidth || 0) >= 701; }
+  var show = wide && !!p && SECTION_ORDER.indexOf(ui.view) >= 0;
+  bar.innerHTML = "";
+  bar.classList.toggle("show", show);
+  var root = document.documentElement;
+  if(show) root.style.setProperty("--sticktop", "calc(114px + env(safe-area-inset-top,0px))");
+  else root.style.removeProperty("--sticktop");
+  if(!show) return;
+  SECTION_ORDER.forEach(function(v){
+    var b = document.createElement("button"); b.type = "button"; b.className = "crumb-btn";
+    b.textContent = SECTION_LABELS[v];
+    if(v === ui.view) b.setAttribute("aria-current", "page");
+    b.addEventListener("click", function(){ setView(v); });
+    bar.appendChild(b);
+  });
+}
 function updateBar(){
   var p = cur();
   var bt = document.getElementById("barTitle");
   if(bt) bt.textContent = (ui.view !== "projects" && p) ? p.title : "Your projects";
-  var crumb = document.getElementById("barCrumb");
-  if(crumb){
-    if(ui.view === "projects") crumb.textContent = "Projects";
-    else if(p) crumb.textContent = SECTION_LABELS[ui.view] || "";
-    else crumb.textContent = SECTION_LABELS[ui.view] || "";
-  }
+  renderCrumbs();
   var dt = document.getElementById("drawerTitle");
   if(dt) dt.textContent = p ? p.title : "Menu";
   document.querySelectorAll(".navitem").forEach(function(n){
@@ -1376,6 +1566,7 @@ try{
     resizeTimer = setTimeout(function(){
       var nowPhone = isPhoneMapWidth();
       if(lastPhoneMap !== null && nowPhone !== lastPhoneMap && ui.view === "scenes") renderScenes();
+      renderCrumbs();
       lastPhoneMap = nowPhone;
     }, 150);
   });
@@ -1389,7 +1580,7 @@ try{
 function closeAllEditorsAndSave(){
   ui.openBeat = null; ui.openScene = null; ui.openChar = null; ui.openPass = null;
   ui.openGate = null; ui.openArc = null; ui.openBeatCard = null; ui.openLoopStep = null;
-  ui.openQuestion = null; ui.beatConflict = null; ui.openBSEntry = null; ui.bsMapEditId = null;
+  ui.openQuestion = null; ui.beatConflict = null; ui.openBSEntry = null; ui.bsMapEditId = null; ui.mapBeatEdit = null; ui.gridTagPicker = null; ui.openWorld = null;
   if(saveTimer){ clearTimeout(saveTimer); saveTimer = null; }
   if(cur()) save();
 }
@@ -1503,13 +1694,50 @@ document.getElementById("barExportBtn").addEventListener("click", function(){
 });
 
 /* ---------- intake ---------- */
+/* Writing tips per input, keyed by the field's label. field() puts a
+   tiny info icon beside the title of any field whose label is listed
+   here (Characters, Story Arcs, and Intake inputs); tapping it opens
+   the info overlay with more information and tips for writing it. */
+var FIELD_INFO = {
+  "Project title": "A working title is a handle, not a promise — it can change at any draft stage. Pick something that reminds you what this story is, even if it is just a codename for now.",
+  "Premise — one sentence": "One sentence: who, in what situation, facing what conflict, with what at stake. If it will not fit in one sentence yet, write the long version in Key ideas and keep trimming — the sentence is a compass for every later choice.",
+  "Key question — whole story": "Phrase it so the ending can answer it: yes, no, or yes-but. Avoid questions with no possible answer — the ending has to be able to land on one side.",
+  "Theme": "The argument the story tests, not a topic. Love is a topic; love survives only when it is chosen daily is a theme. The Midpoint is a good place to let a character argue the other side.",
+  "Narrative framing — sketch now, lock at the scene list": "Decide who is telling this and from how far away. It affects what the narrator can know, what they can hide, and how scenes open — cheaper to sketch now than to retrofit later.",
+  "Key ideas": "Raw material, not outline: images, moments, lines, places. Nothing here has to earn its place yet — but when you outline, raid this list first before inventing new material.",
+  "Synopsis expansion": "Expand in passes, only as far as your length needs (see the scale below). Each disaster should grow out of the previous one — if you can swap two disasters without breaking anything, one of them is not doing causal work.",
+  "Target length (words) — Gate 1": "Length is a planning decision: it decides how many threads and scenes you can afford (Gate 1). You can change it later — the budget and scale guidance update with it.",
+  "Average scene length (words)": "Your honest average, not your best scene. If unsure, use the average from your last finished piece; short stories run shorter scenes, novels longer ones.",
+  "Name": "The name everyone in the story uses for them. If different people call them different names, that difference is worth a line in their Storyline.",
+  "Their question": "One question per major character, answerable by the ending: will she forgive him? does he choose the work over the family? Every beat in their arc should move this question.",
+  "Goal": "Concrete and checkable: something they could succeed or fail at on the page, not a state of mind. Being respected becomes winning the council seat.",
+  "Motivation": "Why this goal, for this person? Motivation is what makes a character keep going after the first disaster — and what a Pinch can threaten.",
+  "Conflict": "Both kinds: what blocks them outside (people, world, circumstance) and what blocks them inside (fear, flaw, loyalty). The inside one is usually what the epiphany has to change.",
+  "Epiphany": "What they learn that they could not have believed at the start. The Resolution only lands if this change is earned by the disasters before it.",
+  "Storyline": "Their arc in one paragraph: start state, pressure, end state. Read it against their question — the paragraph should end where the question gets answered.",
+  "Arc name": "Name the arc for the thread it tracks (Main story, Romance, The debt), not for a character alone — an arc is a question moving through beats.",
+  "Arc question — this arc only": "This arc's own answerable question — narrower than the whole-story key question in Intake. Each of the seven beats below should move it, one way or the other.",
+  "Key Question": "The yes/no question the ending answers, plus one question per character. If the ending cannot answer it, sharpen it until it can.",
+  "Hook": "The hero in the opposite state to their end state — world, characters, and arc introduced. Build it after the Resolution: it is the ending, inverted.",
+  "Plot Turn 1": "The world changes from status quo to conflict; the inciting incident draws the hero in. After this, the hero cannot simply go back to normal.",
+  "Pinch 1": "Something goes wrong and forces the hero into action; stakes rise and the antagonist's pressure becomes visible. A pinch applies pressure — it does not solve anything.",
+  "Midpoint": "The hero shifts from reaction to action — a conscious decision. Revisit the theme here: let the decision argue with it.",
+  "Pinch 2": "Something fails and all seems hopeless — the dark night of the soul. This lowest point should grow out of the hero's own choices, not just bad luck.",
+  "Plot Turn 2": "The hero obtains the last thing needed to resolve the conflict — often knowledge or a tool earned by the Midpoint decision.",
+  "Resolution": "Build this first. The hero follows through on the Midpoint decision, the conflict resolves, and the key question gets its answer here.",
+  "Question moved": "Optional bookkeeping: name the question this beat pushes, and which way — closer to yes, or closer to no. If several beats in a row move nothing, one of them can probably go.",
+  "__gateNote": "Record the decision and the date, plus one line of why. Mid-draft, future-you will want to know whether this was a real decision or a placeholder."
+};
 function field(label, hint, val, oninput, opts){
   opts = opts || {};
   var id = "f" + Math.random().toString(36).slice(2,9);
   var wrap = document.createElement("div");
   wrap.className = "fieldwrap";
   var lab = document.createElement("label"); lab.className="flabel"; lab.setAttribute("for", id);
-  lab.innerHTML = esc(label) + (hint ? '<span class="hint">'+esc(hint)+'</span>' : "");
+  lab.appendChild(document.createTextNode(label));
+  var infoText = opts.info || FIELD_INFO[label] || (label.indexOf("Your note — ") === 0 ? FIELD_INFO["__gateNote"] : null);
+  if(infoText) lab.appendChild(makeInfoIcon(opts.infoTitle || label, infoText));
+  if(hint){ var hs = document.createElement("span"); hs.className = "hint"; hs.textContent = hint; lab.appendChild(hs); }
   wrap.appendChild(lab);
   var el;
   if(opts.type === "number"){ el = document.createElement("input"); el.type="number"; el.min="0"; el.inputMode="numeric"; }
@@ -1709,6 +1937,88 @@ function renderBudget(){
   if(g2 && ui.view === "scenes") renderGateInto(GATES[1], g2);
 }
 
+/* ---------- worldbuilding page ---------- */
+function renderWorld(){
+  var body = document.getElementById("worldBody"); if(!body) return;
+  body.innerHTML = "";
+  var p = cur();
+  if(!p){ body.innerHTML = '<div class="noproject">No project selected. Create one from the Projects homepage.</div>'; return; }
+  ensureWorld(p);
+  var card = document.createElement("div"); card.className = "card";
+  var lab = document.createElement("label"); lab.className = "flabel";
+  lab.appendChild(document.createTextNode("Worldbuilding approach — for this story"));
+  var hs = document.createElement("span"); hs.className = "hint";
+  hs.textContent = "Different stories need different worldbuilding. Pick the version that fits this one — you can switch at any time, and switching never deletes anything you have written: sections from another approach are kept below and come back when you switch back.";
+  lab.appendChild(hs); card.appendChild(lab);
+  var sel = document.createElement("select");
+  sel.setAttribute("aria-label", "Worldbuilding approach for this story");
+  var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "Choose an approach…"; sel.appendChild(o0);
+  WB_TEMPLATES.forEach(function(t){ var o = document.createElement("option"); o.value = t.id; o.textContent = t.name; sel.appendChild(o); });
+  sel.value = p.world.template || "";
+  sel.addEventListener("change", function(){
+    p.world.template = sel.value; touch(p); save(); renderWorld();
+    var nt = wbTemplateOf(p);
+    toast(nt ? "Worldbuilding approach: " + nt.name : "Worldbuilding approach cleared — your notes are kept below");
+  });
+  card.appendChild(sel);
+  var tpl = wbTemplateOf(p);
+  if(tpl){ var d = document.createElement("p"); d.style.cssText = "margin:var(--sp3) 0 0;color:var(--ink2)"; d.textContent = tpl.desc; card.appendChild(d); }
+  body.appendChild(card);
+  if(!tpl){
+    var prompt = document.createElement("div"); prompt.className = "empty";
+    prompt.innerHTML = "<strong>Choose an approach to begin</strong>Pick the version that fits this story from the dropdown above — its sections will appear here, ready to fill in. Worldbuilding is planning only for now: flesh the world out here first, then work it into arcs and scenes when you are ready.";
+    body.appendChild(prompt);
+  } else {
+    tpl.sections.forEach(function(sec){
+      var data = wbSection(p, sec.key);
+      var open = ui.openWorld === sec.key;
+      var node = document.createElement("div"); node.className = "node";
+      node.setAttribute("data-world-key", sec.key);
+      var head = document.createElement("div"); head.className = "node-head";
+      var main = document.createElement("div"); main.className = "node-main";
+      main.innerHTML = '<span class="ntitle"><span>' + esc(sec.title) + '</span></span>'
+        + '<span class="nsub">' + esc(sec.prompt) + '</span>'
+        + (String(data.text || "").trim() ? '<span class="nprev">' + esc(data.text) + '</span>' : '<span class="nprev empty-t">Not written yet.</span>')
+        + (tpl.neededBy && String(data.neededBy || "").trim() ? '<span class="nprev"><strong>Needed by:</strong> ' + esc(data.neededBy) + '</span>' : '');
+      head.appendChild(main);
+      var eBtn = document.createElement("button"); eBtn.type = "button"; eBtn.className = "btn small";
+      eBtn.textContent = open ? "Close" : "Edit";
+      eBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      eBtn.addEventListener("click", function(){ ui.openWorld = open ? null : sec.key; editToggle(renderWorld, '[data-world-key="' + sec.key + '"]'); });
+      head.appendChild(eBtn);
+      node.appendChild(head);
+      if(open){
+        var ed = document.createElement("div"); ed.className = "editor";
+        ed.appendChild(field(sec.title, sec.prompt, data.text, function(v){ data.text = v; touch(p); saveSoon(); }, {rows:5, tall:true, placeholder:"Flesh it out — skeleton notes, not prose"}));
+        if(tpl.neededBy) ed.appendChild(field("Needed by (arc / scene)", "Which arc or scene needs this fleshed out? A note for later linking — nothing is linked automatically.", data.neededBy, function(v){ data.neededBy = v; touch(p); saveSoon(); }, {rows:1, placeholder:"e.g. Arc 2 — the Midpoint scene"}));
+        node.appendChild(ed);
+      }
+      body.appendChild(node);
+    });
+  }
+  /* Entries written under another approach: kept, never deleted. */
+  var curKeys = {};
+  if(tpl) tpl.sections.forEach(function(s2){ curKeys[s2.key] = true; });
+  var others = Object.keys(WB_SECTION_INDEX).filter(function(k){
+    if(curKeys[k]) return false;
+    var d2 = p.world.sections[k];
+    return d2 && (String(d2.text || "").trim() || String(d2.neededBy || "").trim());
+  });
+  if(others.length){
+    var oc = document.createElement("div"); oc.className = "card";
+    oc.innerHTML = "<h3 class='serif' style='margin-top:0'>Other notes from a previous template</h3><p style='color:var(--ink2)'>Kept safe — switching approaches never deletes your writing. Switch back to that approach to edit these; they are read-only here.</p>";
+    others.forEach(function(k){
+      var meta = WB_SECTION_INDEX[k]; var d3 = p.world.sections[k];
+      var b = document.createElement("div"); b.style.cssText = "margin-top:var(--sp4)";
+      b.innerHTML = "<strong style='font-family:Georgia,serif'>" + esc(meta.title) + "</strong> <span style='color:var(--ink2);font-size:.85rem'>(" + esc(meta.templateName) + ")</span>"
+        + (String(d3.text || "").trim() ? "<p style='white-space:pre-wrap;word-break:break-word;margin:var(--sp1) 0 0'>" + esc(d3.text) + "</p>" : "")
+        + (String(d3.neededBy || "").trim() ? "<p style='margin:var(--sp1) 0 0'><strong>Needed by:</strong> " + esc(d3.neededBy) + "</p>" : "");
+      oc.appendChild(b);
+    });
+    body.appendChild(oc);
+  }
+}
+
 /* ---------- characters ---------- */
 function renderCharacters(){
   var list = document.getElementById("charList"); list.innerHTML = "";
@@ -1773,7 +2083,7 @@ document.getElementById("addCharBtn").addEventListener("click", function(){
    written description text, never the generic definition of the beat type.
    There are no input fields in the map: the card's Edit button jumps to
    that beat's section on the Story Arcs page, input focused and selected. */
-function makeBeatCard(p, arc, key, scene){
+function makeBeatCard(p, arc, key, scene, opts){
   var bt = BEAT_BY_KEY[key];
   var d = beatData(arc, key);
   var openKey = arc.id + "|" + key;
@@ -1792,12 +2102,45 @@ function makeBeatCard(p, arc, key, scene){
     else { card.appendChild(buildBeatActions()); ui.openBeatCard = openKey; head.setAttribute("aria-expanded", "true"); }
   });
   card.appendChild(head);
+  /* iPad layout only (opts.inline): an EXTRA SMALL pencil in the top
+     right corner edits this beat's text IN PLACE in the map. The
+     checkmark confirms and writes to the arc's beat — the single
+     source — so the edit shows everywhere (Story Arcs, scene cards,
+     exports). Cancel leaves the text untouched. */
+  var inlineEdit = !!(opts && opts.inline);
+  var editingBeat = inlineEdit && ui.mapBeatEdit === openKey;
+  if(inlineEdit && !editingBeat){
+    var bp = document.createElement("button"); bp.type = "button"; bp.className = "pencilbtn beat-pencil-tr"; bp.textContent = "✎";
+    bp.title = "Edit this beat's text here"; bp.setAttribute("aria-label", "Edit this beat's text here in the map");
+    bp.addEventListener("click", function(ev){ ev.stopPropagation(); ui.mapBeatEdit = openKey; editToggle(renderScenes, null); });
+    card.appendChild(bp);
+    head.style.paddingRight = "36px";
+  }
+  if(editingBeat){
+    var ew2 = document.createElement("div"); ew2.className = "beatcard-edit";
+    var bta = document.createElement("textarea"); bta.rows = 3; bta.value = d.text || "";
+    bta.setAttribute("aria-label", bt.title + " text"); bta.setAttribute("data-noscroll", "1");
+    bta.placeholder = "What happens here, and what question does it move?";
+    ew2.appendChild(bta);
+    var erow = document.createElement("div"); erow.className = "beatcard-edit-row";
+    var okB = document.createElement("button"); okB.type = "button"; okB.className = "icon-xs-btn"; okB.textContent = "✓";
+    okB.title = "Confirm — updates this beat everywhere"; okB.setAttribute("aria-label", "Confirm beat text");
+    okB.addEventListener("click", function(){ d.text = bta.value; syncBeatsMirror(p); ui.mapBeatEdit = null; touch(p); save(); editToggle(renderScenes, null); toast(bt.title + " updated"); });
+    var cxB = document.createElement("button"); cxB.type = "button"; cxB.className = "icon-xs-btn"; cxB.textContent = "✕";
+    cxB.title = "Cancel"; cxB.setAttribute("aria-label", "Cancel beat edit");
+    cxB.addEventListener("click", function(){ ui.mapBeatEdit = null; editToggle(renderScenes, null); });
+    erow.appendChild(okB); erow.appendChild(cxB); ew2.appendChild(erow);
+    card.appendChild(ew2);
+    setTimeout(function(){ try{ bta.focus({preventScroll:true}); bta.select(); }catch(e){} }, 0);
+  }
   function buildBeatActions(){
     var acts = document.createElement("div"); acts.className = "beatcard-actions";
-    var eb = document.createElement("button"); eb.type = "button"; eb.className = "icon-xs-btn"; eb.textContent = "✎";
-    eb.title = "Edit this beat in Story Arcs"; eb.setAttribute("aria-label", "Edit this beat in Story Arcs");
-    eb.addEventListener("click", function(ev){ ev.stopPropagation(); jumpToBeat(arc.id, key); });
-    acts.appendChild(eb);
+    if(!inlineEdit){
+      var eb = document.createElement("button"); eb.type = "button"; eb.className = "icon-xs-btn"; eb.textContent = "✎";
+      eb.title = "Edit this beat in Story Arcs"; eb.setAttribute("aria-label", "Edit this beat in Story Arcs");
+      eb.addEventListener("click", function(ev){ ev.stopPropagation(); jumpToBeat(arc.id, key); });
+      acts.appendChild(eb);
+    }
     if(scene){
       var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-xs-btn"; rm.textContent = "🗑";
       rm.title = "Remove tag"; rm.setAttribute("aria-label", "Remove this beat tag");
@@ -1809,7 +2152,7 @@ function makeBeatCard(p, arc, key, scene){
   if(open) card.appendChild(buildBeatActions());
   return card;
 }
-/* A Blessing/Setback card for the map's dedicated row. It follows the
+/* A Blessing/Setback card for the visual map — it sits in its linked arc's row, or in the Unlinked row. It follows the
    same editing rules as every other editable section: COLLAPSED by
    default — title plus an italic text preview, with a pencil icon
    button (✎, the map's Edit) — and expanded IN PLACE only while
@@ -1900,7 +2243,7 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
 function buildBSEditor(p, s, sceneIdx){
   var wrapEl = document.createElement("div"); wrapEl.style.marginTop = "var(--sp3)";
   var lab = document.createElement("label"); lab.className = "flabel";
-  lab.innerHTML = "Blessings &amp; Setbacks <span class='hint'>Optional entries with their own text, like beats — a Setback must change the plan, not just be bad news. They appear in the map's Blessings and Setbacks row.</span>";
+  lab.innerHTML = "Blessings &amp; Setbacks <span class='hint'>Optional entries with their own text, like beats — a Setback must change the plan, not just be bad news. They appear in the visual map, in the row of the arc each one is linked to — or under Unlinked.</span>";
   wrapEl.appendChild(lab);
   ensureSceneBS(s);
   if(!s.bs.length){
@@ -1917,6 +2260,11 @@ function buildBSEditor(p, s, sceneIdx){
     box.setAttribute("data-bs-entry", entry.id);
     var hd = document.createElement("div"); hd.className = "bs-entry-head";
     var st = document.createElement("strong"); st.textContent = bsTypeLabel(entry.type); hd.appendChild(st);
+    var arcPill = document.createElement("span"); arcPill.className = "tagpill";
+    var earc = bsArcOf(p, entry);
+    if(earc){ var ebg = pillBg(getArcColor(p, earc)); arcPill.style.background = ebg; arcPill.style.color = readableOn(ebg); arcPill.textContent = earc.name; }
+    else { arcPill.textContent = "Unlinked"; }
+    hd.appendChild(arcPill);
     var pv = document.createElement("span"); pv.className = "bs-preview";
     pv.textContent = String(entry.text || "").trim() || "Not written yet.";
     hd.appendChild(pv);
@@ -1944,6 +2292,25 @@ function buildBSEditor(p, s, sceneIdx){
         pv.textContent = String(ta.value || "").trim() || "Not written yet.";
       });
       box.appendChild(ta);
+      var arcRow = document.createElement("div"); arcRow.className = "bs-stepper";
+      var arcLab2 = document.createElement("span"); arcLab2.style.cssText = "font-weight:700;font-size:.85rem"; arcLab2.textContent = "Arc";
+      var arcSel2 = document.createElement("select"); arcSel2.setAttribute("aria-label", "Arc this " + bsTypeLabel(entry.type) + " is linked to");
+      arcSel2.style.cssText = "flex:1;min-width:140px;width:auto;background:var(--surface);color:var(--ink)";
+      var oNone = document.createElement("option"); oNone.value = ""; oNone.textContent = "None — unlinked";
+      if(!entry.arcId) oNone.selected = true;
+      arcSel2.appendChild(oNone);
+      (p.arcs || []).forEach(function(a){
+        var o = document.createElement("option"); o.value = a.id; o.textContent = a.name;
+        if(entry.arcId === a.id) o.selected = true;
+        arcSel2.appendChild(o);
+      });
+      arcSel2.addEventListener("change", function(){
+        entry.arcId = arcSel2.value ? arcSel2.value : null;
+        touch(p); save(); editToggle(renderScenes, null);
+        toast(entry.arcId ? "Linked — it now shows in that arc's row on the map" : "Unlinked — it now shows under Unlinked on the map");
+      });
+      arcRow.appendChild(arcLab2); arcRow.appendChild(arcSel2);
+      box.appendChild(arcRow);
       var foot = document.createElement("div"); foot.style.cssText = "display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap;margin-top:var(--sp3)";
       /* Done / Remove as icon buttons, same as in the map: checkmark
          (SMALL tier here, matching the scene list) and trashcan. */
@@ -1991,7 +2358,7 @@ function buildBSEditor(p, s, sceneIdx){
   [["blessing", "+ Blessing"], ["setback", "+ Setback"]].forEach(function(pair){
     var ab = document.createElement("button"); ab.type = "button"; ab.className = "tagbtn"; ab.textContent = pair[1];
     ab.addEventListener("click", function(){
-      var ne = {id:uid(), type:pair[0], text:""};
+      var ne = {id:uid(), type:pair[0], text:"", arcId:null};
       s.bs.push(ne);
       s.tag = deriveTagFromBS(s); ui.openBSEntry = ne.id;
       touch(p); save(); editToggle(renderScenes, null); focusBSInput(ne.id);
@@ -2155,6 +2522,16 @@ function buildPhoneTagControl(p, arc, sc){
       });
       picker.appendChild(b);
     });
+    [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
+      var pb2 = document.createElement("button"); pb2.type = "button"; pb2.textContent = "+ " + pair[1];
+      pb2.setAttribute("aria-label", "Add a " + pair[1] + " linked to " + arc.name + " at this scene");
+      pb2.addEventListener("click", function(){
+        ui.phoneSceneId = sc.id; ui.phoneTagPicker = null;
+        var ne4 = addBSEntry(p, sc, pair[0], arc.id);
+        editToggle(renderScenes, null); focusBSInput(ne4.id);
+      });
+      picker.appendChild(pb2);
+    });
     var cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "ptp-cancel"; cancel.textContent = "\u00d7";
     cancel.setAttribute("aria-label", "Close beat picker");
     cancel.addEventListener("click", function(){ ui.phoneTagPicker = null; editToggle(renderScenes, null); });
@@ -2178,11 +2555,15 @@ function buildPhoneTagControl(p, arc, sc){
    mode) plus the same single centred + opening the Blessing/Setback
    dropdown. Choosing adds in place and opens the new entry for
    editing right here, with no page jump. */
-function buildPhoneBSCellStack(p, sc, idx){
+function buildPhoneBSCellStack(p, sc, idx, onlyUnlinked){
   var stack = document.createElement("div"); stack.className = "bs-cell-stack";
   ensureSceneBS(sc);
   var bsCounts = {blessing:0, setback:0};
-  (sc.bs || []).forEach(function(entry){ stack.appendChild(makeBSCard(p, sc, entry, idx, bsCounts[entry.type]++)); });
+  (sc.bs || []).forEach(function(entry){
+    var cnt2 = bsCounts[entry.type]++;
+    if(onlyUnlinked && entry.arcId) return;
+    stack.appendChild(makeBSCard(p, sc, entry, idx, cnt2));
+  });
   var bsAdd = document.createElement("div"); bsAdd.className = "bs-map-add";
   var plusB = document.createElement("button"); plusB.type = "button"; plusB.className = "bs-plus-btn"; plusB.textContent = "+";
   plusB.setAttribute("aria-label", "Add a Blessing or Setback to " + (sc.title || ("Scene " + (idx + 1))));
@@ -2200,10 +2581,9 @@ function buildPhoneBSCellStack(p, sc, idx){
       mb.setAttribute("aria-label", "Add a " + pair[1] + " to " + (sc.title || ("Scene " + (idx + 1))));
       mb.addEventListener("click", function(ev2){
         ev2.stopPropagation();
-        var ne = {id:uid(), type:pair[0], text:""};
-        sc.bs.push(ne);
-        sc.tag = deriveTagFromBS(sc); ui.bsMapEditId = ne.id; ui.phoneSceneId = sc.id;
-        touch(p); save(); editToggle(renderScenes, null); focusBSInput(ne.id);
+        var ne = addBSEntry(p, sc, pair[0], null);
+        ui.phoneSceneId = sc.id;
+        editToggle(renderScenes, null); focusBSInput(ne.id);
       });
       menu.appendChild(mb);
     });
@@ -2241,7 +2621,7 @@ function buildPhoneBSCellStack(p, sc, idx){
    the fresh render positions the scroller — instantly — back on
    ui.phoneSceneId's column. */
 function renderPhoneSceneMap(p, wrap){
-  ensureArcs(p); cleanBeatTags(p); p.scenes.forEach(ensureSceneBS);
+  ensureArcs(p); cleanBeatTags(p); cleanBSArcs(p); p.scenes.forEach(ensureSceneBS);
   var box = document.createElement("div"); box.className = "phone-map";
   /* (1) Scene tab strip — tabs on one continuous line. */
   var strip = document.createElement("div"); strip.className = "phone-scene-strip";
@@ -2279,9 +2659,6 @@ function renderPhoneSceneMap(p, wrap){
       sec.appendChild(hd);
       box.appendChild(sec);
     });
-    var bsE = document.createElement("div"); bsE.className = "phone-bs";
-    bsE.innerHTML = "<div class='phone-bs-title'>Blessings and Setbacks</div>";
-    box.appendChild(bsE);
     wrap.appendChild(box);
     return;
   }
@@ -2318,7 +2695,8 @@ function renderPhoneSceneMap(p, wrap){
     grid.style.gridTemplateColumns = LABEL_W + "px repeat(" + p.scenes.length + ", " + w + "px)";
   }
   applyCols(COL_W);
-  grid.style.gridTemplateRows = "repeat(" + Math.max(1, p.arcs.length) + ", minmax(92px, auto)) minmax(72px, auto)";
+  var hasUnlinkedP = p.scenes.some(function(sx){ return (sx.bs || []).some(function(e){ return !e.arcId; }); });
+  grid.style.gridTemplateRows = "repeat(" + Math.max(1, p.arcs.length) + ", minmax(92px, auto))" + (hasUnlinkedP ? " minmax(72px, auto)" : "");
   var firstColCells = [];
   p.arcs.forEach(function(arc, ai){
     var arcColor = getArcColor(p, arc);
@@ -2335,24 +2713,35 @@ function renderPhoneSceneMap(p, wrap){
       cell.style.gridColumn = String(si + 2); cell.style.gridRow = String(ai + 1);
       cell.setAttribute("data-phone-scene", sc.id);
       var beatKey = sceneTagFor(sc, arc.id);
-      if(beatKey) cell.appendChild(makeBeatCard(p, arc, beatKey, sc));
-      else cell.appendChild(buildPhoneTagControl(p, arc, sc));
+      var cellStack = document.createElement("div"); cellStack.className = "bs-cell-stack";
+      if(beatKey) cellStack.appendChild(makeBeatCard(p, arc, beatKey, sc));
+      var pbsCounts = {blessing:0, setback:0};
+      (sc.bs || []).forEach(function(entry){
+        var cnt = pbsCounts[entry.type]++;
+        if(entry.arcId === arc.id) cellStack.appendChild(makeBSCard(p, sc, entry, si, cnt));
+      });
+      cellStack.appendChild(buildPhoneTagControl(p, arc, sc));
+      cell.appendChild(cellStack);
       grid.appendChild(cell);
       if(ai === 0) firstColCells[si] = cell;
     });
   });
-  var bsRow = p.arcs.length + 1;
-  var bsLab = document.createElement("div"); bsLab.className = "phone-label-cell phone-label-bs";
-  bsLab.style.gridColumn = "1"; bsLab.style.gridRow = String(bsRow);
-  bsLab.innerHTML = "<span class='pa-name'>Blessings and Setbacks</span>";
-  grid.appendChild(bsLab);
-  p.scenes.forEach(function(sc2, si2){
-    var bcell = document.createElement("div"); bcell.className = "phone-cell";
-    bcell.style.gridColumn = String(si2 + 2); bcell.style.gridRow = String(bsRow);
-    bcell.setAttribute("data-phone-scene", sc2.id);
-    bcell.appendChild(buildPhoneBSCellStack(p, sc2, si2));
-    grid.appendChild(bcell);
-  });
+  /* Unlinked Blessings/Setbacks get one small row at the bottom — only
+     when any exist. Linked entries live in their arc's row, above. */
+  if(hasUnlinkedP){
+    var bsRow = p.arcs.length + 1;
+    var bsLab = document.createElement("div"); bsLab.className = "phone-label-cell phone-label-bs";
+    bsLab.style.gridColumn = "1"; bsLab.style.gridRow = String(bsRow);
+    bsLab.innerHTML = "<span class='pa-name'>Unlinked</span><span class='pa-q'>Blessings &amp; Setbacks not linked to an arc</span>";
+    grid.appendChild(bsLab);
+    p.scenes.forEach(function(sc2, si2){
+      var bcell = document.createElement("div"); bcell.className = "phone-cell";
+      bcell.style.gridColumn = String(si2 + 2); bcell.style.gridRow = String(bsRow);
+      bcell.setAttribute("data-phone-scene", sc2.id);
+      bcell.appendChild(buildPhoneBSCellStack(p, sc2, si2, true));
+      grid.appendChild(bcell);
+    });
+  }
   scroller.appendChild(grid);
   box.appendChild(scroller);
   /* Dots indicator under the map — also live, and tappable. */
@@ -2432,13 +2821,63 @@ function renderPhoneSceneMap(p, wrap){
   ensureChipVisible(currentIdx);
 }
 
+/* Tag control for the iPad-layout grid map: ONLY a + button (Extra
+   Small tier) in a cell — tapping it shows the dropdown list of the
+   seven beats PLUS Blessing and Setback (which add a Blessing/Setback
+   entry linked to this arc, in this arc's row). ui.gridTagPicker holds
+   "arcId|sceneId" while the list is open; UI-only, never saved. */
+function buildGridTagControl(p, arc, sc){
+  var key = arc.id + "|" + sc.id;
+  if(ui.gridTagPicker === key){
+    var picker = document.createElement("div"); picker.className = "phone-tag-picker";
+    var pt = document.createElement("div"); pt.className = "ptp-title"; pt.textContent = "Tag a beat";
+    picker.appendChild(pt);
+    BEAT_ORDER.forEach(function(k){
+      var gb = document.createElement("button"); gb.type = "button"; gb.textContent = BEAT_BY_KEY[k].title;
+      gb.setAttribute("aria-label", "Tag " + BEAT_BY_KEY[k].title + " for " + arc.name + " at this scene");
+      gb.addEventListener("click", function(){
+        ui.gridTagPicker = null;
+        applyBeatTag(p, sc, arc.id, k);
+        editToggle(renderScenes, null);
+      });
+      picker.appendChild(gb);
+    });
+    [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
+      var bb2 = document.createElement("button"); bb2.type = "button"; bb2.textContent = "+ " + pair[1];
+      bb2.setAttribute("aria-label", "Add a " + pair[1] + " linked to " + arc.name + " at this scene");
+      bb2.addEventListener("click", function(){
+        ui.gridTagPicker = null;
+        var ne3 = addBSEntry(p, sc, pair[0], arc.id);
+        editToggle(renderScenes, null); focusBSInput(ne3.id);
+      });
+      picker.appendChild(bb2);
+    });
+    var gcancel = document.createElement("button"); gcancel.type = "button"; gcancel.className = "ptp-cancel"; gcancel.textContent = "×";
+    gcancel.setAttribute("aria-label", "Close beat picker");
+    gcancel.addEventListener("click", function(){ ui.gridTagPicker = null; editToggle(renderScenes, null); });
+    picker.appendChild(gcancel);
+    return picker;
+  }
+  var wrapEl = document.createElement("div"); wrapEl.className = "phone-tag-add";
+  var plus = document.createElement("button"); plus.type = "button"; plus.className = "phone-tag-btn"; plus.textContent = "+";
+  plus.setAttribute("aria-label", "Tag a beat or add a Blessing or Setback for " + arc.name + " at this scene");
+  plus.setAttribute("aria-haspopup", "true");
+  plus.addEventListener("click", function(){
+    ui.gridTagPicker = key;
+    editToggle(renderScenes, null);
+  });
+  wrapEl.appendChild(plus);
+  return wrapEl;
+}
+
 function renderSceneMap(p, wrap){
   if(!wrap) return;
   wrap.innerHTML = "";
   if(!p) return;
   if(isPhoneMapWidth()){ renderPhoneSceneMap(p, wrap); return; }
-  ensureArcs(p); cleanBeatTags(p); p.scenes.forEach(ensureSceneBS);
+  ensureArcs(p); cleanBeatTags(p); cleanBSArcs(p); p.scenes.forEach(ensureSceneBS);
   var LABEL_W = 148, SCENE_W = 204;
+  var hasUnlinkedG = p.scenes.some(function(sx){ return (sx.bs || []).some(function(e){ return !e.arcId; }); });
   if(!p.scenes.length){
     /* Empty map: the arcs are already here as rows (ensureArcs above
        guarantees at least the default Main story arc), beside ONE
@@ -2449,7 +2888,7 @@ function renderSceneMap(p, wrap){
     var eScroll = document.createElement("div"); eScroll.className = "mapscroll";
     var eGrid = document.createElement("div"); eGrid.className = "mapgrid2";
     eGrid.style.gridTemplateColumns = LABEL_W + "px 64px";
-    eGrid.style.gridTemplateRows = "auto repeat(" + (Math.max(1, p.arcs.length) + 1) + ", minmax(128px, auto))";
+    eGrid.style.gridTemplateRows = "auto repeat(" + Math.max(1, p.arcs.length) + ", minmax(128px, auto))";
     var eCorner = document.createElement("div"); eCorner.className = "mapcell3 mh";
     eCorner.style.gridColumn = "1"; eCorner.style.gridRow = "1";
     eCorner.textContent = "Arc \\ Scene \u2192";
@@ -2459,7 +2898,7 @@ function renderSceneMap(p, wrap){
     eHead.textContent = "Scenes";
     eGrid.appendChild(eHead);
     var ePlus = document.createElement("div"); ePlus.className = "mapcell3 mplus mplus-big";
-    ePlus.style.gridColumn = "2"; ePlus.style.gridRow = "2 / span " + (Math.max(1, p.arcs.length) + 1);
+    ePlus.style.gridColumn = "2"; ePlus.style.gridRow = "2 / span " + Math.max(1, p.arcs.length);
     var eBtn = document.createElement("button"); eBtn.type = "button"; eBtn.textContent = "+";
     eBtn.setAttribute("aria-label", "Add the first scene");
     eBtn.addEventListener("click", function(){ addSceneAt(p, 0, true); });
@@ -2472,10 +2911,6 @@ function renderSceneMap(p, wrap){
         + (arc.question ? '<div style="font-weight:400;font-size:.82rem;color:var(--ink2);margin-top:2px">' + esc(arc.question) + "</div>" : "");
       eGrid.appendChild(elab);
     });
-    var eBsLab = document.createElement("div"); eBsLab.className = "mapcell3 mlab-bs";
-    eBsLab.style.gridColumn = "1"; eBsLab.style.gridRow = String(p.arcs.length + 2);
-    eBsLab.innerHTML = "<strong>Blessings and Setbacks</strong>";
-    eGrid.appendChild(eBsLab);
     eScroll.appendChild(eGrid); eFrame.appendChild(eScroll); wrap.appendChild(eFrame);
     var eHint = document.createElement("p"); eHint.className = "kbd-note";
     eHint.textContent = "No scenes yet \u2014 tap + to add one.";
@@ -2548,14 +2983,14 @@ function renderSceneMap(p, wrap){
      with ONE button each. The start one sticks immediately AFTER the
      sticky arc labels (which occupy the first LABEL_W pixels). */
   var psBody = document.createElement("div"); psBody.className = "mapcell3 mplus mplus-side";
-  psBody.style.gridColumn = "2"; psBody.style.gridRow = "1 / span " + (p.arcs.length + 1);
+  psBody.style.gridColumn = "2"; psBody.style.gridRow = "1 / span " + (p.arcs.length + (hasUnlinkedG ? 1 : 0));
   psBody.style.left = LABEL_W + "px";
   var psb2 = document.createElement("button"); psb2.type = "button"; psb2.textContent = "+";
   psb2.setAttribute("aria-label", "Add a scene at the beginning");
   psb2.addEventListener("click", function(){ addSceneAt(p, 0, true); });
   psBody.appendChild(psb2); grid.appendChild(psBody);
   var peBody = document.createElement("div"); peBody.className = "mapcell3 mplus";
-  peBody.style.gridColumn = String(lastCol); peBody.style.gridRow = "1 / span " + (p.arcs.length + 1);
+  peBody.style.gridColumn = String(lastCol); peBody.style.gridRow = "1 / span " + (p.arcs.length + (hasUnlinkedG ? 1 : 0));
   var peb2 = document.createElement("button"); peb2.type = "button"; peb2.textContent = "+";
   peb2.setAttribute("aria-label", "Add a scene at the end");
   peb2.addEventListener("click", function(){ addSceneAt(p, p.scenes.length, true); });
@@ -2585,56 +3020,42 @@ function renderSceneMap(p, wrap){
       var cell = document.createElement("div"); cell.className = "mapcell3";
       cell.style.gridColumn = String(si + 3); cell.style.gridRow = String(rowIdx);
       var beatKey = sceneTagFor(s, arc.id);
-      if(beatKey){
-        cell.appendChild(makeBeatCard(p, arc, beatKey, s));
-      } else {
-        /* Tag in place with one compact dropdown: the cell stays small and
-           the map keeps its scroll position instead of jumping left. */
-        var sel = document.createElement("select"); sel.className = "mapsel";
-        sel.style.width = "100%";
-        sel.setAttribute("aria-label", "Tag a beat for " + arc.name + " at this scene");
-        var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "Tag a beat\u2026"; sel.appendChild(o0);
-        BEAT_ORDER.forEach(function(k){
-          var o = document.createElement("option"); o.value = k; o.textContent = BEAT_BY_KEY[k].title; sel.appendChild(o);
-        });
-        sel.addEventListener("change", function(){
-          if(!sel.value) return;
-          applyBeatTag(p, s, arc.id, sel.value);
-          renderScenes();
-        });
-        cell.appendChild(sel);
-      }
+      var cellStack2 = document.createElement("div"); cellStack2.className = "bs-cell-stack";
+      if(beatKey) cellStack2.appendChild(makeBeatCard(p, arc, beatKey, s, {inline:true}));
+      var gbsCounts = {blessing:0, setback:0};
+      (s.bs || []).forEach(function(entry){
+        var cnt3 = gbsCounts[entry.type]++;
+        if(entry.arcId === arc.id) cellStack2.appendChild(makeBSCard(p, s, entry, si, cnt3));
+      });
+      cellStack2.appendChild(buildGridTagControl(p, arc, s));
+      cell.appendChild(cellStack2);
       grid.appendChild(cell);
     });
   });
-  /* Dedicated Blessings and Setbacks row, below the arc rows: one cell
-     per scene holding that scene's Blessing/Setback entry cards. */
+  /* Unlinked Blessings and Setbacks row — only when unlinked entries
+     exist. Linked entries live in their arc's row (inside the arc cells
+     above); this row keeps pre-linking entries visible and editable,
+     and its + adds new unlinked entries. */
+  if(hasUnlinkedG){
   var bsRowIdx = p.arcs.length + 1;
   var bsLab = document.createElement("div"); bsLab.className = "mapcell3 mlab mlab-bs";
   bsLab.style.gridColumn = "1"; bsLab.style.gridRow = String(bsRowIdx);
-  bsLab.innerHTML = "<strong>Blessings and Setbacks</strong>";
+  bsLab.innerHTML = "<strong>Unlinked</strong><div style=\"font-weight:400;font-size:.82rem;color:var(--ink2);margin-top:2px\">Blessings &amp; Setbacks not linked to an arc</div>";
   grid.appendChild(bsLab);
   p.scenes.forEach(function(s2, si2){
     var bcell = document.createElement("div"); bcell.className = "mapcell3";
     bcell.style.gridColumn = String(si2 + 3); bcell.style.gridRow = String(bsRowIdx);
     ensureSceneBS(s2);
-    /* Cards and the add control sit in one flex stack with a fixed gap,
-       so multiple entries never touch each other and the last card
-       never touches the + below it. */
     var stack = document.createElement("div"); stack.className = "bs-cell-stack";
     var bsCounts = {blessing:0, setback:0};
-    (s2.bs || []).forEach(function(entry){ stack.appendChild(makeBSCard(p, s2, entry, si2, bsCounts[entry.type]++)); });
-    /* ONE centred + button in EVERY cell of this row — on its own in an
-       empty cell, below the existing entries in a filled one. Tapping
-       it opens a small dropdown with two choices, Blessing and Setback
-       (this dropdown is only for choosing the add type here in the map;
-       the scene list keeps its own + Blessing / + Setback buttons).
-       Choosing one adds the entry in place: no navigation, no page
-       scroll; the new entry opens in edit mode right here in the cell
-       and its input is focused without a scroll jump. */
+    (s2.bs || []).forEach(function(entry){
+      var cnt4 = bsCounts[entry.type]++;
+      if(entry.arcId) return;
+      stack.appendChild(makeBSCard(p, s2, entry, si2, cnt4));
+    });
     var bsAdd = document.createElement("div"); bsAdd.className = "bs-map-add";
     var plusB = document.createElement("button"); plusB.type = "button"; plusB.className = "bs-plus-btn"; plusB.textContent = "+";
-    plusB.setAttribute("aria-label", "Add a Blessing or Setback to " + (s2.title || ("Scene " + (si2 + 1))));
+    plusB.setAttribute("aria-label", "Add an unlinked Blessing or Setback to " + (s2.title || ("Scene " + (si2 + 1))));
     plusB.setAttribute("aria-haspopup", "true"); plusB.setAttribute("aria-expanded", "false");
     plusB.addEventListener("click", function(ev){
       ev.stopPropagation();
@@ -2646,13 +3067,11 @@ function renderSceneMap(p, wrap){
       [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
         var mb = document.createElement("button"); mb.type = "button"; mb.textContent = pair[1];
         mb.setAttribute("role", "menuitem");
-        mb.setAttribute("aria-label", "Add a " + pair[1] + " to " + (s2.title || ("Scene " + (si2 + 1))));
+        mb.setAttribute("aria-label", "Add an unlinked " + pair[1] + " to " + (s2.title || ("Scene " + (si2 + 1))));
         mb.addEventListener("click", function(ev2){
           ev2.stopPropagation();
-          var ne = {id:uid(), type:pair[0], text:""};
-          s2.bs.push(ne);
-          s2.tag = deriveTagFromBS(s2); ui.bsMapEditId = ne.id;
-          touch(p); save(); editToggle(renderScenes, null); focusBSInput(ne.id);
+          var ne5 = addBSEntry(p, s2, pair[0], null);
+          editToggle(renderScenes, null); focusBSInput(ne5.id);
         });
         menu.appendChild(mb);
       });
@@ -2664,6 +3083,7 @@ function renderSceneMap(p, wrap){
     bcell.appendChild(stack);
     grid.appendChild(bcell);
   });
+  }
   if(orderIssues.length){
     var ow = document.createElement("div"); ow.className = "warnbox";
     ow.innerHTML = "<strong>Beats out of order:</strong> in " + esc(orderIssues.join(", ")) + ", a beat sits in an earlier scene than a beat that should come before it. Nothing was blocked or changed \u2014 you may be reordering on purpose. Move scenes or retag whenever you're ready.";
@@ -2681,7 +3101,7 @@ function renderSceneMap(p, wrap){
      Blessings and Setbacks row sizes to its content instead, so its
      cards and the centred + below them are not stranded in a tall,
      mostly-empty cell with a large blank area underneath. */
-  grid.style.gridTemplateRows = "repeat(" + Math.max(1, p.arcs.length) + ", minmax(" + rowMin + "px, auto)) minmax(64px, auto)";
+  grid.style.gridTemplateRows = "repeat(" + Math.max(1, p.arcs.length) + ", minmax(" + rowMin + "px, auto))" + (hasUnlinkedG ? " minmax(64px, auto)" : "");
   /* Keep the map where the user left it horizontally — tagging or moving a
      scene must never fling the view back to the left edge — and keep the
      sticky header bar's columns synced to the same offset. */
@@ -2727,6 +3147,7 @@ function renderBeats(){
       var cw = document.createElement("div"); cw.className = "fieldwrap";
       var cl = document.createElement("label"); cl.className = "flabel";
       cl.textContent = "Arc colour";
+      cl.appendChild(makeInfoIcon("Arc colour", "The colour this arc wears everywhere: its pills on scene cards and its row in the visual map. Colours come from the project scheme family (chosen on Overview), so arcs always harmonise."));
       cw.appendChild(cl);
       var srow = document.createElement("div"); srow.className = "swatches";
       arcPalette(p).forEach(function(col, ci){
@@ -2957,6 +3378,22 @@ function renderScenes(){
         btnRow.appendChild(bb);
       });
       btWrap.appendChild(btnRow);
+      var bsBtnRow = document.createElement("div"); bsBtnRow.className = "beatbtns";
+      [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
+        var sb = document.createElement("button"); sb.type = "button"; sb.className = "tagbtn"; sb.textContent = "+ " + pair[1];
+        sb.setAttribute("aria-label", "Add a " + pair[1] + " linked to the selected arc");
+        sb.addEventListener("click", function(){
+          if(!selArcId){ toast("Add an arc first"); return; }
+          var ne2 = addBSEntry(p, s, pair[0], selArcId);
+          ui.openBSEntry = ne2.id; ui.bsMapEditId = null;
+          editToggle(renderScenes, null); focusBSInput(ne2.id);
+        });
+        bsBtnRow.appendChild(sb);
+      });
+      btWrap.appendChild(bsBtnRow);
+      var bsBtnHint = document.createElement("span"); bsBtnHint.className = "hint";
+      bsBtnHint.textContent = "Blessing / Setback add an entry linked to the arc selected above — it shows in that arc's row on the map, alongside the beat card.";
+      btWrap.appendChild(bsBtnHint);
 
       btWrap.appendChild(buildBSEditor(p, s, i));
 
@@ -3283,6 +3720,35 @@ function buildOverallSheet(p){
     L.push(mdText(p.intake.synopsis));
     L.push("");
   }
+  ensureWorld(p);
+  var wbTpl = wbTemplateOf(p);
+  var wbFilled = Object.keys(WB_SECTION_INDEX).filter(function(k){ var d4 = p.world.sections[k]; return d4 && (mdText(d4.text) || mdText(d4.neededBy)); });
+  if(wbTpl || wbFilled.length){
+    L.push("## Worldbuilding" + (wbTpl ? " — " + wbTpl.name : ""));
+    L.push("");
+    if(wbTpl) wbTpl.sections.forEach(function(sec){
+      var d5 = p.world.sections[sec.key] || {text:"", neededBy:""};
+      if(!mdText(d5.text) && !mdText(d5.neededBy)) return;
+      L.push("### " + sec.title);
+      L.push("");
+      if(mdText(d5.text)) L.push(mdText(d5.text));
+      if(mdText(d5.neededBy)) L.push("Needed by: " + mdText(d5.neededBy));
+      L.push("");
+    });
+    var wbOthers = wbFilled.filter(function(k){ return !wbTpl || !wbTpl.sections.some(function(s3){ return s3.key === k; }); });
+    if(wbOthers.length){
+      L.push("### Other notes (from another approach)");
+      L.push("");
+      wbOthers.forEach(function(k){
+        var d6 = p.world.sections[k];
+        L.push("#### " + WB_SECTION_INDEX[k].title);
+        L.push("");
+        if(mdText(d6.text)) L.push(mdText(d6.text));
+        if(mdText(d6.neededBy)) L.push("Needed by: " + mdText(d6.neededBy));
+        L.push("");
+      });
+    }
+  }
   L.push("## Characters");
   L.push("");
   if(!p.characters.length){ L.push("(no characters yet)"); L.push(""); }
@@ -3325,7 +3791,7 @@ function buildOverallSheet(p){
       if(sceneChapter(s)) L.push("- Chapter: " + sceneChapter(s));
       if(mdText(s.pov)) L.push("- POV: " + mdText(s.pov));
       var feel = sceneFeelText(s); if(feel) L.push("- Feeling: " + feel);
-      bsExportLines(s).forEach(function(x){ L.push("- " + x); });
+      bsExportLines(s, p).forEach(function(x){ L.push("- " + x); });
       sceneBeatTagLines(p, s).forEach(function(x){ L.push("- " + x); });
       if(mdText(s.what)){ L.push(""); L.push("What must happen: " + mdText(s.what)); }
       var seq = s.sequel || {};
@@ -3360,7 +3826,7 @@ function buildSceneSheet(p, s, i){
   if(sceneChapter(s)) L.push("Chapter: " + sceneChapter(s));
   if(mdText(s.pov)) L.push("POV: " + mdText(s.pov));
   var feel = sceneFeelText(s); if(feel) L.push("Feeling: " + feel);
-  bsExportLines(s).forEach(function(x){ L.push(x); });
+  bsExportLines(s, p).forEach(function(x){ L.push(x); });
   sceneBeatTagLines(p, s).forEach(function(x){ L.push(x); });
   if(mdText(s.what)){ L.push(""); L.push("What must happen: " + mdText(s.what)); }
   var decision = s.sequel ? mdText(s.sequel.decision) : "";
@@ -3400,7 +3866,7 @@ function sceneSheetHtml(p, s, i){
   if(sceneChapter(s)) H.push(para("Chapter: " + sceneChapter(s)));
   if(mdText(s.pov)) H.push(para("POV: " + mdText(s.pov)));
   var feel = sceneFeelText(s); if(feel) H.push(para("Feeling: " + feel));
-  bsExportLines(s).forEach(function(x){ H.push(para(x)); });
+  bsExportLines(s, p).forEach(function(x){ H.push(para(x)); });
   sceneBeatTagLines(p, s).forEach(function(x){ H.push(para(x)); });
   if(mdText(s.what)) H.push(para("What must happen: " + mdText(s.what)));
   var decision = s.sequel ? mdText(s.sequel.decision) : "";
@@ -3550,7 +4016,7 @@ function sanitizeProject(raw){
       ["title","chapter","pov","what","feelStart","feelEnd","stage"].forEach(function(k){ if(rs[k]!=null) s[k]=String(rs[k]); });
       if(TAGS.indexOf(rs.tag)>=0) s.tag = rs.tag;
       if(Array.isArray(rs.bs)) rs.bs.forEach(function(re){
-        if(re && (re.type === "blessing" || re.type === "setback")) s.bs.push({id:uid(), type:re.type, text:re.text != null ? String(re.text) : ""});
+        if(re && (re.type === "blessing" || re.type === "setback")) s.bs.push({id:uid(), type:re.type, text:re.text != null ? String(re.text) : "", arcId:(typeof re.arcId === "string" && re.arcId) ? re.arcId : null});
       });
       ensureSceneBS(s); /* no bs in the file: migrates the old binary tag into entries */
       if(Array.isArray(rs.beatTags)) rs.beatTags.forEach(function(rt){
@@ -3560,6 +4026,16 @@ function sanitizeProject(raw){
       p.scenes.push(s);
     });
     cleanBeatTags(p);
+    cleanBSArcs(p);
+    if(raw.world && typeof raw.world === "object"){
+      ensureWorld(p);
+      if(typeof raw.world.template === "string" && WB_TEMPLATES.some(function(x){ return x.id === raw.world.template; })) p.world.template = raw.world.template;
+      if(raw.world.sections && typeof raw.world.sections === "object") Object.keys(WB_SECTION_INDEX).forEach(function(k){
+        var rs = raw.world.sections[k]; if(!rs || typeof rs !== "object") return;
+        if(rs.text != null) p.world.sections[k].text = String(rs.text);
+        if(rs.neededBy != null) p.world.sections[k].neededBy = String(rs.neededBy);
+      });
+    }
     if(raw.editing) PASSES.forEach(function(ps){
       var re = raw.editing[ps.key]; if(!re) return;
       p.editing[ps.key].done = !!re.done;
@@ -3780,6 +4256,16 @@ function renderOverview(){
     ];
   }
   grid.appendChild(ovCard("Scenes", sceneLabel, scenePct, sceneChecks, "scenes"));
+  /* Worldbuilding */
+  ensureWorld(p);
+  var wbT2 = wbTemplateOf(p);
+  var wbSecs = wbT2 ? wbT2.sections : [];
+  var wbDone = wbSecs.filter(function(s4){ return filledStr(p.world.sections[s4.key] && p.world.sections[s4.key].text); }).length;
+  var wbChecks = [
+    {label: wbT2 ? "Approach: " + wbT2.name : "No approach chosen yet", done: !!wbT2},
+    {label: wbT2 ? wbDone + " of " + wbSecs.length + " sections written" : "Pick an approach on the Worldbuilding page", done: wbT2 ? (wbSecs.length > 0 && wbDone === wbSecs.length) : false}
+  ];
+  grid.appendChild(ovCard("Worldbuilding", wbT2 ? wbDone + " / " + wbSecs.length + " sections" : "not started", wbT2 && wbSecs.length ? wbDone / wbSecs.length * 100 : 0, wbChecks, "world"));
   /* Editing: x / 6 passes */
   var passDone = PASSES.filter(function(ps){ return p.editing[ps.key] && p.editing[ps.key].done; }).length;
   var passChecks = PASSES.map(function(ps){ return {label:ps.title, done:!!(p.editing[ps.key] && p.editing[ps.key].done)}; });
@@ -3820,7 +4306,7 @@ function renderSetup(){
 }
 
 /* ---------- Prev / Next, in page flow at the end of each section ---------- */
-var SECTION_ORDER = ["overview","intake","characters","map","scenes","editing","setup"];
+var SECTION_ORDER = ["overview","intake","world","characters","map","scenes","editing","setup"];
 function renderPrevNext(){
   document.querySelectorAll(".prevnext").forEach(function(box){
     var v = box.getAttribute("data-pn");
@@ -3867,7 +4353,7 @@ function renderPrevNext(){
 /* ---------- render all ---------- */
 function renderAll(){
   applyTheme();
-  renderProjects(); renderOverview(); renderIntake(); renderCharacters(); renderBeats(); renderScenes(); renderEditing(); renderGates(); renderPrevNext(); renderSchemePickers(); renderSetup();
+  renderProjects(); renderOverview(); renderIntake(); renderWorld(); renderCharacters(); renderBeats(); renderScenes(); renderEditing(); renderGates(); renderPrevNext(); renderSchemePickers(); renderSetup();
   updateBar();
 }
 load();
