@@ -50,8 +50,13 @@ p{margin:0 0 var(--sp3)}
 h1,h2,h3,.serif{font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-.wrap{max-width:980px;margin:0 auto;padding:0 16px calc(176px + env(safe-area-inset-bottom,0px));width:100%}
-@media(min-width:768px){.wrap{padding:0 24px calc(176px + env(safe-area-inset-bottom,0px))}}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px calc(288px + env(safe-area-inset-bottom,0px));width:100%}
+@media(min-width:768px){.wrap{padding:0 24px calc(288px + env(safe-area-inset-bottom,0px))}}
+/* Projects page: the kitty is larger there (232px), so the empty bottom
+   space below the project cards / + New project button grows to fit it
+   whole — kitty top stays below the last button, kitty bottom stays
+   above the bottom app bar. Toggled in updateBar. */
+.wrap.wrap-projects{padding-bottom:calc(344px + env(safe-area-inset-bottom,0px))}
 /* Slim sticky bar: hamburger + project title + Export ONLY. Everything else scrolls. */
 .topbar{position:sticky;top:0;z-index:40;background:var(--bar);border-bottom:1px solid var(--line);margin:0 -16px;padding:5px 16px;padding-top:calc(5px + env(safe-area-inset-top,0px));box-shadow:var(--shadow)}
 @media(min-width:768px){.topbar{margin:0 -24px;padding-left:24px;padding-right:24px}}
@@ -225,9 +230,16 @@ code{background:var(--surface2);padding:1px 6px;border-radius:5px;font-size:.88e
 .modal .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
 /* Top toast: sits just below the slim sticky bar, never at the bottom, never blocks taps. */
 .toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));bottom:auto;transform:translateX(-50%) translateY(-10px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:9px 13px;border-radius:8px;font-weight:600;font-size:.84rem;line-height:1.35;z-index:90;transition:transform .25s ease,opacity .25s ease;max-width:min(92vw,480px);text-align:center;box-shadow:var(--shadow)}
-.prevnext{display:flex;justify-content:space-between;gap:var(--sp3);flex-wrap:wrap;margin-top:var(--sp5);padding-top:var(--sp4);border-top:1px solid var(--line)}
+/* The Prev/Next row is the END of the content area: its top border is the
+   divider line above the buttons, and a matching bottom border is the
+   clean boundary below them — the page's content background extends only
+   through this row, down to that bottom divider line. Below that line is
+   the empty bottom space (the .wrap bottom padding) where the fixed
+   calico kitty sits, so the kitty starts below the divider, never behind
+   the buttons and never overlapped by them. */
+.prevnext{position:relative;display:flex;justify-content:space-between;gap:var(--sp3);flex-wrap:wrap;margin-top:var(--sp5);padding-top:var(--sp4);padding-bottom:var(--sp4);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .prevnext .spacer{flex:1}
-.prevnext .btn{white-space:normal;text-align:left}
+.prevnext .btn{white-space:normal;text-align:left;position:relative;z-index:1}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
 .fieldwrap{margin-top:var(--sp5)}
@@ -239,7 +251,12 @@ select{width:100%;padding:14px var(--sp3);border:1px solid var(--line);border-ra
 .arrowbtn{min-width:28px;min-height:28px;width:28px;height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-weight:700;font-size:var(--icon-xs);line-height:1;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
 .arrowbtn.sm{min-width:36px;min-height:36px;width:36px;height:36px;border-radius:8px;font-size:var(--icon-sm)}
 .arrowbtn:disabled{opacity:.35;cursor:default}
-.toptags{display:inline-flex;gap:var(--sp1);flex-wrap:wrap;align-items:center;vertical-align:middle}
+/* Scene-card pills ALWAYS start on their own line below the scene title,
+   never inline with it: title block, then this flex row, then the summary.
+   One gap scale throughout — title→pills, pill→pill, pills→summary all
+   use --sp2, and wrapped pill rows keep the same row gap. */
+.scenetags{display:flex;gap:var(--sp2);flex-wrap:wrap;align-items:center;margin-top:var(--sp2)}
+.node .nsub.scenesub{margin-top:var(--sp2)}
 .beatpill{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.75rem;font-weight:700;color:#fff;background:var(--accent)}
 .schemerow{display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap}
 .beattagrow{display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap;margin-top:var(--sp2)}
@@ -382,9 +399,18 @@ select.mapsel{min-height:32px;padding:4px 8px;font-size:.85rem;border-radius:6px
    is happy, looking left with quill raised — on the Projects page it
    faces the project list, a little bigger; on project pages it sits at
    the bottom the same way, slightly smaller. It hides itself if the
-   file is missing, so a preview without it never shows a broken icon. */
+   file is missing, so a preview without it never shows a broken icon.
+   ORIGINAL position (bottom-right) and ORIGINAL sizes (176px, 232px on
+   Projects) are restored — the kitty is NOT inside the Prev/Next row
+   and no button ever paints over it. Two offsets keep it fully visible
+   in the empty bottom space BELOW the Prev/Next row: its bottom edge
+   sits 92px up, clear of the bottom app bar that used to cut off its
+   feet on the Projects page, and the .wrap bottom padding (288px, or
+   344px on Projects) is taller than 92px + the kitty's height, so when
+   the page is scrolled to the end the whole kitty fits below the
+   Prev/Next row's bottom divider line with room to spare. */
 .wrap{position:relative;z-index:1}
-.calico-bg{position:fixed;right:10px;bottom:calc(8px + env(safe-area-inset-bottom,0px));width:176px;max-width:44vw;height:auto;z-index:0;pointer-events:none}
+.calico-bg{position:fixed;right:10px;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:176px;max-width:44vw;height:auto;z-index:0;pointer-events:none}
 .calico-bg-lg{width:232px;max-width:58vw}
 img.calico-gone{display:none!important}
 /* Inline name editing in the visual map */
@@ -427,6 +453,91 @@ img.calico-gone{display:none!important}
 .bs-map-edit textarea,.bs-map-edit .bs-ta{min-height:104px;font-style:italic;padding:12px 14px;line-height:1.5;font-size:16px;box-sizing:border-box;margin-top:0}
 .bs-icon-row{display:flex;gap:var(--sp2);align-items:center;margin-top:var(--sp2)}
 .bs-remove-row{display:flex;gap:var(--sp2);flex-wrap:wrap;margin-top:var(--sp3)}
+/* Phone scene map — ALIGNED ROWS + PERSISTENT LABELS (narrow screens
+   only, switched in renderSceneMap). One grid inside ONE horizontal
+   scroller: column 1 is the arc label column (arc name + that arc's
+   persistent key question, and a final Blessings and Setbacks label),
+   position:sticky at the left so it NEVER scrolls sideways; the other
+   columns are scenes in story order. Because labels and beat/BS cells
+   share the same grid rows, the Arc 1 / Arc 2 / Arc 3 / BS rows sit at
+   exactly the same vertical positions in every scene column — the
+   tallest cell in a row drives that row's height. Only the beat and
+   Blessing/Setback cells scroll sideways with their scene. Scene
+   columns are ~88% of the width remaining after the label column, so
+   the next scene peeks in, with scroll-snap settling a column into
+   place. No scene-reordering controls live here. */
+.phone-map{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:var(--sp4);max-width:100%}
+/* Scene tab strip: scrolls sideways, scrollbar ALWAYS hidden, and the
+   tabs sit on one continuous track line (on the inner track element,
+   so the line scrolls with the tabs and spans the whole strip). */
+.phone-scene-strip{position:relative;overflow-x:auto;overflow-y:hidden;padding-bottom:var(--sp2);-webkit-overflow-scrolling:touch;max-width:100%;scrollbar-width:none;-ms-overflow-style:none}
+.phone-scene-strip::-webkit-scrollbar{display:none;width:0;height:0}
+.phone-strip-track{position:relative;display:flex;gap:var(--sp2);align-items:center;width:max-content;min-width:100%;padding:2px 0}
+.phone-strip-track::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;transform:translateY(-50%);background:var(--line);border-radius:2px;z-index:0}
+.phone-chip{position:relative;z-index:1;flex:0 0 auto;min-height:36px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:.88rem;line-height:1.25;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.phone-chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.phone-chip-add{border-style:dashed}
+.phone-scene-head{margin:var(--sp2) 0 var(--sp2)}
+.phone-scene-head .ps-label{min-width:0;text-align:center;font-weight:700;font-size:.98rem;line-height:1.3;overflow-wrap:anywhere}
+.phone-scene-head .ps-label span{display:block;font-weight:600;font-size:.8rem;color:var(--ink2)}
+/* The scene carousel: native horizontal scrolling ONLY — momentum and
+   the visible slide are the browser's own, so dragging sideways feels
+   continuous and the next scene is seen arriving, not jumped to.
+   touch-action pan-x pan-y lets the browser direction-lock a gesture:
+   a vertical drag scrolls the PAGE (the container has no vertical
+   overflow), a sideways drag scrolls the panels. Form fields inside a
+   panel are pan-y only, so a drag that starts while typing/editing in
+   an input, textarea or select can never pull the carousel sideways
+   and change the scene mid-edit. overscroll-behavior-x stops a hard
+   sideways fling at the ends from chaining to anything behind it. */
+.phone-align-scroll{position:relative;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;overscroll-behavior-x:contain;max-width:100%;padding-bottom:var(--sp2);scrollbar-width:none;-ms-overflow-style:none}
+.phone-align-scroll::-webkit-scrollbar{display:none;width:0;height:0}
+.phone-align-scroll input,.phone-align-scroll textarea,.phone-align-scroll select{touch-action:pan-y}
+.phone-align-grid{display:grid;width:max-content;min-width:100%;column-gap:var(--sp3)}
+.phone-label-cell{position:sticky;left:0;z-index:4;background:var(--surface);border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:var(--sp3) var(--sp2) var(--sp3) var(--sp3);min-width:0;text-align:left;overflow-wrap:anywhere;word-break:break-word}
+.phone-label-cell .pa-name{font-weight:700;font-size:.92rem;display:block;line-height:1.3}
+.phone-label-cell .pa-q{display:block;font-size:.78rem;color:var(--ink2);margin-top:var(--sp1);line-height:1.4;overflow-wrap:anywhere}
+.phone-label-bs{background:var(--surface2)}
+.phone-cell{border-bottom:1px solid var(--line);padding:var(--sp3);min-width:0;text-align:left;overflow-wrap:anywhere;word-break:break-word;background:var(--surface);scroll-snap-align:start;scroll-snap-stop:always}
+.phone-cell .beatcard{margin:0}
+.phone-dots{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;margin:var(--sp2) 0 0}
+.phone-dot{width:9px;height:9px;min-width:9px;min-height:9px;padding:0;border:1px solid var(--line);border-radius:999px;background:var(--surface2);cursor:pointer}
+.phone-dot[aria-current="true"]{width:24px;background:var(--accent);border-color:var(--accent)}
+.phone-arc{border-top:1px solid var(--line);padding:var(--sp3) 0 var(--sp3) var(--sp3);margin-top:var(--sp3)}
+.phone-arc-head{margin-bottom:var(--sp2)}
+.phone-arc-head .pa-name{font-weight:700;font-size:1rem;display:block}
+.phone-arc-head .pa-q{display:block;font-size:.85rem;color:var(--ink2);margin-top:var(--sp1);overflow-wrap:anywhere}
+.phone-bs{border-top:1px solid var(--line);padding-top:var(--sp3);margin-top:var(--sp3)}
+.phone-bs-title{font-weight:700;font-size:1rem;margin:0 0 var(--sp2)}
+/* Tag-a-beat in the phone map is ONLY a + button (Extra Small tier,
+   same size as the map's other + buttons) — never a dropdown field.
+   Tapping it opens the seven-beat picker inline in that cell. */
+.phone-tag-add{display:flex;justify-content:center;align-items:flex-start;position:relative;padding-top:var(--sp1)}
+.phone-tag-btn{width:28px;height:28px;min-width:28px;min-height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font-weight:700;font-size:var(--icon-xs);line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.phone-tag-picker{display:flex;flex-direction:column;gap:var(--sp1)}
+.phone-tag-picker .ptp-title{font-size:.78rem;font-weight:700;color:var(--ink2);text-align:center}
+.phone-tag-picker button{min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-weight:600;font-size:.85rem;text-align:left}
+.phone-tag-picker button.ptp-cancel{text-align:center;color:var(--ink2)}
+/* Explanation text directly under the map (phone hint and grid hint):
+   one consistent small gap to the map, no large blank space, no extra
+   paragraph margin underneath it. */
+.phone-map>.kbd-note{margin:var(--sp3) 0 0;line-height:1.5}
+#sceneMapWrap>.kbd-note{margin-top:var(--sp3);margin-bottom:0;line-height:1.5}
+#sceneMapWrap>.warnbox{margin:var(--sp3) 0 0}
+/* Blessing/Setback cards fit their content tightly, in the phone view
+   and the grid alike: no inherited min-height on the head, one 8px gap
+   between the text and the button row, buttons vertically centred in
+   that row, and the pencil flush to the card's right edge (kept there
+   by margin-left:auto inside a centred flex row, not floating). */
+.bs-card{display:flex;flex-direction:column;gap:var(--sp2);padding:var(--sp3);height:auto;min-height:0}
+.bs-card .beatcard-head{min-height:0}
+.bs-card .beatnav{margin-top:0;align-items:center;min-height:28px}
+.bs-card .beatnav .pencilbtn{margin-left:auto}
+.bs-card .bs-icon-row{margin-top:0;align-items:center}
+.bs-card .bs-map-edit{margin-top:0}
+.phone-empty-note{color:var(--ink2);font-size:.92rem;margin:0}
+#gate2Slot{margin-top:var(--sp4)}
+#gate2Slot .card{margin-bottom:0}
 .bscount{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.75rem;font-weight:700;background:var(--chip)}
 .mlab-bs{background:var(--surface2)}
 /* Edit/Close flicker guard: expanding an editor never animates layout.
@@ -536,7 +647,7 @@ input[type="file"]{display:none}
     <div id="sceneRefStrip"></div>
     <div id="sceneCharRefs"></div>
     <h3 class="serif" style="margin-top:6px">Visual map — arcs × scenes</h3>
-    <p class="lede" style="margin-bottom:8px">Columns are scenes in story order; rows are arcs. Move a scene with the ‹ › arrows on its column — its beat tags travel with it. Tag a beat from a cell's dropdown; a beat card's Edit button jumps to that beat in the Story Arcs.</p>
+    <p class="lede" style="margin-bottom:8px">Arcs are rows, scenes are columns. Tap + to tag a beat.</p>
     <div id="sceneMapWrap"></div>
     <div id="gate2Slot"></div>
     <h3 class="serif" style="margin-top:26px">Scene list</h3>
@@ -775,6 +886,47 @@ function getArcColor(p, arc){
   var idx = (arc && typeof arc.colorIndex === "number") ? arc.colorIndex : 0;
   return pal[Math.abs(idx) % pal.length];
 }
+/* Readable text colour for a filled arc-colour pill. White text on the
+   light arc colours (every dark-mode palette is pastels, and several
+   light-mode ones are mid-tones) failed contrast. This computes the
+   WCAG contrast ratio of the arc colour against white and against a
+   near-black ink and returns whichever is higher — dark text on light
+   arc colours, white only where the colour is dark enough — so every
+   arc tag is readable in both modes across all five schemes, per arc
+   colour, without changing the arc colours themselves. */
+function readableOn(hex){
+  var h = String(hex || "").replace("#", "");
+  if(h.length === 3) h = h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);
+  if(h.length !== 6) return "#ffffff";
+  function lin(c){ c = c/255; return c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); }
+  var L = 0.2126*lin(parseInt(h.substr(0,2),16)) + 0.7152*lin(parseInt(h.substr(2,2),16)) + 0.0722*lin(parseInt(h.substr(4,2),16));
+  var cWhite = 1.05 / (L + 0.05);
+  var cDark = (L + 0.05) / 0.058; /* #161616 ink, luminance ≈ 0.008 */
+  return cWhite >= cDark ? "#ffffff" : "#161616";
+}
+/* The pill's background fill. For almost every arc colour the raw colour
+   already gives some text colour a passing ratio; exactly one colour
+   (Ember light's mid-amber) sits in the dead zone where neither white
+   (4.43) nor dark (4.09) reaches 4.5:1. For that case only, deepen the
+   fill slightly — same hue, same arc identity — until white text
+   passes, so EVERY arc pill in every scheme and mode is ≥ 4.5:1. */
+function pillBg(hex){
+  var h = String(hex || "").replace("#", "");
+  if(h.length === 3) h = h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);
+  if(h.length !== 6) return hex;
+  function lin(c){ c = c/255; return c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); }
+  function lum(r, g, b){ return 0.2126*lin(r) + 0.7152*lin(g) + 0.0722*lin(b); }
+  var r = parseInt(h.substr(0,2),16), g = parseInt(h.substr(2,2),16), b = parseInt(h.substr(4,2),16);
+  var L = lum(r, g, b);
+  var best = Math.max(1.05 / (L + 0.05), (L + 0.05) / 0.058);
+  if(best >= 4.5) return hex;
+  for(var i = 0; i < 16; i++){
+    r = Math.round(r * 0.96); g = Math.round(g * 0.96); b = Math.round(b * 0.96);
+    if(1.05 / (lum(r, g, b) + 0.05) >= 4.5) break;
+  }
+  function hx(c){ var s = c.toString(16); return s.length === 1 ? "0" + s : s; }
+  return "#" + hx(r) + hx(g) + hx(b);
+}
 var BEAT_ORDER = ["hook","plotTurn1","pinch1","midpoint","pinch2","plotTurn2","resolution"];
 var BEAT_BY_KEY = {}; BEATS.forEach(function(b){ BEAT_BY_KEY[b.key] = b; });
 /* Two orders, kept distinct everywhere both are shown:
@@ -998,7 +1150,7 @@ function blankChar(){
 }
 
 var state = { projects:[], currentId:null };
-var ui = { view:"projects", openBeat:null, openScene:null, openChar:null, openPass:null, openGate:null, openArc:null, openBeatCard:null, openLoopStep:null, beatConflict:null, tagArcSel:null, tagBeatSel:null, dragSceneId:null, mapScrollLeft:0, refOpen:false, openQuestion:null, showFullScale:false, openBSEntry:null, bsMapEditId:null };
+var ui = { view:"projects", openBeat:null, openScene:null, openChar:null, openPass:null, openGate:null, openArc:null, openBeatCard:null, openLoopStep:null, beatConflict:null, tagArcSel:null, tagBeatSel:null, dragSceneId:null, mapScrollLeft:0, refOpen:false, openQuestion:null, showFullScale:false, openBSEntry:null, bsMapEditId:null, phoneSceneId:null, phoneTagPicker:null };
 var SECTION_LABELS = { projects:"Projects", overview:"Overview", intake:"Intake", map:"Story Arcs", scenes:"Scenes", characters:"Characters", editing:"Editing", setup:"Setup & Backup" };
 
 function load(){
@@ -1152,8 +1304,16 @@ function updateBar(){
      and stays hidden. */
   var cb = document.getElementById("calicoBg");
   if(cb && !cb.classList.contains("calico-gone")){
+    /* The fixed bottom-right kitty shows on EVERY page again, at its
+       original position and size — bigger only on the Projects page.
+       It is never placed inside the Prev/Next row, so no button can
+       cover it; the .wrap bottom padding reserves the empty space
+       below the Prev/Next row (or below the project cards on Projects)
+       where it sits fully visible above the bottom app bar. */
     cb.style.display = "";
     cb.classList.toggle("calico-bg-lg", ui.view === "projects");
+    var wrapEl = document.querySelector(".wrap");
+    if(wrapEl) wrapEl.classList.toggle("wrap-projects", ui.view === "projects");
   }
 }
 function openDrawer(){
@@ -1205,6 +1365,21 @@ try{
   if(mqDark.addEventListener) mqDark.addEventListener("change", function(){ applyTheme(); renderBeats(); renderScenes(); });
   else if(mqDark.addListener) mqDark.addListener(function(){ applyTheme(); renderBeats(); renderScenes(); });
 }catch(e){}
+/* The visual map switches between the wide grid and the phone view at the
+   700px breakpoint: re-render Scenes when a resize crosses it (rotate /
+   split-screen), so the right layout is always the one on screen. */
+var lastPhoneMap = null, resizeTimer = null;
+try{
+  lastPhoneMap = isPhoneMapWidth();
+  window.addEventListener("resize", function(){
+    if(resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){
+      var nowPhone = isPhoneMapWidth();
+      if(lastPhoneMap !== null && nowPhone !== lastPhoneMap && ui.view === "scenes") renderScenes();
+      lastPhoneMap = nowPhone;
+    }, 150);
+  });
+}catch(e){}
 /* Auto-close + save on navigation: every open editor closes and every
    pending edit is committed before the page changes, so nothing is lost
    and no section is left open on the new page. Fields already write into
@@ -1249,7 +1424,7 @@ document.addEventListener("focusin", function(e){
   if(!t || (t.tagName !== "INPUT" && t.tagName !== "TEXTAREA" && t.tagName !== "SELECT")) return;
   if(t.type === "file") return;
   if(t.hasAttribute && t.hasAttribute("data-noscroll")) return;
-  if(t.closest && t.closest(".mapscroll")) return; /* map controls edit in place — never yank the page */
+  if(t.closest && (t.closest(".mapscroll") || t.closest(".phone-align-scroll") || t.closest(".phone-scroll"))) return; /* map controls edit in place — never yank the page */
   setTimeout(function(){
     var anchor = t;
     var wrap = t.closest ? t.closest(".fieldwrap") : null;
@@ -1927,10 +2102,341 @@ function inlineNameEdit(container, current, onSave){
    bar at render time). Rows otherwise size to their tallest cell, and all
    text wraps — longer beat text grows the row instead of cramping,
    overlapping, or clipping. */
+/* Phone breakpoint for the visual map ONLY: at phone width the wide grid
+   is replaced by the aligned-rows view below (sticky arc labels, scene
+   columns scrolling past them); at iPad width and up the grid renders
+   exactly as before. UI state only — the selected scene id lives in
+   ui.phoneSceneId, never in the project data, so exports and the data
+   model are unchanged and the previous version restores cleanly. */
+function isPhoneMapWidth(){
+  try{ if(window.matchMedia) return window.matchMedia("(max-width: 700px)").matches; }catch(e){}
+  return (window.innerWidth || 9999) <= 700;
+}
+function phoneSelectedScene(p){
+  if(!p || !p.scenes.length) return null;
+  for(var i = 0; i < p.scenes.length; i++) if(p.scenes[i].id === ui.phoneSceneId) return { scene:p.scenes[i], idx:i };
+  ui.phoneSceneId = p.scenes[0].id;
+  return { scene:p.scenes[0], idx:0 };
+}
+/* There is deliberately no select-and-re-render scene switcher any more:
+   phone navigation is the scroll container inside renderPhoneSceneMap.
+   Scrolling (or tapping a chip / dot, which scrolls the container)
+   updates ui.phoneSceneId directly WITHOUT re-rendering, so the slide
+   is continuous, focus and any in-progress edit are never destroyed,
+   and the page never jumps. Re-renders (tagging a beat, editing a
+   Blessing/Setback) position the container back on ui.phoneSceneId. */
+function addPhoneScene(p){
+  var s = blankScene(p.scenes.length + 1);
+  p.scenes.push(s);
+  ui.phoneSceneId = s.id;
+  touch(p); save(); editToggle(renderScenes, null);
+  toast("Scene added — tag it here, or fill in details in the list below");
+}
+/* Tag-a-beat control for the phone map: ONLY a + button (Extra Small
+   tier, the map's usual + size) in an empty cell — never a dropdown
+   field. Tapping + opens the seven-beat picker inline in that cell
+   (ui.phoneTagPicker holds "arcId|sceneId" while open; UI-only state,
+   never saved). Choosing a beat tags in place via applyBeatTag with
+   no page jump, exactly as the old dropdown did, and pins
+   ui.phoneSceneId so the re-render keeps this scene in view. */
+function buildPhoneTagControl(p, arc, sc){
+  var key = arc.id + "|" + sc.id;
+  if(ui.phoneTagPicker === key){
+    var picker = document.createElement("div"); picker.className = "phone-tag-picker";
+    var pt = document.createElement("div"); pt.className = "ptp-title"; pt.textContent = "Tag a beat";
+    picker.appendChild(pt);
+    BEAT_ORDER.forEach(function(k){
+      var b = document.createElement("button"); b.type = "button"; b.textContent = BEAT_BY_KEY[k].title;
+      b.setAttribute("aria-label", "Tag " + BEAT_BY_KEY[k].title + " for " + arc.name + " at this scene");
+      b.addEventListener("click", function(){
+        ui.phoneSceneId = sc.id; ui.phoneTagPicker = null;
+        applyBeatTag(p, sc, arc.id, k);
+        editToggle(renderScenes, null);
+      });
+      picker.appendChild(b);
+    });
+    var cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "ptp-cancel"; cancel.textContent = "\u00d7";
+    cancel.setAttribute("aria-label", "Close beat picker");
+    cancel.addEventListener("click", function(){ ui.phoneTagPicker = null; editToggle(renderScenes, null); });
+    picker.appendChild(cancel);
+    return picker;
+  }
+  var wrapEl = document.createElement("div"); wrapEl.className = "phone-tag-add";
+  var plus = document.createElement("button"); plus.type = "button"; plus.className = "phone-tag-btn"; plus.textContent = "+";
+  plus.setAttribute("aria-label", "Tag a beat for " + arc.name + " at this scene");
+  plus.setAttribute("aria-haspopup", "true");
+  plus.addEventListener("click", function(){
+    ui.phoneSceneId = sc.id; ui.phoneTagPicker = key;
+    editToggle(renderScenes, null);
+  });
+  wrapEl.appendChild(plus);
+  return wrapEl;
+}
+/* One scene's Blessing/Setback stack for a phone BS cell: the same
+   makeBSCard cards (background fills, italic text, pencil to edit,
+   \u2713 / trash while editing, \u2039 \u203a move arrows in collapsed
+   mode) plus the same single centred + opening the Blessing/Setback
+   dropdown. Choosing adds in place and opens the new entry for
+   editing right here, with no page jump. */
+function buildPhoneBSCellStack(p, sc, idx){
+  var stack = document.createElement("div"); stack.className = "bs-cell-stack";
+  ensureSceneBS(sc);
+  var bsCounts = {blessing:0, setback:0};
+  (sc.bs || []).forEach(function(entry){ stack.appendChild(makeBSCard(p, sc, entry, idx, bsCounts[entry.type]++)); });
+  var bsAdd = document.createElement("div"); bsAdd.className = "bs-map-add";
+  var plusB = document.createElement("button"); plusB.type = "button"; plusB.className = "bs-plus-btn"; plusB.textContent = "+";
+  plusB.setAttribute("aria-label", "Add a Blessing or Setback to " + (sc.title || ("Scene " + (idx + 1))));
+  plusB.setAttribute("aria-haspopup", "true"); plusB.setAttribute("aria-expanded", "false");
+  plusB.addEventListener("click", function(ev){
+    ev.stopPropagation();
+    var existing = bsAdd.querySelector(".bs-menu");
+    document.querySelectorAll(".bs-menu").forEach(function(m){ m.remove(); });
+    document.querySelectorAll(".bs-plus-btn").forEach(function(b){ b.setAttribute("aria-expanded", "false"); });
+    if(existing) return;
+    var menu = document.createElement("div"); menu.className = "bs-menu"; menu.setAttribute("role", "menu");
+    [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
+      var mb = document.createElement("button"); mb.type = "button"; mb.textContent = pair[1];
+      mb.setAttribute("role", "menuitem");
+      mb.setAttribute("aria-label", "Add a " + pair[1] + " to " + (sc.title || ("Scene " + (idx + 1))));
+      mb.addEventListener("click", function(ev2){
+        ev2.stopPropagation();
+        var ne = {id:uid(), type:pair[0], text:""};
+        sc.bs.push(ne);
+        sc.tag = deriveTagFromBS(sc); ui.bsMapEditId = ne.id; ui.phoneSceneId = sc.id;
+        touch(p); save(); editToggle(renderScenes, null); focusBSInput(ne.id);
+      });
+      menu.appendChild(mb);
+    });
+    bsAdd.appendChild(menu);
+    plusB.setAttribute("aria-expanded", "true");
+  });
+  bsAdd.appendChild(plusB);
+  stack.appendChild(bsAdd);
+  return stack;
+}
+/* The phone scene map: ALIGNED ROWS with PERSISTENT ARC LABELS.
+   Structure: (1) a horizontally scrollable strip of scene tabs in
+   story order plus a "+ Scene" tab, the tabs joined by one continuous
+   track line behind them, scrollbar hidden; (2) a heading — "Scene N
+   of M" + the scene name, NO stepper arrows and NO subtitle — that
+   updates LIVE while the map scrolls; (3) ONE grid in ONE horizontal
+   scroller (scrollbar hidden, scroll-snap): column 1 is a sticky left
+   label column holding, per row, the arc name + that arc's persistent
+   key question, and finally the Blessings and Setbacks label — it
+   never scrolls sideways. Each remaining column is one scene (~88% of
+   the width left after the label column, so the next scene peeks in)
+   holding, in the same row order, that scene's beat card (or only a
+   + tag button when untagged) for each arc, then that scene's
+   Blessing/Setback cards. Shared grid rows align every row across
+   scenes: the tallest cell drives its row's height. Only the beat/BS
+   cells scroll sideways; vertical dragging still scrolls the page.
+   Scrolling never reorders scenes, and there are NO scene
+   move/reorder controls or drag anywhere in this view.
+   Live feedback WITHOUT re-rendering: the scroller's scroll listener
+   finds the scene column nearest the snap position and updates, in
+   the DOM, ui.phoneSceneId, the heading, the dots and the tabs, and
+   keeps the active tab visible — so scrolling cannot lose focus,
+   destroy an open editor, or jump the page. Tapping a tab or dot
+   scrolls that column into view. Edits re-render via editToggle and
+   the fresh render positions the scroller — instantly — back on
+   ui.phoneSceneId's column. */
+function renderPhoneSceneMap(p, wrap){
+  ensureArcs(p); cleanBeatTags(p); p.scenes.forEach(ensureSceneBS);
+  var box = document.createElement("div"); box.className = "phone-map";
+  /* (1) Scene tab strip — tabs on one continuous line. */
+  var strip = document.createElement("div"); strip.className = "phone-scene-strip";
+  strip.setAttribute("role", "group"); strip.setAttribute("aria-label", "Choose a scene to view");
+  var track = document.createElement("div"); track.className = "phone-strip-track";
+  var sel0 = phoneSelectedScene(p);
+  var chipEls = [];
+  p.scenes.forEach(function(s, i){
+    var chip = document.createElement("button"); chip.type = "button"; chip.className = "phone-chip";
+    chip.textContent = (i + 1) + ". " + (s.title || "Untitled scene");
+    var isSel = !!sel0 && sel0.scene.id === s.id;
+    chip.setAttribute("aria-pressed", isSel ? "true" : "false");
+    chip.setAttribute("aria-label", "View scene " + (i + 1) + ": " + (s.title || "Untitled scene"));
+    track.appendChild(chip);
+    chipEls.push(chip);
+  });
+  var addChip = document.createElement("button"); addChip.type = "button"; addChip.className = "phone-chip phone-chip-add";
+  addChip.textContent = "+ Scene";
+  addChip.setAttribute("aria-label", "Add a scene");
+  addChip.addEventListener("click", function(){ addPhoneScene(p); });
+  track.appendChild(addChip);
+  strip.appendChild(track);
+  box.appendChild(strip);
+  if(!p.scenes.length){
+    var es = document.createElement("p"); es.className = "phone-empty-note";
+    es.style.marginTop = "var(--sp2)";
+    es.textContent = "No scenes yet \u2014 tap + Scene above to add one.";
+    box.appendChild(es);
+    p.arcs.forEach(function(arc){
+      var sec = document.createElement("div"); sec.className = "phone-arc";
+      sec.style.borderLeft = "6px solid " + getArcColor(p, arc);
+      var hd = document.createElement("div"); hd.className = "phone-arc-head";
+      hd.innerHTML = "<span class='pa-name'>" + esc(arc.name) + "</span>"
+        + (arc.question ? "<span class='pa-q'>" + esc(arc.question) + "</span>" : "");
+      sec.appendChild(hd);
+      box.appendChild(sec);
+    });
+    var bsE = document.createElement("div"); bsE.className = "phone-bs";
+    bsE.innerHTML = "<div class='phone-bs-title'>Blessings and Setbacks</div>";
+    box.appendChild(bsE);
+    wrap.appendChild(box);
+    return;
+  }
+  var sel = phoneSelectedScene(p);
+  var currentIdx = sel.idx;
+  /* (2) Scene heading — label only, NO stepper arrows, NO subtitle. */
+  var sceneHead = document.createElement("div"); sceneHead.className = "phone-scene-head";
+  var lab = document.createElement("div"); lab.className = "ps-label";
+  var labSpan = document.createElement("span");
+  labSpan.textContent = "Scene " + (currentIdx + 1) + " of " + p.scenes.length;
+  lab.appendChild(labSpan);
+  var labName = document.createTextNode(p.scenes[currentIdx].title || "Untitled scene");
+  lab.appendChild(labName);
+  sceneHead.appendChild(lab);
+  box.appendChild(sceneHead);
+  /* Beat-order warning, same non-blocking check as the grid. */
+  var orderIssues = [];
+  p.arcs.forEach(function(a){ if(arcOrderIssue(p, a) >= 0) orderIssues.push(a.name); });
+  if(orderIssues.length){
+    var ow = document.createElement("div"); ow.className = "warnbox";
+    ow.innerHTML = "<strong>Beats out of order:</strong> in " + esc(orderIssues.join(", ")) + ", a beat sits in an earlier scene than a beat that should come before it. Nothing was blocked or changed \u2014 you may be reordering on purpose.";
+    box.appendChild(ow);
+  }
+  /* (3) The aligned grid in its horizontal scroller. */
+  var LABEL_W = 104;
+  var vw = window.innerWidth || 390;
+  var estAvail = Math.max(150, (vw - 66) - LABEL_W);
+  var COL_W = Math.max(140, Math.round(estAvail * 0.88));
+  var scroller = document.createElement("div"); scroller.className = "phone-align-scroll";
+  scroller.setAttribute("aria-label", "Scenes \u2014 scroll sideways to move between scenes");
+  scroller.style.scrollPaddingLeft = LABEL_W + "px";
+  var grid = document.createElement("div"); grid.className = "phone-align-grid";
+  function applyCols(w){
+    grid.style.gridTemplateColumns = LABEL_W + "px repeat(" + p.scenes.length + ", " + w + "px)";
+  }
+  applyCols(COL_W);
+  grid.style.gridTemplateRows = "repeat(" + Math.max(1, p.arcs.length) + ", minmax(92px, auto)) minmax(72px, auto)";
+  var firstColCells = [];
+  p.arcs.forEach(function(arc, ai){
+    var arcColor = getArcColor(p, arc);
+    var issueAt = arcOrderIssue(p, arc);
+    var labCell = document.createElement("div"); labCell.className = "phone-label-cell";
+    labCell.style.gridColumn = "1"; labCell.style.gridRow = String(ai + 1);
+    labCell.style.borderLeft = "6px solid " + arcColor;
+    labCell.innerHTML = "<span class='pa-name'>" + esc(arc.name) + "</span>"
+      + (arc.question ? "<span class='pa-q'>" + esc(arc.question) + "</span>" : "")
+      + (issueAt >= 0 ? '<div class="mapwarn">\u26a0 Out of order</div>' : "");
+    grid.appendChild(labCell);
+    p.scenes.forEach(function(sc, si){
+      var cell = document.createElement("div"); cell.className = "phone-cell";
+      cell.style.gridColumn = String(si + 2); cell.style.gridRow = String(ai + 1);
+      cell.setAttribute("data-phone-scene", sc.id);
+      var beatKey = sceneTagFor(sc, arc.id);
+      if(beatKey) cell.appendChild(makeBeatCard(p, arc, beatKey, sc));
+      else cell.appendChild(buildPhoneTagControl(p, arc, sc));
+      grid.appendChild(cell);
+      if(ai === 0) firstColCells[si] = cell;
+    });
+  });
+  var bsRow = p.arcs.length + 1;
+  var bsLab = document.createElement("div"); bsLab.className = "phone-label-cell phone-label-bs";
+  bsLab.style.gridColumn = "1"; bsLab.style.gridRow = String(bsRow);
+  bsLab.innerHTML = "<span class='pa-name'>Blessings and Setbacks</span>";
+  grid.appendChild(bsLab);
+  p.scenes.forEach(function(sc2, si2){
+    var bcell = document.createElement("div"); bcell.className = "phone-cell";
+    bcell.style.gridColumn = String(si2 + 2); bcell.style.gridRow = String(bsRow);
+    bcell.setAttribute("data-phone-scene", sc2.id);
+    bcell.appendChild(buildPhoneBSCellStack(p, sc2, si2));
+    grid.appendChild(bcell);
+  });
+  scroller.appendChild(grid);
+  box.appendChild(scroller);
+  /* Dots indicator under the map — also live, and tappable. */
+  var dotsWrap = document.createElement("div"); dotsWrap.className = "phone-dots";
+  dotsWrap.setAttribute("role", "group"); dotsWrap.setAttribute("aria-label", "Scene position");
+  var dotEls = [];
+  p.scenes.forEach(function(sc, idx){
+    var d = document.createElement("button"); d.type = "button"; d.className = "phone-dot";
+    d.setAttribute("aria-label", "Go to scene " + (idx + 1) + ": " + (sc.title || "Untitled scene"));
+    d.setAttribute("aria-current", idx === currentIdx ? "true" : "false");
+    dotsWrap.appendChild(d);
+    dotEls.push(d);
+  });
+  box.appendChild(dotsWrap);
+  var hint = document.createElement("p"); hint.className = "kbd-note";
+  hint.textContent = "Empty arcs are fine.";
+  box.appendChild(hint);
+  wrap.appendChild(box);
+  /* ---- live position + column navigation (closures over this DOM) ---- */
+  var reducedMotion = false;
+  try{ reducedMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); }catch(e){}
+  /* Refine the column width from the real scroller width now the map
+     is in the page (the estimate used the window width): each scene
+     column is ~88% of the width remaining after the sticky labels. */
+  if(scroller.clientWidth > 0){
+    var realAvail = scroller.clientWidth - LABEL_W;
+    var realCol = Math.max(140, Math.round(realAvail * 0.88));
+    if(Math.abs(realCol - COL_W) > 4){ COL_W = realCol; applyCols(COL_W); }
+  }
+  function colTargetLeft(i){
+    var c = firstColCells[i]; if(!c) return 0;
+    return Math.max(0, c.offsetLeft - LABEL_W);
+  }
+  function ensureChipVisible(i){
+    var chip = chipEls[i]; if(!chip) return;
+    var cL = chip.offsetLeft, cR = cL + chip.offsetWidth;
+    var vL = strip.scrollLeft, vR = vL + strip.clientWidth;
+    if(cL < vL) strip.scrollLeft = Math.max(0, cL - 8);
+    else if(cR > vR) strip.scrollLeft = cR - strip.clientWidth + 8;
+  }
+  function setCurrent(i){
+    if(i < 0 || i >= p.scenes.length) return;
+    currentIdx = i;
+    ui.phoneSceneId = p.scenes[i].id;
+    labSpan.textContent = "Scene " + (i + 1) + " of " + p.scenes.length;
+    labName.nodeValue = p.scenes[i].title || "Untitled scene";
+    chipEls.forEach(function(c, ci){ c.setAttribute("aria-pressed", ci === i ? "true" : "false"); });
+    dotEls.forEach(function(d, di){ d.setAttribute("aria-current", di === i ? "true" : "false"); });
+    ensureChipVisible(i);
+  }
+  function scrollToCol(i){
+    if(i < 0 || i >= p.scenes.length) return;
+    setCurrent(i);
+    var target = colTargetLeft(i);
+    if(scroller.scrollTo) scroller.scrollTo({left:target, behavior: reducedMotion ? "auto" : "smooth"});
+    else scroller.scrollLeft = target;
+  }
+  chipEls.forEach(function(chip, i){ chip.addEventListener("click", function(){ scrollToCol(i); }); });
+  dotEls.forEach(function(d, i){ d.addEventListener("click", function(){ scrollToCol(i); }); });
+  var scrollTicking = false;
+  scroller.addEventListener("scroll", function(){
+    if(scrollTicking) return;
+    scrollTicking = true;
+    var raf = window.requestAnimationFrame || function(fn){ return setTimeout(fn, 16); };
+    raf(function(){
+      scrollTicking = false;
+      var best = currentIdx, bestDist = Infinity;
+      firstColCells.forEach(function(c, i2){
+        if(!c) return;
+        var dist = Math.abs((c.offsetLeft - LABEL_W) - scroller.scrollLeft);
+        if(dist < bestDist){ bestDist = dist; best = i2; }
+      });
+      if(best !== currentIdx) setCurrent(best);
+    });
+  }, {passive:true});
+  scroller.scrollLeft = colTargetLeft(currentIdx);
+  ensureChipVisible(currentIdx);
+}
+
 function renderSceneMap(p, wrap){
   if(!wrap) return;
   wrap.innerHTML = "";
   if(!p) return;
+  if(isPhoneMapWidth()){ renderPhoneSceneMap(p, wrap); return; }
   ensureArcs(p); cleanBeatTags(p); p.scenes.forEach(ensureSceneBS);
   var LABEL_W = 148, SCENE_W = 204;
   if(!p.scenes.length){
@@ -1972,7 +2478,7 @@ function renderSceneMap(p, wrap){
     eGrid.appendChild(eBsLab);
     eScroll.appendChild(eGrid); eFrame.appendChild(eScroll); wrap.appendChild(eFrame);
     var eHint = document.createElement("p"); eHint.className = "kbd-note";
-    eHint.textContent = "No scenes yet \u2014 tap + to add the first one, right here on the map. Once a scene exists, the beats you tag will appear in these arc rows.";
+    eHint.textContent = "No scenes yet \u2014 tap + to add one.";
     wrap.appendChild(eHint);
     return;
   }
@@ -2171,7 +2677,11 @@ function renderSceneMap(p, wrap){
      reads 0); the next render with the view visible measures for real. */
   var headH = headbar.getBoundingClientRect().height || 0;
   var rowMin = Math.max(128, Math.ceil(headH) + 16);
-  grid.style.gridTemplateRows = "repeat(" + Math.max(1, p.arcs.length) + ", minmax(" + rowMin + "px, auto)) minmax(" + rowMin + "px, auto)";
+  /* Only the ARC rows carry the taller-than-header minimum height. The
+     Blessings and Setbacks row sizes to its content instead, so its
+     cards and the centred + below them are not stranded in a tall,
+     mostly-empty cell with a large blank area underneath. */
+  grid.style.gridTemplateRows = "repeat(" + Math.max(1, p.arcs.length) + ", minmax(" + rowMin + "px, auto)) minmax(64px, auto)";
   /* Keep the map where the user left it horizontally — tagging or moving a
      scene must never fling the view back to the left edge — and keep the
      sticky header bar's columns synced to the same offset. */
@@ -2180,7 +2690,7 @@ function renderSceneMap(p, wrap){
   syncHead();
   scroll.addEventListener("scroll", function(){ ui.mapScrollLeft = scroll.scrollLeft; syncHead(); });
   var hint = document.createElement("p"); hint.className = "kbd-note";
-  hint.textContent = "Empty cells are fine: not every scene carries a beat in every arc, and a scene can carry beats from several arcs at once. Blessing/Setback entries live in the bottom row — tap the + in any cell and choose Blessing or Setback, and move an entry between scenes with its \u2039 \u203a buttons.";
+  hint.textContent = "Empty arcs are fine.";
   wrap.appendChild(hint);
 }
 function renderBeats(){
@@ -2353,18 +2863,24 @@ function renderScenes(){
     if(typeof s.chapter !== "string") s.chapter = "";
     /* Tags sit at the TOP of the collapsed card, beside the title: the
        Blessing/Setback pill and one pill per beat tag (in its arc's colour). */
+    /* Pills (Blessing/Setback counts + one beat pill per arc tag) render
+       on their OWN line below the title — never inline with it, however
+       long or wrapped the title is. Each beat pill's text colour comes
+       from readableOn so it stays readable on its arc colour in both
+       colour modes. */
     var topTags = "";
     ensureSceneBS(s);
     var nBless = (s.bs || []).filter(function(e){ return e.type === "blessing"; }).length;
     var nSet = (s.bs || []).filter(function(e){ return e.type === "setback"; }).length;
-    if(nBless || nSet) topTags += ' <span class="bscount">' + (nBless ? nBless + (nBless === 1 ? " Blessing" : " Blessings") : "") + (nBless && nSet ? " \u00b7 " : "") + (nSet ? nSet + (nSet === 1 ? " Setback" : " Setbacks") : "") + '</span>';
+    if(nBless || nSet) topTags += '<span class="bscount">' + (nBless ? nBless + (nBless === 1 ? " Blessing" : " Blessings") : "") + (nBless && nSet ? " \u00b7 " : "") + (nSet ? nSet + (nSet === 1 ? " Setback" : " Setbacks") : "") + '</span>';
     (s.beatTags || []).forEach(function(t){
       var arc = null;
       p.arcs.forEach(function(a){ if(a.id === t.arcId) arc = a; });
-      if(arc && BEAT_BY_KEY[t.beat]) topTags += ' <span class="beatpill" style="background:' + esc(getArcColor(p, arc)) + '">' + esc(BEAT_BY_KEY[t.beat].title) + ' · ' + esc(arc.name) + '</span>';
+      if(arc && BEAT_BY_KEY[t.beat]){ var ac = pillBg(getArcColor(p, arc)); topTags += '<span class="beatpill" style="background:' + esc(ac) + ';color:' + esc(readableOn(ac)) + '">' + esc(BEAT_BY_KEY[t.beat].title) + ' · ' + esc(arc.name) + '</span>'; }
     });
-    b.innerHTML = '<div class="node-main"><span class="ntitle"><span>'+(i+1)+'. '+esc(s.title||"Untitled scene")+(topTags ? '<span class="toptags">' + topTags + '</span>' : '')+'</span></span>'
-      + '<span class="nsub">'+esc(s.chapter ? "Chapter: "+s.chapter+" · " : "")+esc(s.pov ? "POV: "+s.pov+" · " : "")+esc(s.what ? "" : "What happens not written yet")+'</span>'
+    b.innerHTML = '<div class="node-main"><span class="ntitle"><span>'+(i+1)+'. '+esc(s.title||"Untitled scene")+'</span></span>'
+      + (topTags ? '<div class="scenetags">' + topTags + '</div>' : '')
+      + '<span class="nsub scenesub">'+esc(s.chapter ? "Chapter: "+s.chapter+" · " : "")+esc(s.pov ? "POV: "+s.pov+" · " : "")+esc(s.what ? "" : "What happens not written yet")+'</span>'
       + (s.what ? '<span class="nprev">'+esc(s.what)+'</span>' : '') + '</div>';
     node.appendChild(b);
     if(open){
@@ -2396,7 +2912,9 @@ function renderScenes(){
         if(!arc || !BEAT_BY_KEY[t.beat]) return;
         var row = document.createElement("div"); row.className = "beattagrow";
         var pill = document.createElement("button"); pill.type = "button"; pill.className = "beatpill tagpillbtn";
-        pill.style.background = getArcColor(p, arc);
+        var pbg = pillBg(getArcColor(p, arc));
+        pill.style.background = pbg;
+        pill.style.color = readableOn(pbg);
         pill.textContent = BEAT_BY_KEY[t.beat].title + " · " + arc.name + " ✕";
         pill.title = "Tap to remove this tag";
         pill.addEventListener("click", function(){ setSceneTag(p, s, t.arcId, null); touch(p); save(); renderScenes(); toast("Tag removed"); });
@@ -3309,6 +3827,10 @@ function renderPrevNext(){
     var idx = SECTION_ORDER.indexOf(v);
     box.innerHTML = "";
     if(idx < 0) return;
+    /* No kitty in this row: the calico is the fixed bottom-right
+       background element (#calicoBg) only, sitting in the empty space
+       below this row's bottom divider line, so the buttons here can
+       never cover it. */
     if(!cur()){
       /* With no project open, the per-project steps in SECTION_ORDER are
          not reachable — but the global sections are. On Setup & Backup
