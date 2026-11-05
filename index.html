@@ -102,9 +102,11 @@ button{cursor:pointer}
 .saved{font-size:.85rem;color:var(--ink2);padding:8px 0 0;min-height:1.2em}
 
 .bar-saved{font-size:.72rem;font-weight:600;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;min-height:1em}
-/* Breadcrumbs (iPad layout, >=701px): every page in order as connected
-   buttons, sticky under the header. Rendered by renderCrumbs only when a
-   project is open; the current page is highlighted. */
+/* Breadcrumbs: every page in order as connected buttons, sticky under
+   the header, on BOTH layouts — iPad and iPhone. On iPhone the strip
+   scrolls horizontally so all pages fit; the scrollbar is hidden.
+   Rendered by renderCrumbs only when a project is open; the current
+   page is highlighted. */
 .crumbs{position:sticky;top:calc(62px + env(safe-area-inset-top,0px));z-index:38;display:none;background:var(--bg);padding:var(--sp2) 0;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
 .crumbs::-webkit-scrollbar{display:none;width:0;height:0}
 .crumbs.show{display:flex}
@@ -313,6 +315,12 @@ select{width:100%;padding:14px var(--sp3);border:1px solid var(--line);border-ra
    inline add, a reorder, or a retag, nothing can shift. The "+" cells
    are narrow columns at both ends of both the header bar and the body
    grid — never rows. */
+/* The visual map is the primary place for editing the story, so it is
+   the ONE element that breaks out of the site container: it runs edge
+   to edge of the device with only ~8px of margin on each side. Every
+   other element stays inside the container exactly as before. */
+#sceneMapWrap{margin-left:-8px;margin-right:-8px}
+@media(min-width:768px){#sceneMapWrap{margin-left:-16px;margin-right:-16px}}
 .mapframe{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);max-width:100%}
 .mapheadbar{position:sticky;top:var(--sticktop);z-index:6;display:flex;background:var(--surface2);border-bottom:1px solid var(--line);border-radius:var(--radius) var(--radius) 0 0}
 .maphead-clip{flex:1;min-width:0;overflow:hidden;position:relative}
@@ -342,9 +350,15 @@ select{width:100%;padding:14px var(--sp3);border:1px solid var(--line);border-ra
 .beatcard-head strong{display:block;font-family:Georgia,serif;font-size:.92rem}
 .beatcard-head span{display:block;font-size:.85rem;margin-top:2px;white-space:pre-wrap;word-break:break-word}
 .beatcard-head .empty-t{color:var(--ink2);font-style:italic}
-.beatnav{display:flex;gap:var(--sp1);margin-top:var(--sp2);align-items:center}
-.beatnav button{min-width:28px;min-height:28px;width:28px;height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-weight:700;font-size:var(--icon-xs);line-height:1;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
-.beatnav button:disabled{opacity:.35;cursor:default}
+/* Map icons — OPTION A: icon-only, NO button chrome. The left/right
+   move glyphs and the edit pencil on the visual map are tiny icons
+   (~15px): no border, no background, no button padding, just the glyph
+   itself. The left icon sits on the LEFT side of its component and the
+   right icon on the RIGHT side (see .beatnav / .colnav below) — beats,
+   Blessings/Setbacks, and scenes all behave the same way. */
+.mapicon{background:none;border:0;padding:3px;margin:0;color:inherit;font-size:15px;font-weight:700;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;font-family:inherit}
+.mapicon:disabled{opacity:.35;cursor:default}
+.beatnav{display:flex;gap:var(--sp1);margin-top:var(--sp2);align-items:center;justify-content:space-between;width:100%}
 .scenebar{display:flex;gap:var(--sp3);align-items:center;padding:var(--sp4) var(--sp5) 0;flex-wrap:wrap}
 .barhint{font-size:.8rem;color:var(--ink2);font-weight:600}
 /* (scenebar buttons carry the .btn.small class — the SMALL tier.) */
@@ -364,7 +378,7 @@ select{width:100%;padding:14px var(--sp3);border:1px solid var(--line);border-ra
 .tagpillbtn{cursor:pointer;border:0;font:inherit}
 select.mapsel{min-height:32px;padding:4px 8px;font-size:.85rem;border-radius:6px}
 .mapwarn{font-size:.78rem;font-weight:700;color:var(--warn);margin-top:2px}
-.colnav{display:flex;gap:var(--sp1);margin-top:var(--sp1)}
+.colnav{display:flex;margin-top:var(--sp1);align-items:center;justify-content:space-between;width:100%}
 .beatref{margin-top:var(--sp3);background:var(--surface2);border:none;outline:none;border-radius:8px;padding:var(--sp3) var(--sp4)}
 .beatref strong{font-family:Georgia,serif;font-size:.9rem;display:block}
 .beatref span{display:block;font-size:.92rem;white-space:pre-wrap;word-break:break-word}
@@ -435,7 +449,7 @@ select.mapsel{min-height:32px;padding:4px 8px;font-size:.85rem;border-radius:6px
 .calico-bg-lg{width:232px;max-width:58vw}
 img.calico-gone{display:none!important}
 /* Inline name editing in the visual map */
-.pencilbtn{min-width:28px;min-height:28px;width:28px;height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-size:var(--icon-xs);line-height:1;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;vertical-align:middle}
+.pencilbtn{background:none;border:0;padding:3px;margin:0;color:inherit;font-size:15px;line-height:1;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;vertical-align:middle;cursor:pointer}
 .nameedit{display:flex;gap:var(--sp1);align-items:center;flex-wrap:wrap}
 /* A name with its pencil at the END of the name, on the same line — used for
    the arc names and scene names in the visual map only. */
@@ -515,7 +529,7 @@ img.calico-gone{display:none!important}
 .phone-align-scroll::-webkit-scrollbar{display:none;width:0;height:0}
 .phone-align-scroll input,.phone-align-scroll textarea,.phone-align-scroll select{touch-action:pan-y}
 .phone-align-grid{display:grid;width:max-content;min-width:100%;column-gap:var(--sp3)}
-.phone-label-cell{position:sticky;left:0;z-index:4;background:var(--surface);border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:var(--sp3) var(--sp2) var(--sp3) var(--sp3);min-width:0;text-align:left;overflow-wrap:anywhere;word-break:break-word}
+.phone-label-cell{position:sticky;left:0;z-index:4;background:var(--surface);border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:var(--sp3);min-width:0;text-align:left;overflow-wrap:anywhere;word-break:break-word}
 .phone-label-cell .pa-name{font-weight:700;font-size:.92rem;display:block;line-height:1.3}
 .phone-label-cell .pa-q{display:block;font-size:.78rem;color:var(--ink2);margin-top:var(--sp1);line-height:1.4;overflow-wrap:anywhere}
 .phone-label-bs{background:var(--surface2)}
@@ -552,8 +566,7 @@ img.calico-gone{display:none!important}
    by margin-left:auto inside a centred flex row, not floating). */
 .bs-card{display:flex;flex-direction:column;gap:var(--sp2);padding:var(--sp3);height:auto;min-height:0}
 .bs-card .beatcard-head{min-height:0}
-.bs-card .beatnav{margin-top:0;align-items:center;min-height:28px}
-.bs-card .beatnav .pencilbtn{margin-left:auto}
+.bs-card .beatnav{margin-top:0;align-items:center}
 .bs-card .bs-icon-row{margin-top:0;align-items:center}
 .bs-card .bs-map-edit{margin-top:0}
 .phone-empty-note{color:var(--ink2);font-size:.92rem;margin:0}
@@ -571,6 +584,28 @@ img.calico-gone{display:none!important}
 textarea,input,select{max-width:100%}
 .nsub,.nprev,.beatcard-head span,.beatref span,.loopnode b{overflow-wrap:anywhere}
 input[type="file"]{display:none}
+/* Arc placement dots: seven tiny dots under an arc's name, in
+   Seven-Point story order. Filled (in the arc colour) = that beat is
+   placed on a scene; empty = not placed yet. Visual only — no numbers,
+   no text. They re-render with the map, so they update live as beats
+   are placed, moved, or removed. Spacing: a clear 10px gap below the
+   key question, and the row may WRAP to a second line (with the same
+   5px row gap) rather than ever clipping or half-hiding a dot against
+   the label column's divider; the phone label column is also widened
+   (LABEL_W) and given full right padding so all seven fit on one row
+   at phone width. */
+.beatdots{display:flex;gap:5px;row-gap:5px;margin-top:10px;align-items:center;flex-wrap:wrap;max-width:100%}
+.beatdot{width:8px;height:8px;min-width:8px;border-radius:50%;border:1.5px solid var(--ink2);display:block;flex:0 0 auto}
+/* Stage-directions reference block (scene editor): a read-only block
+   above the Stage instructions input, visually distinct from an input
+   — darker inset, no border — listing this scene's beat(s) and
+   Blessing/Setback(s) live, with a button to insert them into the
+   Stage instructions as bracketed lines. */
+.stageref{padding:var(--sp4);margin-top:var(--sp5)}
+.stageref .sr-title{font-family:Georgia,serif;font-weight:700;font-size:.92rem;display:block;margin-bottom:var(--sp2)}
+.stageref .sr-line{display:block;font-size:.92rem;white-space:pre-wrap;word-break:break-word;margin-top:2px}
+.stageref .sr-line.empty-t{color:var(--ink2);font-style:italic}
+.stageref .btn{margin-top:var(--sp3)}
 .noproject{text-align:left;padding:24px 10px 40px;color:var(--ink2);vertical-align:top}
 </style>
 </head>
@@ -1171,12 +1206,14 @@ function ensureSceneBS(s){
   s.tag = deriveTagFromBS(s);
 }
 function bsTypeLabel(t){ return t === "blessing" ? "Blessing" : "Setback"; }
-/* Blessing / Setback colours: NOT from the arc palette. Blessings cycle
+/* Blessing / Setback colours for UNLINKED entries: Blessings cycle
    through positive hues (green, blue, purple, teal); Setbacks cycle through
    negative hues (red, orange, pink). Each entry gets the next colour for its
    type, so entries never share a colour until the cycle wraps. Pairs are
    [background, readable text] chosen for light and dark themes alike; the
-   colour is a background FILL (no outline), and the entry text is italic. */
+   colour is a background FILL (no outline), and the entry text is italic.
+   Entries LINKED to an arc instead use a close variation of that arc's
+   colour — see bsArcColors below. */
 var BS_PAL_LIGHT = {
   blessing:[["#cdeac0","#1e4620"],["#c3dcf5","#173a5e"],["#ddd0f7","#3c2568"],["#bfe6da","#12453a"]],
   setback:[["#f7cdc4","#5e1f16"],["#f9dfae","#5e3d0e"],["#f7c6da","#5e1f3d"],["#f3bfc9","#5e1c28"]]
@@ -1190,6 +1227,122 @@ function bsPalette(type, idx){
   var pal = table[type] || table.blessing;
   var c = pal[Math.abs(idx || 0) % pal.length];
   return { bg:c[0], fg:c[1] };
+}
+/* WCAG contrast ratio between two hex colours. */
+function contrastRatio(hexA, hexB){
+  function lum(hex){
+    var h = String(hex || "").replace("#", "");
+    if(h.length === 3) h = h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);
+    if(h.length !== 6) return 0;
+    function lin(c){ c = c/255; return c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); }
+    return 0.2126*lin(parseInt(h.substr(0,2),16)) + 0.7152*lin(parseInt(h.substr(2,2),16)) + 0.0722*lin(parseInt(h.substr(4,2),16));
+  }
+  var l1 = lum(hexA), l2 = lum(hexB);
+  if(l1 < l2){ var t = l1; l1 = l2; l2 = t; }
+  return (l1 + 0.05) / (l2 + 0.05);
+}
+function hexToHsl(hex){
+  var h = String(hex || "").replace("#", "");
+  if(h.length === 3) h = h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);
+  var r = parseInt(h.substr(0,2),16)/255, g = parseInt(h.substr(2,2),16)/255, b = parseInt(h.substr(4,2),16)/255;
+  var mx = Math.max(r,g,b), mn = Math.min(r,g,b), l = (mx+mn)/2, hue = 0, s = 0;
+  if(mx !== mn){
+    var d = mx - mn;
+    s = l > 0.5 ? d/(2-mx-mn) : d/(mx+mn);
+    if(mx === r) hue = (g-b)/d + (g < b ? 6 : 0);
+    else if(mx === g) hue = (b-r)/d + 2;
+    else hue = (r-g)/d + 4;
+    hue *= 60;
+  }
+  return { h:hue, s:s, l:l };
+}
+function hslToHex(h, s, l){
+  h = ((h % 360) + 360) % 360 / 360;
+  function hue2rgb(p, q, t){
+    if(t < 0) t += 1; if(t > 1) t -= 1;
+    if(t < 1/6) return p + (q-p)*6*t;
+    if(t < 1/2) return q;
+    if(t < 2/3) return p + (q-p)*(2/3-t)*6;
+    return p;
+  }
+  var r, g, b;
+  if(s === 0){ r = g = b = l; }
+  else {
+    var q = l < 0.5 ? l*(1+s) : l+s-l*s;
+    var pp = 2*l - q;
+    r = hue2rgb(pp, q, h + 1/3); g = hue2rgb(pp, q, h); b = hue2rgb(pp, q, h - 1/3);
+  }
+  function hx(c){ var v = Math.round(Math.max(0, Math.min(1, c)) * 255).toString(16); return v.length === 1 ? "0" + v : v; }
+  return "#" + hx(r) + hx(g) + hx(b);
+}
+/* Blessing/Setback colours for an entry LINKED to an arc: Blessings and
+   Setbacks now live inside arcs, so the card keeps a background FILL,
+   but the fill is a very close variation of THAT ARC's colour —
+   Blessing slightly lighter and cooler (hue nudged toward blue),
+   Setback slightly darker and warmer (hue nudged toward red/orange) —
+   per arc colour, in both layouts and both colour modes.
+   The variation is NEVER inverted from the arc's beat cards: beat
+   cards sit on the page background (dark in dark mode, light in light
+   mode) with mode-appropriate text, so the BS fill is built in the
+   MODE's lightness range, not the raw arc colour's — in DARK mode the
+   fill is a DARK variation of the arc colour with LIGHT text, and in
+   LIGHT mode a LIGHT variation with DARK text. (Deriving the fill from
+   the raw arc colour inverted it, because dark-mode arc colours are
+   pastels and light-mode ones are mid-tones.) Blessing and Setback
+   stay distinguishable WITHIN that range — Blessing the lighter of the
+   two in both modes, Setback the darker — never by flipping one of
+   them across to the opposite lightness. If the starting lightness
+   still misses 4.5:1 against the mode's text colour, the fill is
+   stepped further INTO the mode's range (darker in dark mode, lighter
+   in light mode) until it passes; verified across all 70 arc colours
+   × both types × both modes, worst case ≈ 5.3:1. Unlinked entries
+   keep the cycling palettes above, which are already mode-correct
+   (dark fills/light text in BS_PAL_DARK, light fills/dark text in
+   BS_PAL_LIGHT). */
+function bsArcColors(p, entry){
+  var arc = bsArcOf(p, entry);
+  if(!arc) return null;
+  var hsl = hexToHsl(getArcColor(p, arc));
+  var h = hsl.h, s = hsl.s;
+  if(entry.type === "blessing") h = h - 10; else h = h + 10;
+  var dark = colorModeDark();
+  var fg = dark ? "#ffffff" : "#161616";
+  var l = dark ? (entry.type === "blessing" ? 0.30 : 0.24)
+               : (entry.type === "blessing" ? 0.83 : 0.76);
+  var bg = hslToHex(h, s, l);
+  for(var i = 0; i < 24; i++){
+    if(contrastRatio(bg, fg) >= 4.5) break;
+    l += dark ? -0.02 : 0.02;
+    if(l < 0.04 || l > 0.97) break;
+    bg = hslToHex(h, s, l);
+  }
+  return { bg:bg, fg:fg };
+}
+/* The colours a Blessing/Setback card or editor block actually uses:
+   the arc variation when linked, the type palette when unlinked. */
+function bsCardColors(p, entry, typeIdx){
+  return bsArcColors(p, entry) || bsPalette(entry.type, typeIdx);
+}
+/* Seven placement dots for an arc (metadata option 1): one dot per
+   Seven-Point beat, in story order, filled in the arc colour when that
+   beat is placed on a scene, empty when it is not. Visual only. */
+function arcDotsEl(p, arc){
+  var wrapEl = document.createElement("div"); wrapEl.className = "beatdots";
+  var placedCount = 0;
+  var spans = BEAT_ORDER.map(function(k){
+    var placed = p.scenes.some(function(s){ return sceneTagFor(s, arc.id) === k; });
+    if(placed) placedCount++;
+    var d = document.createElement("span"); d.className = "beatdot";
+    var col = getArcColor(p, arc);
+    d.style.borderColor = col;
+    if(placed) d.style.background = col; else d.style.opacity = ".55";
+    d.title = BEAT_BY_KEY[k].title + (placed ? " — placed" : " — not placed yet");
+    return d;
+  });
+  spans.forEach(function(d){ wrapEl.appendChild(d); });
+  wrapEl.setAttribute("role", "img");
+  wrapEl.setAttribute("aria-label", placedCount + " of 7 beats placed for " + arc.name);
+  return wrapEl;
 }
 /* Focus a Blessing/Setback input without moving the page at all. */
 function focusBSInput(id){
@@ -1210,6 +1363,25 @@ function moveBSEntry(p, fromIdx, entryId, delta){
   var entry = from.bs.splice(pos, 1)[0];
   p.scenes[toIdx].bs.push(entry);
   from.tag = deriveTagFromBS(from); p.scenes[toIdx].tag = deriveTagFromBS(p.scenes[toIdx]);
+  touch(p); save();
+  return toIdx;
+}
+/* Move a beat's tag one scene earlier or later — beats move between
+   scenes exactly like Blessing/Setback entries do (same ‹ › icons,
+   same behaviour). If the destination scene already carries a
+   DIFFERENT beat of the same arc, the two beats swap scenes, since a
+   scene holds at most one beat per arc. Returns the destination scene
+   index, or -1 when the move is impossible. */
+function moveBeatTag(p, arc, beatKey, fromIdx, delta){
+  if(!p || !p.scenes || fromIdx < 0 || fromIdx >= p.scenes.length) return -1;
+  var toIdx = fromIdx + delta;
+  if(toIdx < 0 || toIdx >= p.scenes.length) return -1;
+  var from = p.scenes[fromIdx], to = p.scenes[toIdx];
+  if(sceneTagFor(from, arc.id) !== beatKey) return -1;
+  var other = sceneTagFor(to, arc.id);
+  if(other && other !== beatKey) setSceneTag(p, from, arc.id, other);
+  else setSceneTag(p, from, arc.id, null);
+  setSceneTag(p, to, arc.id, beatKey);
   touch(p); save();
   return toIdx;
 }
@@ -1442,16 +1614,18 @@ function makeInfoIcon(title, text){
 }
 document.getElementById("infoClose").addEventListener("click", hideInfo);
 document.getElementById("infoBack").addEventListener("click", function(e){ if(e.target === this) hideInfo(); });
-/* Breadcrumbs (iPad layout only, >=701px wide): all pages in order as
-   connected buttons under the header, sticky, current page highlighted.
-   They carry the page name now; the header itself carries the project
-   name and the "Saved on this device" note under it. */
+/* Breadcrumbs: all pages in order as connected buttons under the
+   header, sticky, current page highlighted — on iPad and iPhone alike
+   (the strip scrolls sideways on iPhone). They carry the page name;
+   the header itself carries the project name and the "Saved on this
+   device" note under it. */
 function renderCrumbs(){
   var bar = document.getElementById("crumbBar"); if(!bar) return;
   var p = cur();
-  var wide = false;
-  try{ wide = window.matchMedia ? window.matchMedia("(min-width: 701px)").matches : (window.innerWidth || 0) >= 701; }catch(e){ wide = (window.innerWidth || 0) >= 701; }
-  var show = wide && !!p && SECTION_ORDER.indexOf(ui.view) >= 0;
+  /* Breadcrumbs show on BOTH layouts — iPad and iPhone. On iPhone the
+     strip is horizontally scrollable (scrollbar hidden, see .crumbs)
+     so all pages fit; the current page is highlighted either way. */
+  var show = !!p && SECTION_ORDER.indexOf(ui.view) >= 0;
   bar.innerHTML = "";
   bar.classList.toggle("show", show);
   var root = document.documentElement;
@@ -1728,6 +1902,77 @@ var FIELD_INFO = {
   "Question moved": "Optional bookkeeping: name the question this beat pushes, and which way — closer to yes, or closer to no. If several beats in a row move nothing, one of them can probably go.",
   "__gateNote": "Record the decision and the date, plus one line of why. Mid-draft, future-you will want to know whether this was a real decision or a placeholder."
 };
+/* "From the literature" — a second section for the info overlays: 2–3
+   sourced tips per input, naming the methodology, WITHOUT making the
+   FIELD_INFO text above any longer or more verbose. field() appends
+   this section to the overlay text for any label listed here. */
+var FIELD_LIT = {
+  "Project title": "• Randy Ingermanson's Snowflake Method treats every early label as provisional — the title, like the one-sentence summary, is expected to change as the design sharpens.\n• A working title's job in the planning literature is retrieval, not marketing: you should be able to find and recognise the project at a glance months later.",
+  "Premise — one sentence": "• Snowflake Step 1 (Ingermanson): spend an hour on a one-sentence summary that names the protagonist, their goal, and the stakes — it becomes the sentence every later expansion must stay true to.\n• Ingermanson's test: a good one-sentence summary is also your pitch — if it would not make someone want to read the book, the concept may need sharpening, not the sentence.",
+  "Key question — whole story": "• Dan Wells' Seven-Point Structure: the whole plot hangs on one question that only the Resolution answers — every beat exists to move that question.\n• Wells builds backwards from the answer: decide how the question resolves first (Resolution), then set the opening as its opposite (Hook), so the question has somewhere to travel.",
+  "Theme": "• Dan Wells, Seven-Point teaching: revisit the theme at the Midpoint — the hero's conscious decision there is where the story argues its theme instead of just stating it.\n• John Truby, The Anatomy of Story: theme is the author's moral argument, expressed through the structure — what the hero learns (self-revelation) is the theme proved by action.",
+  "Narrative framing — sketch now, lock at the scene list": "• Dwight V. Swain, Techniques of the Selling Writer: scenes are written through a viewpoint character's senses — the framing decides whose senses you have, in every scene.\n• Ingermanson's Snowflake: POV choices made at the character stage are cheap; the same choice made mid-draft means rewriting every scene's opening.",
+  "Key ideas": "• Anne Lamott, Bird by Bird: keep the raw material coming in small pieces — short assignments and one-inch picture frames — rather than waiting for the whole design.\n• Ingermanson's Snowflake keeps a running list of ideas alongside the steps: material gathered early is mined at every expansion pass before anything new is invented.",
+  "Synopsis expansion": "• Snowflake Steps 2–4 (Ingermanson): expand in passes — sentence to paragraph, paragraph to a page — and only as far as your length requires; each pass keeps the same causal chain.\n• The 'but / therefore' rule (Matt Stone & Trey Parker, from their NYU writing lecture): beats should connect with 'but' or 'therefore', never 'and then' — if they swap freely, the chain is not causal.",
+  "Target length (words) — Gate 1": "• Ingermanson's Snowflake scales the design work to the book: the scene list and synopsis depth for a novel are wasted on a short story, and a short story's sketch starves a novel.\n• Dan Wells' Seven-Point lectures make the same point from the other side: length decides how many arcs (threads) the structure can carry — each extra arc needs all seven beats placed.",
+  "Average scene length (words)": "• Dwight V. Swain: a scene lasts exactly as long as its conflict does — scenes feel long when the goal is unclear, not when the word count is high.\n• Ingermanson's scene spreadsheet (Snowflake Step 8) budgets words per scene before drafting, so length problems surface at planning, not at page 200.",
+  "Name": "• Ingermanson, Snowflake Step 3: each major character gets a one-page summary before any synopsis expansion — the name heads that page and anchors everything under it.\n• John Truby, The Anatomy of Story: a character is defined by their web of relationships — how others name and address them is part of that web.",
+  "Their question": "• Dan Wells: give every major character one question the story answers about them — every beat in their arc should move it, or the beat belongs to another arc.\n• Wells' build order applies per character too: know their end state (Resolution) before their opening state (Hook), so the question has a direction.",
+  "Goal": "• Dwight V. Swain: a scene opens the moment a character pursues a goal — and the goal must be something they can visibly succeed or fail at, on the page.\n• Robert McKee, Story: a character's conscious desire drives the plot; what they pursue scene to scene is what the audience actually watches.",
+  "Motivation": "• John Truby's want vs. need (The Anatomy of Story): the want is the surface goal; the need is the flaw they must overcome — motivation lives where the two collide.\n• Swain: motivation must be strong enough to survive a disaster — if the character would quit after the first failure, the motivation, not the scene, needs rewriting.",
+  "Conflict": "• Robert McKee, Story: conflict works on three levels at once — inner, personal, and extra-personal; a scene using only one level usually feels thin.\n• Swain's Scene & Sequel: conflict is not an argument, it is a pursuit blocked — the goal comes first, then the opposition that makes pursuing it dramatic.",
+  "Epiphany": "• John Truby calls it self-revelation: the hero's deep change, revealed under climax pressure — it must be earned by everything before it, never announced.\n• Dan Wells: the Resolution is the Hook inverted — the epiphany is the hinge between the two states, so write it as the opposite of what the character believed at the start.",
+  "Storyline": "• Ingermanson, Snowflake Step 3: write each character's storyline as one paragraph — beginning state, the pressure that changes them, end state — before expanding the synopsis.\n• Truby: a character's storyline is their journey from weakness and need to self-revelation; if the paragraph does not end changed, the arc has no engine.",
+  "Arc name": "• Dan Wells' Seven-Point Structure handles subplots by giving each its own full seven-point arc — romance, mystery, and main plot each get all seven beats.\n• Wells (from the Star Trek Roleplaying Game Narrator's Guide structure he adapted): an arc is a question travelling through beats, so name it for the thread it tracks.",
+  "Arc question — this arc only": "• Dan Wells: each arc's seven beats must each move that arc's question — closer to yes, or further into trouble — or the beat is decoration.\n• Wells' backwards build works per arc: fix this arc's Resolution first, then its Hook as the opposite state, then the Midpoint between them.",
+  "Key Question": "• Dan Wells, Seven-Point Structure: the key question is the arc in one line — the Resolution is its answer, the Hook its opposite.\n• Dwight V. Swain frames the same idea at scene level: every scene also asks a small question, and its Disaster answers it — badly.",
+  "Hook": "• Dan Wells: build the Hook AFTER the Resolution — the hero begins in the opposite state to the one they end in, and the distance between those states is the arc.\n• Wells' Seven-Point comes from the Star Trek Roleplaying Game Narrator's Guide via his LTUE lectures: the Hook introduces hero, world, and the question in that opening state.",
+  "Plot Turn 1": "• Dan Wells: Plot Turn 1 moves the story from the Hook's world into the conflict — after it, returning to the old status quo is impossible.\n• Ingermanson's Snowflake puts the first disaster at the end of the first quarter — the same structural slot, where the premise becomes a problem.",
+  "Pinch 1": "• Dan Wells: a Pinch applies pressure — the antagonist acts, the hero is forced to respond. Pinches never resolve; they squeeze.\n• Dwight V. Swain's disasters work the same way: a pinch that solves something has skipped the sequel — reaction, dilemma, decision — where the character work happens.",
+  "Midpoint": "• Dan Wells: at the Midpoint the hero stops reacting and starts acting — a conscious decision, not an event that happens to them.\n• Wells also teaches theme at the Midpoint: the decision should argue with the theme, so the Resolution can settle the argument.",
+  "Pinch 2": "• Dan Wells: Pinch 2 is the darkest squeeze — the plan fails, the cost lands, and it should grow out of the hero's own Midpoint decision, not random bad luck.\n• Swain's worst disaster type is 'no, and furthermore': the failure itself creates the next, worse problem — that is the shape Pinch 2 wants.",
+  "Plot Turn 2": "• Dan Wells: Plot Turn 2 gives the hero the final piece — knowledge, tool, or ally — needed for the Resolution, and it is earned by the Midpoint decision.\n• Ingermanson's third disaster in Snowflake Step 2 forces the hero to change how they fight — the new piece arrives because the old approach failed.",
+  "Resolution": "• Dan Wells: write the Resolution FIRST. The entire Seven-Point build runs backwards from it — Resolution, its opposite the Hook, then the Midpoint, then the turns and pinches that connect them.\n• The Resolution answers the key question and cashes the Midpoint decision: the hero wins (or loses) by following through on who they decided to become.",
+  "Question moved": "• Dan Wells: audit an arc by asking of every beat 'which way did the question move?' — a beat that moves nothing in either direction is the first candidate to cut or merge.\n• Swain's sequel steps (Reaction → Dilemma → Decision) are the fine-grained version of the same audit, one scene at a time.",
+  "__gateNote": "• Ingermanson's Snowflake is built on decision points: each step is finished and fixed before the next expansion begins, so early decisions are recorded where later steps can check them.\n• Dan Wells' gates are structural, not bureaucratic: length chosen before arcs, arcs fixed before scenes — a note here records which side of the gate a decision was made on."
+};
+/* Worldbuilding info: a short tip plus "From the literature" per section
+   key, shown by the info icon beside each Worldbuilding field. */
+var WB_INFO = {
+  geography:{t:"Place is not backdrop: terrain decides what people eat, fear, and fight over.", l:"• J.R.R. Tolkien, 'On Fairy-Stories': a secondary world earns belief through inner consistency — the geography must obey its own logic everywhere, not just where the plot looks.\n• Brandon Sanderson's worldbuilding lectures (BYU): geography is the first cause — climate and terrain shape the culture, economy, and conflicts built on top of them."},
+  history:{t:"Only the history the present still feels belongs here — grudges, laws, ruins, debts.", l:"• Sanderson's lectures distinguish deep worldbuilding from the iceberg tip: know far more history than you show, and let the unexplained remainder make the world feel old.\n• Tolkien called this the impression of depth — glimpses of untold tales behind the told one — and warned it only works when the glimpsed history is consistent."},
+  politics:{t:"Power is who decides, who pays, and who cannot say no.", l:"• Sanderson (BYU lectures): work out who holds power over the system — a magic or technology's politics matter more to plot than its mechanics.\n• Ursula K. Le Guin's anthropological approach to worldbuilding: a society's power structure shows in its ordinary customs, not just its thrones."},
+  culture:{t:"Daily life is where worldbuilding becomes visible on the page.", l:"• Le Guin built cultures from the inside — food, work, kinship, ritual — arguing a world is its people's habits, not its map labels.\n• Sanderson: culture grows where geography, history, and the system collide; derive customs from those pressures instead of inventing them at random."},
+  religion:{t:"Belief matters to the plot when it makes people do things.", l:"• Sanderson's lectures: a religion's practices and costs show what a society values — doctrine alone is inert until someone acts on it.\n• Le Guin: invented belief works when it is lived daily — festivals, taboos, and mourning tell the reader more than a creation myth."},
+  economy:{t:"Scarcity is a plot engine: note what is expensive, and who goes without.", l:"• Sanderson: follow the system into the marketplace — if something powerful exists, someone sells it, taxes it, or bans it, and all three create story.\n• Tolkien's secondary-world consistency applies to prices too: a world where travel is dangerous cannot have cheap imports."},
+  language:{t:"Names and forms of address carry status, region, and history in one word.", l:"• Tolkien, a philologist first: names in a consistent invented language make a world feel discovered rather than assembled — sound patterns matter more than vocabulary lists.\n• Le Guin, 'From Elfland to Poughkeepsie': the style and naming of a fantasy world must be of a piece, or the spell breaks."},
+  magicTech:{t:"Write the rules as rules: what it does, what it costs, where it stops.", l:"• Sanderson's First Law (2007 essay): your ability to solve conflict with magic is directly proportional to how well the reader understands it — understood magic can solve problems; mysterious magic can only cause them.\n• Sanderson's Second Law: limitations are more interesting than powers — what the system cannot do creates the conflicts.\n• Sanderson's Third Law: expand what you already have before adding something new."},
+  notes:{t:"A parking lot, not a junk drawer — raid it whenever a section above feels thin.", l:"• Ingermanson's Snowflake keeps raw material in lists beside the structured steps: unstructured notes are a working stage, not a failure of organisation.\n• Sanderson's iceberg principle: notes below the surface still count — the reader feels the depth even where nothing is explained."},
+  jitNeeds:{t:"Name the scene or arc that needs each detail — need is the filter.", l:"• Sanderson describes just-in-time worldbuilding in his lectures: build the piece the story is about to touch, deeply, and leave the rest as sketched potential.\n• George R.R. Martin's gardener vs. architect distinction: gardeners grow the world as the story reaches it — this log is the gardener's trellis."},
+  jitDecisions:{t:"One line per settled fact, dated by scene if you can — future scenes will check this log first.", l:"• Tolkien's inner consistency is the just-in-time builder's discipline: a fact invented for scene 3 binds scene 30.\n• Sanderson's iceberg warning: invented-on-the-spot details accumulate into contradictions unless they are written down where the next invention can see them."},
+  jitQuestions:{t:"An unanswered question is a promise — list it before the draft makes it for you.", l:"• Dan Wells: every element should move a question; world questions raised and never answered read as mistakes, not mystery.\n• Sanderson: questions you raise deliberately (and track) become foreshadowing; questions you raise accidentally become plot holes."},
+  jitLater:{t:"Parking a detail here is a decision — it stops the current scene stalling on it.", l:"• Anne Lamott, Bird by Bird: work in small assignments — the scene in front of you gets your full attention; the parked detail gets its own later pass.\n• Ingermanson's Snowflake order is the same discipline at outline scale: nothing is expanded before its step arrives."},
+  sysRules:{t:"State the rules as if a clever character were trying to break them — because one will.", l:"• Sanderson's First Law: reader understanding is the licence to use the system in your climax — rules stated early can pay off; rules invented late cannot.\n• Sanderson's lectures: hard systems (clear rules) suit problem-solving plots; soft systems suit wonder and dread — choose deliberately."},
+  sysCosts:{t:"Costs are the interesting half: what does using it take, risk, or ruin?", l:"• Sanderson's Second Law: limitations > powers — a cost forces choices, and choices are plot.\n• Sanderson: a cost paid by someone else (a servant, a city, a future generation) is a conflict waiting for a scene."},
+  sysUsers:{t:"Access is a social fact: who is in, who is out, and who decides.", l:"• Sanderson (BYU lectures): ask who controls access to the system — that person or institution holds the story's real power.\n• Le Guin, The Ones Who Walk Away from Omelas is the extreme case study: a system's beneficiaries and its excluded define each other."},
+  sysSociety:{t:"Take one ordinary day and bend it around the system: work, law, worship, childhood.", l:"• Sanderson's core worldbuilding exercise: pick the system, then ask how it changes one normal life — the answers are your culture sections.\n• Tolkien's consistency again: if the system would change farming, it changes festivals, inheritance, and war — follow it all the way down."},
+  sysConflict:{t:"List the problems the system creates, not the ones it solves — the plot eats problems.", l:"• Sanderson: a well-built system generates its own antagonists — smugglers of the banned, victims of the cost, priests of the limit.\n• Dan Wells: pressure makes beats — each consequence here is a candidate Pinch for some arc."},
+  culPeople:{t:"Start with the group the story actually touches; the rest of the world can wait.", l:"• Le Guin's anthropological worldbuilding begins with a people's way of life taken seriously on its own terms, not as scenery for the hero.\n• Sanderson: a culture is geography plus history plus system, lived daily — start from those causes and the people follow."},
+  culBeliefs:{t:"Rituals are beliefs you can photograph: choose the visible acts, not just the doctrines.", l:"• Le Guin: belief in fiction convinces when it is practised — calendars, gestures, and obligations, not theology lectures.\n• Tolkien: invented faith works best implied through custom and song — the depth impression again."},
+  culDaily:{t:"One ordinary day, hour by hour, will teach you more than a festival list.", l:"• Le Guin built the Kesh (Always Coming Home) from daily texture — food, work, and mourning as worldbuilding's real substance.\n• Sanderson: test any culture by asking what its people eat, owe, and celebrate — if you can answer, scenes can be set there."},
+  culEvent:{t:"Pick the event people still argue about; consensus history is dead history.", l:"• Tolkien's depth effect depends on a past that feels lived in — events with ruins, songs, and grievances attached.\n• Sanderson: a defining event is a system's or a people's Pinch 2 — the lowest point whose consequences the present is still paying."},
+  culFearValue:{t:"What they protect and what they dread are the two levers every scene with them can pull.", l:"• John Truby, The Anatomy of Story: a culture, like a character, has a want and a need — what it protects aloud and what it fears underneath.\n• Dan Wells: fears and values are beat fuel — a Pinch threatens the value, a Blessing endangers it differently, by making it losable."},
+  geoMapNotes:{t:"Sketch roughly and honestly — precision comes later, and a wrong precise map is worse than a vague true one.", l:"• Tolkien drew the map early and treated it as a contract: distances and directions decided on the map bind every journey in the text.\n• Sanderson's lectures: the map is a promise to the reader — travel times and borders shown there will be checked against the plot."},
+  geoRegions:{t:"Name places by what travellers would call them, and note the one thing each is known for.", l:"• Tolkien's place-names carry language and history — a name in the local tongue implies the people who named it.\n• Le Guin, 'From Elfland to Poughkeepsie': names must belong to the world that speaks them, or the whole construction wobbles."},
+  geoFeatures:{t:"Rivers connect, mountains divide, borders do both badly — mark all three.", l:"• Sanderson: geography is causal — rivers make trade cities, mountains make isolated cultures, and borders make smugglers.\n• Tolkien's journeys are geography lessons: every range and river on the map ends up shaping the plot's options."},
+  geoTrade:{t:"Routes are scenes waiting to happen: who travels, how long, and what can go wrong.", l:"• Sanderson's consistency test: if the journey takes three days in chapter 2, it takes three days in chapter 20 — log times here.\n• Tolkien paced The Lord of the Rings against the map and calendar together; travel time is a plot resource, not filler."},
+  geoLive:{t:"Settlements are answers: to water, food, safety, or work. Note which answer, where.", l:"• Le Guin: a settlement's reason is its culture in embryo — a fishing town and a garrison town fear different things.\n• Sanderson: ask of every town 'why is this HERE?' — the answer usually writes its economy and politics for you."}
+};
+function wbInfoText(key){
+  var w = WB_INFO[key];
+  if(!w) return null;
+  return w.t + "\n\nFrom the literature:\n" + w.l;
+}
 function field(label, hint, val, oninput, opts){
   opts = opts || {};
   var id = "f" + Math.random().toString(36).slice(2,9);
@@ -1736,6 +1981,13 @@ function field(label, hint, val, oninput, opts){
   var lab = document.createElement("label"); lab.className="flabel"; lab.setAttribute("for", id);
   lab.appendChild(document.createTextNode(label));
   var infoText = opts.info || FIELD_INFO[label] || (label.indexOf("Your note — ") === 0 ? FIELD_INFO["__gateNote"] : null);
+  /* Expanded overlays: append the "From the literature" section (sourced
+     tips, existing text untouched) for inputs that have one. Fields that
+     pass their own opts.info (Worldbuilding) already include it. */
+  if(infoText && !opts.info){
+    var litKey = FIELD_LIT[label] ? label : (label.indexOf("Your note — ") === 0 ? "__gateNote" : null);
+    if(litKey) infoText = infoText + "\n\nFrom the literature:\n" + FIELD_LIT[litKey];
+  }
   if(infoText) lab.appendChild(makeInfoIcon(opts.infoTitle || label, infoText));
   if(hint){ var hs = document.createElement("span"); hs.className = "hint"; hs.textContent = hint; lab.appendChild(hs); }
   wrap.appendChild(lab);
@@ -1989,8 +2241,8 @@ function renderWorld(){
       node.appendChild(head);
       if(open){
         var ed = document.createElement("div"); ed.className = "editor";
-        ed.appendChild(field(sec.title, sec.prompt, data.text, function(v){ data.text = v; touch(p); saveSoon(); }, {rows:5, tall:true, placeholder:"Flesh it out — skeleton notes, not prose"}));
-        if(tpl.neededBy) ed.appendChild(field("Needed by (arc / scene)", "Which arc or scene needs this fleshed out? A note for later linking — nothing is linked automatically.", data.neededBy, function(v){ data.neededBy = v; touch(p); saveSoon(); }, {rows:1, placeholder:"e.g. Arc 2 — the Midpoint scene"}));
+        ed.appendChild(field(sec.title, sec.prompt, data.text, function(v){ data.text = v; touch(p); saveSoon(); }, {rows:5, tall:true, placeholder:"Flesh it out — skeleton notes, not prose", info:wbInfoText(sec.key), infoTitle:sec.title}));
+        if(tpl.neededBy) ed.appendChild(field("Needed by (arc / scene)", "Which arc or scene needs this fleshed out? A note for later linking — nothing is linked automatically.", data.neededBy, function(v){ data.neededBy = v; touch(p); saveSoon(); }, {rows:1, placeholder:"e.g. Arc 2 — the Midpoint scene", info:"Note the arc or scene that cannot be planned until this is fleshed out — it turns worldbuilding from decoration into a queue of plot work.\n\nFrom the literature:\n• Dan Wells: every beat must move a question — a world detail is plot-ready when you can name the beat whose question it moves.\n• Sanderson's just-in-time worldbuilding prioritises exactly this way: the detail a scene needs next is built first and deepest.", infoTitle:"Needed by (arc / scene)"}));
         node.appendChild(ed);
       }
       body.appendChild(node);
@@ -2102,7 +2354,7 @@ function makeBeatCard(p, arc, key, scene, opts){
     else { card.appendChild(buildBeatActions()); ui.openBeatCard = openKey; head.setAttribute("aria-expanded", "true"); }
   });
   card.appendChild(head);
-  /* iPad layout only (opts.inline): an EXTRA SMALL pencil in the top
+  /* Both layouts (opts.inline): an EXTRA SMALL pencil in the top
      right corner edits this beat's text IN PLACE in the map. The
      checkmark confirms and writes to the arc's beat — the single
      source — so the edit shows everywhere (Story Arcs, scene cards,
@@ -2136,13 +2388,13 @@ function makeBeatCard(p, arc, key, scene, opts){
   function buildBeatActions(){
     var acts = document.createElement("div"); acts.className = "beatcard-actions";
     if(!inlineEdit){
-      var eb = document.createElement("button"); eb.type = "button"; eb.className = "icon-xs-btn"; eb.textContent = "✎";
+      var eb = document.createElement("button"); eb.type = "button"; eb.className = "mapicon"; eb.textContent = "✎";
       eb.title = "Edit this beat in Story Arcs"; eb.setAttribute("aria-label", "Edit this beat in Story Arcs");
       eb.addEventListener("click", function(ev){ ev.stopPropagation(); jumpToBeat(arc.id, key); });
       acts.appendChild(eb);
     }
     if(scene){
-      var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-xs-btn"; rm.textContent = "🗑";
+      var rm = document.createElement("button"); rm.type = "button"; rm.className = "mapicon"; rm.textContent = "🗑";
       rm.title = "Remove tag"; rm.setAttribute("aria-label", "Remove this beat tag");
       rm.addEventListener("click", function(){ setSceneTag(p, scene, arc.id, null); ui.openBeatCard = null; touch(p); save(); renderScenes(); toast(bt.title + " tag removed"); });
       acts.appendChild(rm);
@@ -2150,6 +2402,33 @@ function makeBeatCard(p, arc, key, scene, opts){
     return acts;
   }
   if(open) card.appendChild(buildBeatActions());
+  /* Move icons, standardised with Blessing/Setback cards: the beat can
+     be moved one scene earlier or later with the same icon-only ‹ ›
+     glyphs — ‹ on the LEFT side of the card, › on the RIGHT side.
+     Hidden while this beat's text is being edited in place, exactly
+     like a Blessing/Setback card hides its arrows while editing. */
+  if(scene && opts && typeof opts.sceneIdx === "number" && !editingBeat){
+    var bnav = document.createElement("div"); bnav.className = "beatnav";
+    var blb = document.createElement("button"); blb.type = "button"; blb.className = "mapicon"; blb.textContent = "\u2039";
+    blb.setAttribute("aria-label", "Move the " + bt.title + " beat to the previous scene");
+    blb.disabled = opts.sceneIdx === 0;
+    blb.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      var to = moveBeatTag(p, arc, key, opts.sceneIdx, -1);
+      if(to >= 0){ editToggle(renderScenes, null); toast(bt.title + " moved to " + (p.scenes[to].title || ("Scene " + (to + 1)))); }
+    });
+    bnav.appendChild(blb);
+    var brb = document.createElement("button"); brb.type = "button"; brb.className = "mapicon"; brb.textContent = "\u203a";
+    brb.setAttribute("aria-label", "Move the " + bt.title + " beat to the next scene");
+    brb.disabled = opts.sceneIdx === p.scenes.length - 1;
+    brb.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      var to2 = moveBeatTag(p, arc, key, opts.sceneIdx, 1);
+      if(to2 >= 0){ editToggle(renderScenes, null); toast(bt.title + " moved to " + (p.scenes[to2].title || ("Scene " + (to2 + 1)))); }
+    });
+    bnav.appendChild(brb);
+    card.appendChild(bnav);
+  }
   return card;
 }
 /* A Blessing/Setback card for the visual map — it sits in its linked arc's row, or in the Unlinked row. It follows the
@@ -2159,10 +2438,12 @@ function makeBeatCard(p, arc, key, scene, opts){
    editing, showing the text input plus a checkmark (✓, done) and a
    trashcan (🗑, remove) icon button side by side. The < > move arrows
    show ONLY in collapsed mode: while editing they are hidden entirely.
-   All of these controls are EXTRA SMALL tier icon buttons, so every
-   icon renders at the same size. */
+   Move and edit controls in collapsed mode are icon-only glyphs (no
+   button chrome), standardised with beat cards: ‹ on the left side of
+   the card, › on the right side, and the edit pencil in the card's
+   TOP RIGHT corner. */
 function makeBSCard(p, s, entry, sceneIdx, typeIdx){
-  var pal = bsPalette(entry.type, typeIdx);
+  var pal = bsCardColors(p, entry, typeIdx);
   var card = document.createElement("div"); card.className = "beatcard bs-card";
   card.style.background = pal.bg; card.style.color = pal.fg; card.style.border = "none";
   var editing = ui.bsMapEditId === entry.id;
@@ -2182,14 +2463,19 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
     ta.addEventListener("input", function(){ entry.text = ta.value; s.tag = deriveTagFromBS(s); touch(p); saveSoon(); });
     ew.appendChild(ta);
     var iconRow = document.createElement("div"); iconRow.className = "bs-icon-row";
+    /* Done / Remove buttons sit on var(--surface), so their glyphs use
+       var(--ink) — the theme's own text colour for that surface — and
+       NEVER inherit the card's text colour: inheriting it made the ✓
+       invisible (dark check on the dark button in dark mode, white
+       check on the white button in light mode). */
     var doneB = document.createElement("button"); doneB.type = "button"; doneB.className = "icon-xs-btn"; doneB.textContent = "✓";
     doneB.title = "Done"; doneB.setAttribute("aria-label", "Done editing this " + bsTypeLabel(entry.type));
-    doneB.style.background = "var(--surface)";
+    doneB.style.background = "var(--surface)"; doneB.style.color = "var(--ink)";
     doneB.addEventListener("click", function(){ ui.bsMapEditId = null; editToggle(renderScenes, null); });
     iconRow.appendChild(doneB);
     var rmB = document.createElement("button"); rmB.type = "button"; rmB.className = "icon-xs-btn"; rmB.textContent = "🗑";
     rmB.title = "Remove"; rmB.setAttribute("aria-label", "Remove this " + bsTypeLabel(entry.type));
-    rmB.style.background = "var(--surface)";
+    rmB.style.background = "var(--surface)"; rmB.style.color = "var(--ink)";
     rmB.addEventListener("click", function(){
       s.bs = s.bs.filter(function(e){ return e.id !== entry.id; });
       s.tag = deriveTagFromBS(s); ui.bsMapEditId = null; touch(p); save(); editToggle(renderScenes, null);
@@ -2199,32 +2485,37 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
     ew.appendChild(iconRow);
     card.appendChild(ew);
   } else {
-    /* Collapsed only: move arrows, then the pencil. No arrows at all
-       while editing (the branch above renders none). */
+    /* Collapsed only: the edit pencil sits in the TOP RIGHT corner of
+       the card (icon-only, no button chrome — the same .beat-pencil-tr
+       placement as a beat card's pencil), and the head reserves
+       top-right padding so the title and text never run under it. The
+       move icons stay in their own row at the bottom of the card —
+       ‹ on the LEFT side, › on the RIGHT side, exactly like a beat
+       card. No arrows at all while editing (the branch above renders
+       none). */
     var nav = document.createElement("div"); nav.className = "beatnav";
-    var lb = document.createElement("button"); lb.type = "button"; lb.textContent = "\u2039";
-    lb.style.background = "var(--surface)";
+    var lb = document.createElement("button"); lb.type = "button"; lb.className = "mapicon"; lb.textContent = "\u2039";
     lb.setAttribute("aria-label", "Move this " + bsTypeLabel(entry.type) + " to the previous scene");
     lb.disabled = sceneIdx === 0;
     lb.addEventListener("click", function(){
       var to = moveBSEntry(p, sceneIdx, entry.id, -1);
       if(to >= 0){ editToggle(renderScenes, null); toast(bsTypeLabel(entry.type) + " moved to " + (p.scenes[to].title || ("Scene " + (to + 1)))); }
     });
-    var rb = document.createElement("button"); rb.type = "button"; rb.textContent = "\u203a";
-    rb.style.background = "var(--surface)";
+    nav.appendChild(lb);
+    var eb = document.createElement("button"); eb.type = "button"; eb.className = "pencilbtn beat-pencil-tr"; eb.textContent = "✎";
+    eb.title = "Edit this " + bsTypeLabel(entry.type);
+    eb.setAttribute("aria-label", "Edit this " + bsTypeLabel(entry.type));
+    eb.addEventListener("click", function(){ ui.bsMapEditId = entry.id; editToggle(renderScenes, null); focusBSInput(entry.id); });
+    card.appendChild(eb);
+    head.style.paddingRight = "36px";
+    var rb = document.createElement("button"); rb.type = "button"; rb.className = "mapicon"; rb.textContent = "\u203a";
     rb.setAttribute("aria-label", "Move this " + bsTypeLabel(entry.type) + " to the next scene");
     rb.disabled = sceneIdx === p.scenes.length - 1;
     rb.addEventListener("click", function(){
       var to = moveBSEntry(p, sceneIdx, entry.id, 1);
       if(to >= 0){ editToggle(renderScenes, null); toast(bsTypeLabel(entry.type) + " moved to " + (p.scenes[to].title || ("Scene " + (to + 1)))); }
     });
-    nav.appendChild(lb); nav.appendChild(rb);
-    var eb = document.createElement("button"); eb.type = "button"; eb.className = "pencilbtn"; eb.textContent = "✎";
-    eb.style.background = "var(--surface)"; eb.style.marginLeft = "auto";
-    eb.title = "Edit this " + bsTypeLabel(entry.type);
-    eb.setAttribute("aria-label", "Edit this " + bsTypeLabel(entry.type));
-    eb.addEventListener("click", function(){ ui.bsMapEditId = entry.id; editToggle(renderScenes, null); focusBSInput(entry.id); });
-    nav.appendChild(eb);
+    nav.appendChild(rb);
     card.appendChild(nav);
   }
   return card;
@@ -2253,7 +2544,7 @@ function buildBSEditor(p, s, sceneIdx){
   }
   var typeCounts = {blessing:0, setback:0};
   s.bs.forEach(function(entry){
-    var pal = bsPalette(entry.type, typeCounts[entry.type]++);
+    var pal = bsCardColors(p, entry, typeCounts[entry.type]++);
     var open = ui.openBSEntry === entry.id;
     var box = document.createElement("div"); box.className = "bs-entry";
     box.style.background = pal.bg; box.style.color = pal.fg;
@@ -2269,7 +2560,7 @@ function buildBSEditor(p, s, sceneIdx){
     pv.textContent = String(entry.text || "").trim() || "Not written yet.";
     hd.appendChild(pv);
     var eBtn = document.createElement("button"); eBtn.type = "button"; eBtn.className = "btn small";
-    eBtn.style.background = "var(--surface)";
+    eBtn.style.background = "var(--surface)"; eBtn.style.color = "var(--ink)";
     eBtn.textContent = open ? "Close" : "Edit";
     eBtn.setAttribute("aria-expanded", open ? "true" : "false");
     eBtn.setAttribute("aria-label", (open ? "Close" : "Edit") + " this " + bsTypeLabel(entry.type));
@@ -2313,17 +2604,20 @@ function buildBSEditor(p, s, sceneIdx){
       box.appendChild(arcRow);
       var foot = document.createElement("div"); foot.style.cssText = "display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap;margin-top:var(--sp3)";
       /* Done / Remove as icon buttons, same as in the map: checkmark
-         (SMALL tier here, matching the scene list) and trashcan. */
+         (SMALL tier here, matching the scene list) and trashcan. Their
+         glyphs use var(--ink) on their var(--surface) background —
+         never the card's inherited text colour, which made the ✓
+         invisible against its own button in both modes. */
       var doneB = document.createElement("button"); doneB.type = "button"; doneB.className = "icon-sm-btn"; doneB.textContent = "✓";
       doneB.title = "Done"; doneB.setAttribute("aria-label", "Done editing this " + bsTypeLabel(entry.type));
-      doneB.style.background = "var(--surface)";
+      doneB.style.background = "var(--surface)"; doneB.style.color = "var(--ink)";
       doneB.addEventListener("click", function(){
         if(ui.openBSEntry === entry.id) ui.openBSEntry = null;
         editToggle(renderScenes, null);
       });
       foot.appendChild(doneB);
       var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-sm-btn"; rm.textContent = "🗑";
-      rm.title = "Remove"; rm.style.background = "var(--surface)";
+      rm.title = "Remove"; rm.style.background = "var(--surface)"; rm.style.color = "var(--ink)";
       rm.setAttribute("aria-label", "Remove this " + bsTypeLabel(entry.type));
       rm.addEventListener("click", function(){
         s.bs = s.bs.filter(function(e){ return e.id !== entry.id; });
@@ -2335,14 +2629,14 @@ function buildBSEditor(p, s, sceneIdx){
       /* Move controls: arrows only, no label text (SMALL tier). */
       var stepper = document.createElement("div"); stepper.className = "bs-stepper"; stepper.style.marginTop = "0";
       var prevB = document.createElement("button"); prevB.type = "button"; prevB.className = "arrowbtn sm"; prevB.textContent = "\u2039";
-      prevB.style.background = "var(--surface)";
+      prevB.style.background = "var(--surface)"; prevB.style.color = "var(--ink)";
       prevB.setAttribute("aria-label", "Move this " + bsTypeLabel(entry.type) + " to the previous scene"); prevB.disabled = sceneIdx === 0;
       prevB.addEventListener("click", function(){
         var to = moveBSEntry(p, sceneIdx, entry.id, -1);
         if(to >= 0){ editToggle(renderScenes, null); toast(bsTypeLabel(entry.type) + " moved to " + (p.scenes[to].title || ("Scene " + (to + 1)))); }
       });
       var nextB = document.createElement("button"); nextB.type = "button"; nextB.className = "arrowbtn sm"; nextB.textContent = "\u203a";
-      nextB.style.background = "var(--surface)";
+      nextB.style.background = "var(--surface)"; nextB.style.color = "var(--ink)";
       nextB.setAttribute("aria-label", "Move this " + bsTypeLabel(entry.type) + " to the next scene"); nextB.disabled = sceneIdx === p.scenes.length - 1;
       nextB.addEventListener("click", function(){
         var to = moveBSEntry(p, sceneIdx, entry.id, 1);
@@ -2523,7 +2817,7 @@ function buildPhoneTagControl(p, arc, sc){
       picker.appendChild(b);
     });
     [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
-      var pb2 = document.createElement("button"); pb2.type = "button"; pb2.textContent = "+ " + pair[1];
+      var pb2 = document.createElement("button"); pb2.type = "button"; pb2.textContent = pair[1];
       pb2.setAttribute("aria-label", "Add a " + pair[1] + " linked to " + arc.name + " at this scene");
       pb2.addEventListener("click", function(){
         ui.phoneSceneId = sc.id; ui.phoneTagPicker = null;
@@ -2656,6 +2950,7 @@ function renderPhoneSceneMap(p, wrap){
       var hd = document.createElement("div"); hd.className = "phone-arc-head";
       hd.innerHTML = "<span class='pa-name'>" + esc(arc.name) + "</span>"
         + (arc.question ? "<span class='pa-q'>" + esc(arc.question) + "</span>" : "");
+      hd.appendChild(arcDotsEl(p, arc));
       sec.appendChild(hd);
       box.appendChild(sec);
     });
@@ -2683,7 +2978,11 @@ function renderPhoneSceneMap(p, wrap){
     box.appendChild(ow);
   }
   /* (3) The aligned grid in its horizontal scroller. */
-  var LABEL_W = 104;
+  /* Label column width: wide enough that the arc name, key question and
+     all seven placement dots (7×8px + 6×5px gaps = 86px) fit INSIDE the
+     cell's padded content box (120 − 6px arc bar − 2×12px padding =
+     90px), so no dot touches or crosses the divider. */
+  var LABEL_W = 120;
   var vw = window.innerWidth || 390;
   var estAvail = Math.max(150, (vw - 66) - LABEL_W);
   var COL_W = Math.max(140, Math.round(estAvail * 0.88));
@@ -2707,6 +3006,7 @@ function renderPhoneSceneMap(p, wrap){
     labCell.innerHTML = "<span class='pa-name'>" + esc(arc.name) + "</span>"
       + (arc.question ? "<span class='pa-q'>" + esc(arc.question) + "</span>" : "")
       + (issueAt >= 0 ? '<div class="mapwarn">\u26a0 Out of order</div>' : "");
+    labCell.appendChild(arcDotsEl(p, arc));
     grid.appendChild(labCell);
     p.scenes.forEach(function(sc, si){
       var cell = document.createElement("div"); cell.className = "phone-cell";
@@ -2714,7 +3014,7 @@ function renderPhoneSceneMap(p, wrap){
       cell.setAttribute("data-phone-scene", sc.id);
       var beatKey = sceneTagFor(sc, arc.id);
       var cellStack = document.createElement("div"); cellStack.className = "bs-cell-stack";
-      if(beatKey) cellStack.appendChild(makeBeatCard(p, arc, beatKey, sc));
+      if(beatKey) cellStack.appendChild(makeBeatCard(p, arc, beatKey, sc, {inline:true, sceneIdx: si}));
       var pbsCounts = {blessing:0, setback:0};
       (sc.bs || []).forEach(function(entry){
         var cnt = pbsCounts[entry.type]++;
@@ -2843,7 +3143,7 @@ function buildGridTagControl(p, arc, sc){
       picker.appendChild(gb);
     });
     [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
-      var bb2 = document.createElement("button"); bb2.type = "button"; bb2.textContent = "+ " + pair[1];
+      var bb2 = document.createElement("button"); bb2.type = "button"; bb2.textContent = pair[1];
       bb2.setAttribute("aria-label", "Add a " + pair[1] + " linked to " + arc.name + " at this scene");
       bb2.addEventListener("click", function(){
         ui.gridTagPicker = null;
@@ -2909,6 +3209,7 @@ function renderSceneMap(p, wrap){
       elab.style.borderLeft = "6px solid " + getArcColor(p, arc);
       elab.innerHTML = "<strong>" + esc(arc.name) + "</strong>"
         + (arc.question ? '<div style="font-weight:400;font-size:.82rem;color:var(--ink2);margin-top:2px">' + esc(arc.question) + "</div>" : "");
+      elab.appendChild(arcDotsEl(p, arc));
       eGrid.appendChild(elab);
     });
     eScroll.appendChild(eGrid); eFrame.appendChild(eScroll); wrap.appendChild(eFrame);
@@ -2954,10 +3255,10 @@ function renderSceneMap(p, wrap){
        one scene there is nothing to swap with, so no arrows are shown. */
     if(p.scenes.length > 1){
       var nav = document.createElement("div"); nav.className = "colnav";
-      var lb = document.createElement("button"); lb.type = "button"; lb.className = "arrowbtn"; lb.textContent = "\u2039";
+      var lb = document.createElement("button"); lb.type = "button"; lb.className = "mapicon"; lb.textContent = "\u2039";
       lb.setAttribute("aria-label", "Move scene " + (i + 1) + " earlier"); lb.disabled = i === 0;
       lb.addEventListener("click", function(){ moveScene(p, i, i - 1); });
-      var rb = document.createElement("button"); rb.type = "button"; rb.className = "arrowbtn"; rb.textContent = "\u203a";
+      var rb = document.createElement("button"); rb.type = "button"; rb.className = "mapicon"; rb.textContent = "\u203a";
       rb.setAttribute("aria-label", "Move scene " + (i + 1) + " later"); rb.disabled = i === p.scenes.length - 1;
       rb.addEventListener("click", function(){ moveScene(p, i, i + 1); });
       nav.appendChild(lb); nav.appendChild(rb);
@@ -3015,13 +3316,14 @@ function renderSceneMap(p, wrap){
     labMeta.innerHTML = (arc.question ? '<div style="font-weight:400;font-size:.82rem;color:var(--ink2);margin-top:2px">' + esc(arc.question) + '</div>' : "")
       + (issueAt >= 0 ? '<div class="mapwarn">\u26a0 Beats out of order in this arc</div>' : "");
     lab.appendChild(labMeta);
+    lab.appendChild(arcDotsEl(p, arc));
     grid.appendChild(lab);
     p.scenes.forEach(function(s, si){
       var cell = document.createElement("div"); cell.className = "mapcell3";
       cell.style.gridColumn = String(si + 3); cell.style.gridRow = String(rowIdx);
       var beatKey = sceneTagFor(s, arc.id);
       var cellStack2 = document.createElement("div"); cellStack2.className = "bs-cell-stack";
-      if(beatKey) cellStack2.appendChild(makeBeatCard(p, arc, beatKey, s, {inline:true}));
+      if(beatKey) cellStack2.appendChild(makeBeatCard(p, arc, beatKey, s, {inline:true, sceneIdx: si}));
       var gbsCounts = {blessing:0, setback:0};
       (s.bs || []).forEach(function(entry){
         var cnt3 = gbsCounts[entry.type]++;
@@ -3147,7 +3449,7 @@ function renderBeats(){
       var cw = document.createElement("div"); cw.className = "fieldwrap";
       var cl = document.createElement("label"); cl.className = "flabel";
       cl.textContent = "Arc colour";
-      cl.appendChild(makeInfoIcon("Arc colour", "The colour this arc wears everywhere: its pills on scene cards and its row in the visual map. Colours come from the project scheme family (chosen on Overview), so arcs always harmonise."));
+      cl.appendChild(makeInfoIcon("Arc colour", "The colour this arc wears everywhere: its pills on scene cards and its row in the visual map. Colours come from the project scheme family (chosen on Overview), so arcs always harmonise.\n\nFrom the literature:\n• Ingermanson's Snowflake scene spreadsheet (Step 8) tracks each scene's thread and POV — writers have colour-coded threads on index cards and corkboards for the same reason: a subplot you cannot see at a glance is a subplot that quietly vanishes.\n• Dan Wells teaches arcs as separate Seven-Point structures running in parallel — giving each its own colour is the visual version of keeping each arc's seven beats distinct."));
       cw.appendChild(cl);
       var srow = document.createElement("div"); srow.className = "swatches";
       arcPalette(p).forEach(function(col, ci){
@@ -3473,7 +3775,58 @@ function renderScenes(){
       combo.appendChild(comboLab);
       combo.appendChild(whatField);
       combo.appendChild(btWrap);
-      combo.appendChild(field("Stage instructions", "One instruction per line — write each step on its own line. In Copy for Evernote and the scene sheets, each line gets its own [brackets], with a blank line between lines.", s.stage, function(v){ s.stage=v; touch(p); saveSoon(); }, {rows:10, xtall:true, placeholder:"One instruction per line:\nShe crosses to the window.\nShe reads the letter twice.\nShe sits down, slowly."}));
+      /* Stage directions — reference block + Insert (option 2): a
+         separate READ-ONLY block above the Stage instructions input,
+         showing this scene's beat(s) and Blessing/Setback(s) live (it
+         re-renders with the scene, so map changes show here), visually
+         distinct from an input. Nothing is auto-inserted: the Insert
+         button appends them to the Stage instructions as bracketed
+         lines only when tapped, and the input itself stays clean and
+         editable. Inserting writes into the existing stage text — no
+         new data field. */
+      var stageField = field("Stage instructions", "One instruction per line — write each step on its own line. In Copy for Evernote and the scene sheets, each line gets its own [brackets], with a blank line between lines.", s.stage, function(v){ s.stage=v; touch(p); saveSoon(); }, {rows:10, xtall:true, placeholder:"One instruction per line:\nShe crosses to the window.\nShe reads the letter twice.\nShe sits down, slowly."});
+      var stageTa = stageField.querySelector("textarea");
+      var sref2 = document.createElement("div"); sref2.className = "refblock stageref";
+      var srTitle = document.createElement("span"); srTitle.className = "sr-title";
+      srTitle.textContent = "On this scene — for reference";
+      sref2.appendChild(srTitle);
+      var srLines = [];
+      (s.beatTags || []).forEach(function(t){
+        var arc3 = null;
+        p.arcs.forEach(function(a){ if(a.id === t.arcId) arc3 = a; });
+        if(!arc3 || !BEAT_BY_KEY[t.beat]) return;
+        var bd3 = beatData(arc3, t.beat);
+        srLines.push("[" + BEAT_BY_KEY[t.beat].title + " \u2014 " + arc3.name + ": " + (String(bd3.text || "").trim() || "not written yet") + "]");
+      });
+      ensureSceneBS(s);
+      (s.bs || []).forEach(function(e2){
+        var arc4 = bsArcOf(p, e2);
+        srLines.push("[" + bsTypeLabel(e2.type) + (arc4 ? " \u2014 " + arc4.name : "") + ": " + (String(e2.text || "").trim() || "not written yet") + "]");
+      });
+      if(srLines.length){
+        srLines.forEach(function(ln){
+          var sp = document.createElement("span"); sp.className = "sr-line"; sp.textContent = ln;
+          sref2.appendChild(sp);
+        });
+        var insBtn = document.createElement("button"); insBtn.type = "button"; insBtn.className = "btn small";
+        insBtn.textContent = "Insert into stage instructions";
+        insBtn.setAttribute("aria-label", "Insert this scene's beats and Blessings/Setbacks into the stage instructions as bracketed lines");
+        insBtn.addEventListener("click", function(){
+          var cur2 = String(s.stage || "");
+          var block = srLines.join("\n");
+          s.stage = cur2.trim() ? cur2.replace(/\s+$/, "") + "\n" + block : block;
+          if(stageTa) stageTa.value = s.stage;
+          touch(p); save();
+          toast("Inserted as bracketed lines in Stage instructions");
+        });
+        sref2.appendChild(insBtn);
+      } else {
+        var srNone = document.createElement("span"); srNone.className = "sr-line empty-t";
+        srNone.textContent = "No beat tagged and no Blessing or Setback on this scene yet — tag one above and it will show here for reference while you write the stage instructions.";
+        sref2.appendChild(srNone);
+      }
+      combo.appendChild(sref2);
+      combo.appendChild(stageField);
       ed.appendChild(combo);
 
       var row = document.createElement("div"); row.style.cssText="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px";
