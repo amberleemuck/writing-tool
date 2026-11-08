@@ -93,6 +93,32 @@ button{cursor:pointer}
    buttons are square at the tier height (.icon-std-btn / .icon-sm-btn /
    .icon-xs-btn). */
 :root{--icon-std:20px;--icon-sm:16px;--icon-xs:15px}
+/* ===== Tabler icons (MIT, outline, 24x24, 2px stroke) =====
+   Every icon in the app is an inline SVG from the Tabler sprite at the
+   top of <body>, rendered through the .ti class. Icons are sized ONLY
+   by the tier of the control that holds them, matching the button
+   tiers above, so an icon swap never changes a button's box:
+   standard controls 20px, small 16px, extra-small / map icons 15px.
+   Stroke and colour come from the icon itself (currentColor), so an
+   icon always takes its button's text colour in every scheme. */
+.ti{display:inline-block;flex:0 0 auto;vertical-align:middle}
+.iconbtn .ti,.icon-std-btn .ti{width:var(--icon-std);height:var(--icon-std)}
+.icon-sm-btn .ti,.arrowbtn.sm .ti{width:var(--icon-sm);height:var(--icon-sm)}
+.icon-xs-btn .ti,.arrowbtn .ti,.nameedit button .ti,.phone-tag-btn .ti{width:var(--icon-xs);height:var(--icon-xs)}
+.mapicon .ti,.pencilbtn .ti{width:15px;height:15px}
+.btn .ti{width:18px;height:18px;vertical-align:-3px}
+.tagbtn .ti{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.beatpill .ti{width:12px;height:12px;vertical-align:-1px;margin-left:4px;margin-right:0}
+.chainchip b .ti{width:13px;height:13px;vertical-align:-1px;margin-left:3px}
+.checks .ck .ti{width:12px;height:12px;stroke-width:2.6}
+.ready-row .rk .ti{width:11px;height:11px;stroke-width:2.6}
+.passnum .ti{width:14px;height:14px;stroke-width:2.6}
+.seqarrow .ti{width:16px;height:16px}
+.looparrow .ti{width:14px;height:14px;vertical-align:-2px}
+.ptp-cancel .ti{width:16px;height:16px;vertical-align:-3px}
+.bs-plus-btn .ti,.mplus button .ti{width:16px;height:16px}
+.mh .ti{width:14px;height:14px;vertical-align:-2px}
+.mapwarn .ti{width:13px;height:13px;vertical-align:-2px;margin-right:3px}
 .btn{min-height:48px;padding:10px 16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);font-weight:600;font-size:1rem;line-height:1.25}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn.small,.btn-sm{min-height:36px;padding:6px 12px;font-size:.88rem;line-height:1.25;border-radius:8px}
@@ -123,7 +149,8 @@ button{cursor:pointer}
 .crumb-btn:last-child{border-radius:0 8px 8px 0}
 .crumb-btn[aria-current="page"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 /* Tiny info icon beside an input title — an icon, not a button-sized control. */
-.infoicon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;min-width:16px;border-radius:50%;border:1.5px solid var(--ink2);color:var(--ink2);font-family:Georgia,serif;font-style:italic;font-size:10px;font-weight:700;line-height:1;margin-left:6px;vertical-align:2px;cursor:pointer;background:none;padding:0}
+.infoicon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;min-width:16px;color:var(--ink2);margin-left:6px;vertical-align:-2px;cursor:pointer;background:none;border:0;padding:0}
+.infoicon .ti{width:16px;height:16px}
 .infoicon:focus{outline:2px solid var(--accent);outline-offset:1px}
 .export-wrap{position:relative;flex:0 0 auto}
 .export-menu{position:absolute;top:calc(100% + 6px);right:0;z-index:60;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:6px;display:none;flex-direction:column;gap:4px;min-width:210px}
@@ -787,11 +814,10 @@ input[type="file"]{display:none}
    it is --accent-ink on the primary Export button (7–12:1) and the
    button's own ink on plain buttons — visible everywhere by
    construction, in every scheme. */
-button.dd-arrow::after{content:" ▾";font-size:.72em;font-weight:700;color:inherit;margin-left:2px}
-button.dd-arrow[aria-expanded="true"]::after{content:" ▴"}
+button.dd-arrow::after{content:"";display:inline-block;width:15px;height:15px;margin-left:5px;vertical-align:-2px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6l6 -6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6l6 -6'/%3E%3C/svg%3E") center/contain no-repeat;transition:transform .15s ease}
+button.dd-arrow[aria-expanded="true"]::after{transform:rotate(180deg)}
 .refstrip-head{position:relative;padding-right:30px}
-button.refstrip-head.dd-arrow::after{content:"▾";position:absolute;top:6px;right:6px;margin:0;font-size:.8rem}
-button.refstrip-head.dd-arrow[aria-expanded="true"]::after{content:"▴"}
+button.refstrip-head.dd-arrow::after{position:absolute;top:8px;right:8px;margin:0;width:16px;height:16px}
 select{padding-right:32px}
 .export-menu,.demo-menu,.layerpanel,.bs-menu{border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);background:var(--surface)}
 /* Editing passes: the info icon sits inline, right beside the pass
@@ -866,11 +892,29 @@ button.chainchip:hover{border-color:var(--accent)}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="ti-menu-2" viewBox="0 0 24 24"><path d="M4 6l16 0"/><path d="M4 12l16 0"/><path d="M4 18l16 0"/></symbol>
+<symbol id="ti-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+<symbol id="ti-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+<symbol id="ti-pencil" viewBox="0 0 24 24"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/></symbol>
+<symbol id="ti-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+<symbol id="ti-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+<symbol id="ti-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+<symbol id="ti-chevron-up" viewBox="0 0 24 24"><path d="M6 15l6 -6l6 6"/></symbol>
+<symbol id="ti-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></symbol>
+<symbol id="ti-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+<symbol id="ti-arrow-right" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></symbol>
+<symbol id="ti-arrow-down" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M18 13l-6 6"/><path d="M6 13l6 6"/></symbol>
+<symbol id="ti-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+<symbol id="ti-info-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></symbol>
+<symbol id="ti-circle" viewBox="0 0 24 24"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/></symbol>
+<symbol id="ti-alert-triangle" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.75a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"/><path d="M12 16h.01"/></symbol>
+</defs></svg>
 <div class="drawerback" id="drawerBack"></div>
 <nav class="drawer" id="drawer" aria-label="Menu" aria-hidden="true">
   <div class="drawer-head">
     <span class="dt" id="drawerTitle">Menu</span>
-    <button class="iconbtn" id="drawerClose" type="button" aria-label="Close menu">×</button>
+    <button class="iconbtn" id="drawerClose" type="button" aria-label="Close menu"><svg class="ti" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ti-x"></use></svg></button>
   </div>
   <button class="navitem" type="button" data-nav="projects">All Projects</button>
   <button class="navitem" type="button" data-nav="setup">Setup &amp; Backup</button>
@@ -888,7 +932,7 @@ button.chainchip:hover{border-color:var(--accent)}
 <div class="wrap">
   <div class="topbar">
     <div class="bar-row">
-      <button class="iconbtn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      <button class="iconbtn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false"><svg class="ti" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ti-menu-2"></use></svg></button>
       <div class="bar-title-block">
         <div class="bar-title" id="barTitle">Your projects</div>
         <div class="bar-saved" id="savedNote" aria-live="polite"></div>
@@ -1125,6 +1169,13 @@ button.chainchip:hover{border-color:var(--accent)}
 (function(){
 "use strict";
 var LS_KEY = "standalone-writing-tool-v1";
+/* Tabler icons: ti("pencil") returns the inline SVG for that symbol in
+   the sprite at the top of <body>. Icon SIZE is never set here - the
+   .ti rules size each icon by the tier of its control (see the CSS
+   button tiers), so swapping a glyph for an icon cannot resize a
+   button. Stroke/colour ride on the svg itself: currentColor, so an
+   icon always matches its button's text colour. */
+function ti(name){ return '<svg class="ti" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><use href="#ti-' + name + '"></use></svg>'; }
 
 var BEATS = [
   {key:"keyQuestion", title:"Key Question", build:"Phase 0", sub:"The yes/no question the ending answers. Plus one question per character."},
@@ -2145,7 +2196,7 @@ function showInfo(title, text){
 function hideInfo(){ var b = document.getElementById("infoBack"); if(b) b.classList.remove("open"); }
 function makeInfoIcon(title, text){
   var s = document.createElement("span");
-  s.className = "infoicon"; s.textContent = "i";
+  s.className = "infoicon"; s.innerHTML = ti("info-circle");
   s.setAttribute("role", "button"); s.setAttribute("tabindex", "0");
   s.setAttribute("aria-label", "More information and tips: " + title);
   s.title = "Tips: " + title;
@@ -3756,7 +3807,7 @@ function renderIntake(){
   var synH = document.createElement("h4"); synH.className = "serif"; synH.style.cssText = "margin:0 0 var(--sp2)"; synH.textContent = "Synopsis from the beats — read-only";
   synHead.appendChild(synH);
   if(synEntries.length){
-    var synJump = document.createElement("button"); synJump.type = "button"; synJump.className = "icon-sm-btn synedit"; synJump.textContent = "\u270e";
+    var synJump = document.createElement("button"); synJump.type = "button"; synJump.className = "icon-sm-btn synedit"; synJump.innerHTML = ti("pencil");
     synJump.title = "Edit these beats in Story Arcs"; synJump.setAttribute("aria-label", "Edit the beats behind this synopsis in Story Arcs");
     (function(first){ synJump.addEventListener("click", function(){ jumpToBeat(first.arc.id, first.items[0].key); }); })(synEntries[0]);
     synHead.appendChild(synJump);
@@ -3776,7 +3827,7 @@ function renderIntake(){
         var lt = document.createElement("span"); lt.style.flex = "1"; lt.style.minWidth = "0";
         lt.innerHTML = "<strong>" + esc(BEAT_BY_KEY[it.key].title) + "</strong> — " + esc(it.text);
         li.appendChild(lt);
-        var eb = document.createElement("button"); eb.type = "button"; eb.className = "icon-sm-btn synedit"; eb.textContent = "\u270e";
+        var eb = document.createElement("button"); eb.type = "button"; eb.className = "icon-sm-btn synedit"; eb.innerHTML = ti("pencil");
         eb.title = "Edit this beat in Story Arcs"; eb.setAttribute("aria-label", "Edit the " + BEAT_BY_KEY[it.key].title + " beat of " + grp.arc.name + " in Story Arcs");
         (function(aid, k){ eb.addEventListener("click", function(){ jumpToBeat(aid, k); }); })(grp.arc.id, it.key);
         li.appendChild(eb);
@@ -4250,7 +4301,7 @@ function renderCharacters(){
       var tgRow = document.createElement("div"); tgRow.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin-top:var(--sp4)";
       function flagBtn(label, val, apply){
         var fb = document.createElement("button"); fb.type = "button"; fb.className = "tagbtn"; fb.setAttribute("aria-pressed", val ? "true" : "false");
-        fb.textContent = (val ? "✓ " : "") + label;
+        fb.innerHTML = (val ? ti("check") : "") + esc(label);
         fb.addEventListener("click", function(){ apply(!val); touch(p); save(); editToggle(renderCharacters, '[data-char-id="' + c.id + '"]'); });
         return fb;
       }
@@ -4323,7 +4374,7 @@ function makeBeatCard(p, arc, key, scene, opts){
   var inlineEdit = !!(opts && opts.inline);
   var editingBeat = inlineEdit && ui.mapBeatEdit === openKey;
   if(inlineEdit && !editingBeat){
-    var bp = document.createElement("button"); bp.type = "button"; bp.className = "pencilbtn beat-pencil-tr"; bp.textContent = "✎";
+    var bp = document.createElement("button"); bp.type = "button"; bp.className = "pencilbtn beat-pencil-tr"; bp.innerHTML = ti("pencil");
     bp.title = "Edit this beat's text here"; bp.setAttribute("aria-label", "Edit this beat's text here in the map");
     bp.addEventListener("click", function(ev){ ev.stopPropagation(); ui.mapBeatEdit = openKey; editToggle(renderScenes, null); });
     card.appendChild(bp);
@@ -4336,10 +4387,10 @@ function makeBeatCard(p, arc, key, scene, opts){
     bta.placeholder = "What happens here, and what question does it move?";
     ew2.appendChild(bta);
     var erow = document.createElement("div"); erow.className = "beatcard-edit-row";
-    var okB = document.createElement("button"); okB.type = "button"; okB.className = "icon-xs-btn"; okB.textContent = "✓";
+    var okB = document.createElement("button"); okB.type = "button"; okB.className = "icon-xs-btn"; okB.innerHTML = ti("check");
     okB.title = "Confirm — updates this beat everywhere"; okB.setAttribute("aria-label", "Confirm beat text");
     okB.addEventListener("click", function(){ d.text = bta.value; ui.mapBeatEdit = null; touch(p); save(); editToggle(renderScenes, null); toast(bt.title + " updated"); });
-    var cxB = document.createElement("button"); cxB.type = "button"; cxB.className = "icon-xs-btn"; cxB.textContent = "✕";
+    var cxB = document.createElement("button"); cxB.type = "button"; cxB.className = "icon-xs-btn"; cxB.innerHTML = ti("x");
     cxB.title = "Cancel"; cxB.setAttribute("aria-label", "Cancel beat edit");
     cxB.addEventListener("click", function(){ ui.mapBeatEdit = null; editToggle(renderScenes, null); });
     erow.appendChild(okB); erow.appendChild(cxB); ew2.appendChild(erow);
@@ -4349,13 +4400,13 @@ function makeBeatCard(p, arc, key, scene, opts){
   function buildBeatActions(){
     var acts = document.createElement("div"); acts.className = "beatcard-actions";
     if(!inlineEdit){
-      var eb = document.createElement("button"); eb.type = "button"; eb.className = "mapicon"; eb.textContent = "✎";
+      var eb = document.createElement("button"); eb.type = "button"; eb.className = "mapicon"; eb.innerHTML = ti("pencil");
       eb.title = "Edit this beat in Story Arcs"; eb.setAttribute("aria-label", "Edit this beat in Story Arcs");
       eb.addEventListener("click", function(ev){ ev.stopPropagation(); jumpToBeat(arc.id, key); });
       acts.appendChild(eb);
     }
     if(scene){
-      var rm = document.createElement("button"); rm.type = "button"; rm.className = "mapicon"; rm.textContent = "🗑";
+      var rm = document.createElement("button"); rm.type = "button"; rm.className = "mapicon"; rm.innerHTML = ti("trash");
       rm.title = "Remove tag"; rm.setAttribute("aria-label", "Remove this beat tag");
       rm.addEventListener("click", function(){ setSceneTag(p, scene, arc.id, null); ui.openBeatCard = null; touch(p); save(); renderScenes(); toast(bt.title + " tag removed"); });
       acts.appendChild(rm);
@@ -4370,7 +4421,7 @@ function makeBeatCard(p, arc, key, scene, opts){
      like a Blessing/Setback card hides its arrows while editing. */
   if(scene && opts && typeof opts.sceneIdx === "number" && !editingBeat){
     var bnav = document.createElement("div"); bnav.className = "beatnav";
-    var blb = document.createElement("button"); blb.type = "button"; blb.className = "mapicon"; blb.textContent = "\u2039";
+    var blb = document.createElement("button"); blb.type = "button"; blb.className = "mapicon"; blb.innerHTML = ti("chevron-left");
     blb.setAttribute("aria-label", "Move the " + bt.title + " beat to the previous scene");
     blb.disabled = opts.sceneIdx === 0;
     blb.addEventListener("click", function(ev){
@@ -4379,7 +4430,7 @@ function makeBeatCard(p, arc, key, scene, opts){
       if(to >= 0){ editToggle(renderScenes, null); toast(bt.title + " moved to " + (p.scenes[to].title || ("Scene " + (to + 1)))); }
     });
     bnav.appendChild(blb);
-    var brb = document.createElement("button"); brb.type = "button"; brb.className = "mapicon"; brb.textContent = "\u203a";
+    var brb = document.createElement("button"); brb.type = "button"; brb.className = "mapicon"; brb.innerHTML = ti("chevron-right");
     brb.setAttribute("aria-label", "Move the " + bt.title + " beat to the next scene");
     brb.disabled = opts.sceneIdx === p.scenes.length - 1;
     brb.addEventListener("click", function(ev){
@@ -4429,12 +4480,12 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
        NEVER inherit the card's text colour: inheriting it made the ✓
        invisible (dark check on the dark button in dark mode, white
        check on the white button in light mode). */
-    var doneB = document.createElement("button"); doneB.type = "button"; doneB.className = "icon-xs-btn"; doneB.textContent = "✓";
+    var doneB = document.createElement("button"); doneB.type = "button"; doneB.className = "icon-xs-btn"; doneB.innerHTML = ti("check");
     doneB.title = "Done"; doneB.setAttribute("aria-label", "Done editing this " + bsTypeLabel(entry.type));
     doneB.style.background = "var(--surface)"; doneB.style.color = "var(--ink)";
     doneB.addEventListener("click", function(){ ui.bsMapEditId = null; editToggle(renderScenes, null); });
     iconRow.appendChild(doneB);
-    var rmB = document.createElement("button"); rmB.type = "button"; rmB.className = "icon-xs-btn"; rmB.textContent = "🗑";
+    var rmB = document.createElement("button"); rmB.type = "button"; rmB.className = "icon-xs-btn"; rmB.innerHTML = ti("trash");
     rmB.title = "Remove"; rmB.setAttribute("aria-label", "Remove this " + bsTypeLabel(entry.type));
     rmB.style.background = "var(--surface)"; rmB.style.color = "var(--ink)";
     rmB.addEventListener("click", function(){
@@ -4455,7 +4506,7 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
        card. No arrows at all while editing (the branch above renders
        none). */
     var nav = document.createElement("div"); nav.className = "beatnav";
-    var lb = document.createElement("button"); lb.type = "button"; lb.className = "mapicon"; lb.textContent = "\u2039";
+    var lb = document.createElement("button"); lb.type = "button"; lb.className = "mapicon"; lb.innerHTML = ti("chevron-left");
     lb.setAttribute("aria-label", "Move this " + bsTypeLabel(entry.type) + " to the previous scene");
     lb.disabled = sceneIdx === 0;
     lb.addEventListener("click", function(){
@@ -4463,13 +4514,13 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
       if(to >= 0){ editToggle(renderScenes, null); toast(bsTypeLabel(entry.type) + " moved to " + (p.scenes[to].title || ("Scene " + (to + 1)))); }
     });
     nav.appendChild(lb);
-    var eb = document.createElement("button"); eb.type = "button"; eb.className = "pencilbtn beat-pencil-tr"; eb.textContent = "✎";
+    var eb = document.createElement("button"); eb.type = "button"; eb.className = "pencilbtn beat-pencil-tr"; eb.innerHTML = ti("pencil");
     eb.title = "Edit this " + bsTypeLabel(entry.type);
     eb.setAttribute("aria-label", "Edit this " + bsTypeLabel(entry.type));
     eb.addEventListener("click", function(){ ui.bsMapEditId = entry.id; editToggle(renderScenes, null); focusBSInput(entry.id); });
     card.appendChild(eb);
     head.style.paddingRight = "36px";
-    var rb = document.createElement("button"); rb.type = "button"; rb.className = "mapicon"; rb.textContent = "\u203a";
+    var rb = document.createElement("button"); rb.type = "button"; rb.className = "mapicon"; rb.innerHTML = ti("chevron-right");
     rb.setAttribute("aria-label", "Move this " + bsTypeLabel(entry.type) + " to the next scene");
     rb.disabled = sceneIdx === p.scenes.length - 1;
     rb.addEventListener("click", function(){
@@ -4554,7 +4605,7 @@ function buildBSEditor(p, s, sceneIdx){
        check / trash / move arrows exist only while editing (below). */
     var eBtn = document.createElement("button"); eBtn.type = "button"; eBtn.className = "pencilbtn";
     eBtn.style.cssText = "margin-left:auto;flex:0 0 auto";
-    eBtn.textContent = open ? "✕" : "✎";
+    eBtn.innerHTML = ti(open ? "x" : "pencil");
     eBtn.title = open ? "Close" : "Edit this " + bsTypeLabel(entry.type);
     eBtn.setAttribute("aria-expanded", open ? "true" : "false");
     eBtn.setAttribute("aria-label", (open ? "Close" : "Edit") + " this " + bsTypeLabel(entry.type));
@@ -4603,7 +4654,7 @@ function buildBSEditor(p, s, sceneIdx){
          glyphs use var(--ink) on their var(--surface) background —
          never the card's inherited text colour, which made the ✓
          invisible against its own button in both modes. */
-      var doneB = document.createElement("button"); doneB.type = "button"; doneB.className = "icon-sm-btn"; doneB.textContent = "✓";
+      var doneB = document.createElement("button"); doneB.type = "button"; doneB.className = "icon-sm-btn"; doneB.innerHTML = ti("check");
       doneB.title = "Done"; doneB.setAttribute("aria-label", "Done editing this " + bsTypeLabel(entry.type));
       doneB.style.background = "var(--surface)"; doneB.style.color = "var(--ink)";
       doneB.addEventListener("click", function(){
@@ -4611,7 +4662,7 @@ function buildBSEditor(p, s, sceneIdx){
         editToggle(renderScenes, null);
       });
       foot.appendChild(doneB);
-      var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-sm-btn"; rm.textContent = "🗑";
+      var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-sm-btn"; rm.innerHTML = ti("trash");
       rm.title = "Remove"; rm.style.background = "var(--surface)"; rm.style.color = "var(--ink)";
       rm.setAttribute("aria-label", "Remove this " + bsTypeLabel(entry.type));
       rm.addEventListener("click", function(){
@@ -4623,14 +4674,14 @@ function buildBSEditor(p, s, sceneIdx){
       foot.appendChild(rm);
       /* Move controls: arrows only, no label text (SMALL tier). */
       var stepper = document.createElement("div"); stepper.className = "bs-stepper"; stepper.style.marginTop = "0";
-      var prevB = document.createElement("button"); prevB.type = "button"; prevB.className = "arrowbtn sm"; prevB.textContent = "\u2039";
+      var prevB = document.createElement("button"); prevB.type = "button"; prevB.className = "arrowbtn sm"; prevB.innerHTML = ti("chevron-left");
       prevB.style.background = "var(--surface)"; prevB.style.color = "var(--ink)";
       prevB.setAttribute("aria-label", "Move this " + bsTypeLabel(entry.type) + " to the previous scene"); prevB.disabled = sceneIdx === 0;
       prevB.addEventListener("click", function(){
         var to = moveBSEntry(p, sceneIdx, entry.id, -1);
         if(to >= 0){ editToggle(renderScenes, null); toast(bsTypeLabel(entry.type) + " moved to " + (p.scenes[to].title || ("Scene " + (to + 1)))); }
       });
-      var nextB = document.createElement("button"); nextB.type = "button"; nextB.className = "arrowbtn sm"; nextB.textContent = "\u203a";
+      var nextB = document.createElement("button"); nextB.type = "button"; nextB.className = "arrowbtn sm"; nextB.innerHTML = ti("chevron-right");
       nextB.style.background = "var(--surface)"; nextB.style.color = "var(--ink)";
       nextB.setAttribute("aria-label", "Move this " + bsTypeLabel(entry.type) + " to the next scene"); nextB.disabled = sceneIdx === p.scenes.length - 1;
       nextB.addEventListener("click", function(){
@@ -4711,7 +4762,7 @@ function addSceneAt(p, index, fromMap){
 }
 function makePencilBtn(label, onClick){
   var b = document.createElement("button"); b.type = "button"; b.className = "pencilbtn";
-  b.textContent = "✎"; b.title = label; b.setAttribute("aria-label", label);
+  b.innerHTML = ti("pencil"); b.title = label; b.setAttribute("aria-label", label);
   b.style.marginLeft = "6px";
   b.addEventListener("click", function(ev){ ev.stopPropagation(); onClick(); });
   return b;
@@ -4725,8 +4776,8 @@ function inlineNameEdit(container, current, onSave){
   var wrapEl = document.createElement("div"); wrapEl.className = "nameedit";
   var inp = document.createElement("input"); inp.type = "text"; inp.value = current || "";
   inp.setAttribute("aria-label", "Name");
-  var ok = document.createElement("button"); ok.type = "button"; ok.textContent = "✓"; ok.setAttribute("aria-label", "Save name");
-  var cx = document.createElement("button"); cx.type = "button"; cx.textContent = "✕"; cx.setAttribute("aria-label", "Cancel rename");
+  var ok = document.createElement("button"); ok.type = "button"; ok.innerHTML = ti("check"); ok.setAttribute("aria-label", "Save name");
+  var cx = document.createElement("button"); cx.type = "button"; cx.innerHTML = ti("x"); cx.setAttribute("aria-label", "Cancel rename");
   ok.addEventListener("click", function(){ onSave(inp.value.trim()); });
   cx.addEventListener("click", function(){ onSave(null); });
   inp.addEventListener("keydown", function(e){
@@ -4817,14 +4868,14 @@ function buildPhoneTagControl(p, arc, sc){
       });
       picker.appendChild(pb2);
     });
-    var cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "ptp-cancel"; cancel.textContent = "\u00d7";
+    var cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "ptp-cancel"; cancel.innerHTML = ti("x");
     cancel.setAttribute("aria-label", "Close beat picker");
     cancel.addEventListener("click", function(){ ui.phoneTagPicker = null; editToggle(renderScenes, null); });
     picker.appendChild(cancel);
     return picker;
   }
   var wrapEl = document.createElement("div"); wrapEl.className = "phone-tag-add";
-  var plus = document.createElement("button"); plus.type = "button"; plus.className = "phone-tag-btn"; plus.textContent = "+";
+  var plus = document.createElement("button"); plus.type = "button"; plus.className = "phone-tag-btn"; plus.innerHTML = ti("plus");
   plus.setAttribute("aria-label", "Tag a beat for " + arc.name + " at this scene");
   plus.setAttribute("aria-haspopup", "true");
   plus.addEventListener("click", function(){
@@ -4850,7 +4901,7 @@ function buildPhoneBSCellStack(p, sc, idx, onlyUnlinked){
     stack.appendChild(makeBSCard(p, sc, entry, idx, cnt2));
   });
   var bsAdd = document.createElement("div"); bsAdd.className = "bs-map-add";
-  var plusB = document.createElement("button"); plusB.type = "button"; plusB.className = "bs-plus-btn"; plusB.textContent = "+";
+  var plusB = document.createElement("button"); plusB.type = "button"; plusB.className = "bs-plus-btn"; plusB.innerHTML = ti("plus");
   plusB.setAttribute("aria-label", "Add a Blessing or Setback to " + (sc.title || ("Scene " + (idx + 1))));
   plusB.setAttribute("aria-haspopup", "true"); plusB.setAttribute("aria-expanded", "false");
   plusB.addEventListener("click", function(ev){
@@ -5018,7 +5069,7 @@ function renderPhoneSceneMap(p, wrap){
     labCell.style.borderLeft = "6px solid " + arcColor;
     labCell.innerHTML = "<span class='pa-name'>" + esc(arc.name) + "</span>"
       + (arc.question ? "<span class='pa-q'>" + esc(arc.question) + "</span>" : "")
-      + (issueAt >= 0 ? '<div class="mapwarn">\u26a0 Out of order</div>' : "");
+      + (issueAt >= 0 ? '<div class="mapwarn">' + ti("alert-triangle") + ' Out of order</div>' : "");
     labCell.appendChild(arcDotsEl(p, arc));
     grid.appendChild(labCell);
     p.scenes.forEach(function(sc, si){
@@ -5168,14 +5219,14 @@ function buildGridTagControl(p, arc, sc){
       });
       picker.appendChild(bb2);
     });
-    var gcancel = document.createElement("button"); gcancel.type = "button"; gcancel.className = "ptp-cancel"; gcancel.textContent = "×";
+    var gcancel = document.createElement("button"); gcancel.type = "button"; gcancel.className = "ptp-cancel"; gcancel.innerHTML = ti("x");
     gcancel.setAttribute("aria-label", "Close beat picker");
     gcancel.addEventListener("click", function(){ ui.gridTagPicker = null; editToggle(renderScenes, null); });
     picker.appendChild(gcancel);
     return picker;
   }
   var wrapEl = document.createElement("div"); wrapEl.className = "phone-tag-add";
-  var plus = document.createElement("button"); plus.type = "button"; plus.className = "phone-tag-btn"; plus.textContent = "+";
+  var plus = document.createElement("button"); plus.type = "button"; plus.className = "phone-tag-btn"; plus.innerHTML = ti("plus");
   plus.setAttribute("aria-label", "Tag a beat or add a Blessing or Setback for " + arc.name + " at this scene");
   plus.setAttribute("aria-haspopup", "true");
   plus.addEventListener("click", function(){
@@ -5509,7 +5560,7 @@ function buildDecisionChain(p){
     var flow = document.createElement("div"); flow.className = "chainflow";
     LOOP.forEach(function(step, li){
       if(li === 3){ var brk = document.createElement("span"); brk.className = "seqbreak"; brk.textContent = "Sequel — what the Disaster causes"; flow.appendChild(brk); }
-      if(li > 0 && li !== 3){ var ar = document.createElement("span"); ar.className = "seqarrow"; ar.textContent = "→"; flow.appendChild(ar); }
+      if(li > 0 && li !== 3){ var ar = document.createElement("span"); ar.className = "seqarrow"; ar.innerHTML = ti("arrow-right"); flow.appendChild(ar); }
       if(ui.chainEdit === s.id + "|" + step.key){
         /* The block BECOMES the input, in its own place in the flow —
            the visual map's pattern: the card stays where it was, a
@@ -5524,10 +5575,10 @@ function buildDecisionChain(p){
         eta.placeholder = "Write this step…";
         ediv.appendChild(eta);
         var erow = document.createElement("div"); erow.className = "beatcard-edit-row";
-        var okB = document.createElement("button"); okB.type = "button"; okB.className = "icon-xs-btn"; okB.textContent = "✓";
+        var okB = document.createElement("button"); okB.type = "button"; okB.className = "icon-xs-btn"; okB.innerHTML = ti("check");
         okB.title = "Done — save this step"; okB.setAttribute("aria-label", "Save " + step.title);
         (function(scene, key){ okB.addEventListener("click", function(){ scene.sequel[key] = eta.value; ui.chainEdit = null; touch(p); save(); rerenderChain(false); }); })(s, step.key);
-        var cxB = document.createElement("button"); cxB.type = "button"; cxB.className = "icon-xs-btn"; cxB.textContent = "✕";
+        var cxB = document.createElement("button"); cxB.type = "button"; cxB.className = "icon-xs-btn"; cxB.innerHTML = ti("x");
         cxB.title = "Cancel"; cxB.setAttribute("aria-label", "Cancel editing " + step.title);
         cxB.addEventListener("click", function(){ ui.chainEdit = null; rerenderChain(false); });
         erow.appendChild(okB); erow.appendChild(cxB); ediv.appendChild(erow);
@@ -5537,7 +5588,7 @@ function buildDecisionChain(p){
         chip.className = "chainchip" + (has(s, step.key) ? " filled" : "");
         chip.setAttribute("aria-label", "Edit " + step.group + " — " + step.title + " for scene " + (i + 1));
         var txt = v(s, step.key); if(txt.length > 110) txt = txt.slice(0, 110) + "…";
-        chip.innerHTML = "<b>" + esc(step.group) + " — " + esc(step.title) + " ✎</b>" + esc(txt);
+        chip.innerHTML = "<b>" + esc(step.group) + " — " + esc(step.title) + "" + ti("pencil") + "</b>" + esc(txt);
         (function(scene, stp){
           chip.addEventListener("click", function(){ ui.chainEdit = scene.id + "|" + stp.key; rerenderChain(true); });
         })(s, step);
@@ -5642,7 +5693,7 @@ function renderGridBeatLayer(p, wrap){
     eGrid.style.gridTemplateRows = "auto repeat(" + Math.max(1, p.arcs.length) + ", minmax(128px, auto))";
     var eCorner = document.createElement("div"); eCorner.className = "mapcell3 mh";
     eCorner.style.gridColumn = "1"; eCorner.style.gridRow = "1";
-    eCorner.textContent = "Arc \\ Scene \u2192";
+    eCorner.innerHTML = "Arc \\ Scene " + ti("arrow-right");
     eGrid.appendChild(eCorner);
     var eHead = document.createElement("div"); eHead.className = "mapcell3 mh";
     eHead.style.gridColumn = "2"; eHead.style.gridRow = "1";
@@ -5650,7 +5701,7 @@ function renderGridBeatLayer(p, wrap){
     eGrid.appendChild(eHead);
     var ePlus = document.createElement("div"); ePlus.className = "mapcell3 mplus mplus-big";
     ePlus.style.gridColumn = "2"; ePlus.style.gridRow = "2 / span " + Math.max(1, p.arcs.length);
-    var eBtn = document.createElement("button"); eBtn.type = "button"; eBtn.textContent = "+";
+    var eBtn = document.createElement("button"); eBtn.type = "button"; eBtn.innerHTML = ti("plus");
     eBtn.setAttribute("aria-label", "Add the first scene");
     eBtn.addEventListener("click", function(){ addSceneAt(p, 0, true); });
     ePlus.appendChild(eBtn); eGrid.appendChild(ePlus);
@@ -5682,7 +5733,7 @@ function renderGridBeatLayer(p, wrap){
      button is the tall one in the body grid below. */
   var corner = document.createElement("div"); corner.className = "mapcell3 mh mh-corner";
   corner.style.width = LABEL_W + "px";
-  corner.textContent = "Arc \\ Scene \u2192";
+  corner.innerHTML = "Arc \\ Scene " + ti("arrow-right");
   headbar.appendChild(corner);
   var psHead = document.createElement("div"); psHead.className = "mapcell3 mh-plus";
   psHead.style.width = "36px";
@@ -5722,10 +5773,10 @@ function renderGridBeatLayer(p, wrap){
        one scene there is nothing to swap with, so no arrows are shown. */
     if(p.scenes.length > 1){
       var nav = document.createElement("div"); nav.className = "colnav";
-      var lb = document.createElement("button"); lb.type = "button"; lb.className = "mapicon"; lb.textContent = "\u2039";
+      var lb = document.createElement("button"); lb.type = "button"; lb.className = "mapicon"; lb.innerHTML = ti("chevron-left");
       lb.setAttribute("aria-label", "Move scene " + (i + 1) + " earlier"); lb.disabled = i === 0;
       lb.addEventListener("click", function(){ moveScene(p, i, i - 1); });
-      var rb = document.createElement("button"); rb.type = "button"; rb.className = "mapicon"; rb.textContent = "\u203a";
+      var rb = document.createElement("button"); rb.type = "button"; rb.className = "mapicon"; rb.innerHTML = ti("chevron-right");
       rb.setAttribute("aria-label", "Move scene " + (i + 1) + " later"); rb.disabled = i === p.scenes.length - 1;
       rb.addEventListener("click", function(){ moveScene(p, i, i + 1); });
       nav.appendChild(lb); nav.appendChild(rb);
@@ -5753,13 +5804,13 @@ function renderGridBeatLayer(p, wrap){
   var psBody = document.createElement("div"); psBody.className = "mapcell3 mplus mplus-side";
   psBody.style.gridColumn = "2"; psBody.style.gridRow = "1 / span " + (p.arcs.length + (hasUnlinkedG ? 1 : 0));
   psBody.style.left = LABEL_W + "px";
-  var psb2 = document.createElement("button"); psb2.type = "button"; psb2.textContent = "+";
+  var psb2 = document.createElement("button"); psb2.type = "button"; psb2.innerHTML = ti("plus");
   psb2.setAttribute("aria-label", "Add a scene at the beginning");
   psb2.addEventListener("click", function(){ addSceneAt(p, 0, true); });
   psBody.appendChild(psb2); grid.appendChild(psBody);
   var peBody = document.createElement("div"); peBody.className = "mapcell3 mplus";
   peBody.style.gridColumn = String(lastCol); peBody.style.gridRow = "1 / span " + (p.arcs.length + (hasUnlinkedG ? 1 : 0));
-  var peb2 = document.createElement("button"); peb2.type = "button"; peb2.textContent = "+";
+  var peb2 = document.createElement("button"); peb2.type = "button"; peb2.innerHTML = ti("plus");
   peb2.setAttribute("aria-label", "Add a scene at the end");
   peb2.addEventListener("click", function(){ addSceneAt(p, p.scenes.length, true); });
   peBody.appendChild(peb2); grid.appendChild(peBody);
@@ -5781,7 +5832,7 @@ function renderGridBeatLayer(p, wrap){
     lab.appendChild(labName);
     var labMeta = document.createElement("div");
     labMeta.innerHTML = (arc.question ? '<div style="font-weight:400;font-size:.82rem;color:var(--ink2);margin-top:2px">' + esc(arc.question) + '</div>' : "")
-      + (issueAt >= 0 ? '<div class="mapwarn">\u26a0 Beats out of order in this arc</div>' : "");
+      + (issueAt >= 0 ? '<div class="mapwarn">' + ti("alert-triangle") + ' Beats out of order in this arc</div>' : "");
     lab.appendChild(labMeta);
     lab.appendChild(arcDotsEl(p, arc));
     grid.appendChild(lab);
@@ -5823,7 +5874,7 @@ function renderGridBeatLayer(p, wrap){
       stack.appendChild(makeBSCard(p, s2, entry, si2, cnt4));
     });
     var bsAdd = document.createElement("div"); bsAdd.className = "bs-map-add";
-    var plusB = document.createElement("button"); plusB.type = "button"; plusB.className = "bs-plus-btn"; plusB.textContent = "+";
+    var plusB = document.createElement("button"); plusB.type = "button"; plusB.className = "bs-plus-btn"; plusB.innerHTML = ti("plus");
     plusB.setAttribute("aria-label", "Add an unlinked Blessing or Setback to " + (s2.title || ("Scene " + (si2 + 1))));
     plusB.setAttribute("aria-haspopup", "true"); plusB.setAttribute("aria-expanded", "false");
     plusB.addEventListener("click", function(ev){
@@ -6099,7 +6150,7 @@ function buildCastEditor(p, s){
       row.appendChild(castFeel("Feeling at start", entry.feelStart, function(v){ entry.feelStart = v; }));
       row.appendChild(castFeel("Feeling at end", entry.feelEnd, function(v){ entry.feelEnd = v; }));
     }
-    var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-sm-btn"; rm.textContent = "✕";
+    var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-sm-btn"; rm.innerHTML = ti("x");
     rm.title = "Remove from this scene's cast"; rm.setAttribute("aria-label", "Remove " + (c.name || "character") + " from this scene's cast");
     rm.addEventListener("click", function(){
       s.cast = s.cast.filter(function(e){ return e.charId !== entry.charId; });
@@ -6170,10 +6221,10 @@ function renderScenes(){
        scenes in story order. The arrows show ONLY while this scene is
        in edit mode, so a collapsed card carries no move chrome. */
     if(open){
-      var upB = document.createElement("button"); upB.type = "button"; upB.className = "arrowbtn sm"; upB.textContent = "↑";
+      var upB = document.createElement("button"); upB.type = "button"; upB.className = "arrowbtn sm"; upB.innerHTML = ti("chevron-up");
       upB.setAttribute("aria-label", "Move scene up"); upB.disabled = i === 0;
       upB.addEventListener("click", function(){ moveScene(p, i, i - 1); });
-      var dnB = document.createElement("button"); dnB.type = "button"; dnB.className = "arrowbtn sm"; dnB.textContent = "↓";
+      var dnB = document.createElement("button"); dnB.type = "button"; dnB.className = "arrowbtn sm"; dnB.innerHTML = ti("chevron-down");
       dnB.setAttribute("aria-label", "Move scene down"); dnB.disabled = i === p.scenes.length - 1;
       dnB.addEventListener("click", function(){ moveScene(p, i, i + 1); });
       bar.appendChild(upB); bar.appendChild(dnB);
@@ -6359,7 +6410,7 @@ function renderScenes(){
         var pbg = pillBg(getArcColor(p, arc));
         pill.style.background = pbg;
         pill.style.color = readableOn(pbg);
-        pill.textContent = BEAT_BY_KEY[t.beat].title + " · " + arc.name + " ✕";
+        pill.innerHTML = esc(BEAT_BY_KEY[t.beat].title) + " · " + esc(arc.name) + ti("x");
         pill.title = "Tap to remove this tag";
         pill.addEventListener("click", function(){ setSceneTag(p, s, t.arcId, null); touch(p); save(); renderScenes(); toast("Tag removed"); });
         row.appendChild(pill);
@@ -6506,9 +6557,9 @@ function renderScenes(){
         if(stepOpen) ln.appendChild(buildLoopEditor());
         loop.appendChild(holder);
         if(li===2){
-          var ar = document.createElement("div"); ar.className="looparrow"; ar.textContent="↓ then the Sequel ↓"; loop.appendChild(ar);
+          var ar = document.createElement("div"); ar.className="looparrow"; ar.innerHTML = ti("arrow-down") + " then the Sequel " + ti("arrow-down"); loop.appendChild(ar);
         } else if(li < LOOP.length - 1){
-          var ar2 = document.createElement("div"); ar2.className = "looparrow step-arrow"; ar2.textContent = "↓ edit this first, then the next step ↓"; loop.appendChild(ar2);
+          var ar2 = document.createElement("div"); ar2.className = "looparrow step-arrow"; ar2.innerHTML = ti("arrow-down") + " edit this first, then the next step " + ti("arrow-down"); loop.appendChild(ar2);
         }
       });
       }
@@ -6836,7 +6887,7 @@ function renderReadiness(){
   card.appendChild(intro);
   checks.forEach(function(c){
     var r = document.createElement("div"); r.className = "ready-row" + (c.done ? " done" : "");
-    var rk = document.createElement("span"); rk.className = "rk"; rk.textContent = c.done ? "✓" : "○";
+    var rk = document.createElement("span"); rk.className = "rk"; rk.innerHTML = ti(c.done ? "check" : "circle");
     r.appendChild(rk);
     var tx = document.createElement("div"); tx.className = "rt";
     tx.innerHTML = "<b>" + esc(c.title) + "</b><span>" + esc(c.detail) + "</span>";
@@ -7021,7 +7072,7 @@ function buildSequelEditor(p){
   LOOP.forEach(function(step, li){
     if(li === 0){ var b0 = document.createElement("span"); b0.className = "seqbreak"; b0.textContent = "Scene — what the POV character pursues"; flow.appendChild(b0); }
     if(li === 3){ var br = document.createElement("span"); br.className = "seqbreak"; br.textContent = "Sequel — what the Disaster causes"; flow.appendChild(br); }
-    if(li > 0 && li !== 3){ var ar = document.createElement("span"); ar.className = "seqarrow"; ar.textContent = "\u2192"; flow.appendChild(ar); }
+    if(li > 0 && li !== 3){ var ar = document.createElement("span"); ar.className = "seqarrow"; ar.innerHTML = ti("arrow-right"); flow.appendChild(ar); }
     var chip = document.createElement("div"); chip.className = "seqchip" + (filledStr(sc.sequel[step.key]) ? " filled" : "");
     chip.innerHTML = "<b>" + esc(step.title) + "</b><span class='sc-state'>" + (filledStr(sc.sequel[step.key]) ? "Written" : "Blank") + "</span>";
     flow.appendChild(chip);
@@ -7065,7 +7116,7 @@ function renderEditing(){
        a body block BELOW the row, at the card's full width — inside the
        flex title row it was squeezed into a narrow column beside the
        button and wrapped a word or two per line. */
-    pmain.innerHTML = '<span class="pass"><span class="passnum">'+(data.done?"✓":(i+1))+'</span><span class="ntitle"><span>'+esc(ps.title)+'</span></span></span>';
+    pmain.innerHTML = '<span class="pass"><span class="passnum">'+(data.done?ti("check"):(i+1))+'</span><span class="ntitle"><span>'+esc(ps.title)+'</span></span></span>';
     if(PASS_INFO[ps.key]) pmain.appendChild(makeInfoIcon(ps.title, PASS_INFO[ps.key]));
     b.appendChild(pmain);
     var pEdit = document.createElement("button"); pEdit.type = "button"; pEdit.className = "btn small";
@@ -7875,7 +7926,7 @@ function ovCard(title, countLabel, pct, checks, view){
   if(checks && checks.length){
     inner += '<ul class="checks">';
     checks.forEach(function(c){
-      inner += '<li class="'+(c.done?"done":"todo")+'"><span class="ck">'+(c.done?"✓":"")+'</span><span>'+esc(c.label)+'</span></li>';
+      inner += '<li class="'+(c.done?"done":"todo")+'"><span class="ck">'+(c.done?ti("check"):"")+'</span><span>'+esc(c.label)+'</span></li>';
     });
     inner += '</ul>';
   }
@@ -8023,7 +8074,7 @@ function renderPrevNext(){
          project-only section. */
       if(v === "setup"){
         var backBtn = document.createElement("button"); backBtn.type="button"; backBtn.className="btn";
-        backBtn.textContent = "← All Projects";
+        backBtn.innerHTML = ti("arrow-left") + " All Projects";
         backBtn.addEventListener("click", function(){ setView("projects"); });
         box.appendChild(backBtn);
       }
@@ -8032,7 +8083,7 @@ function renderPrevNext(){
     if(idx > 0){
       var prevKey = SECTION_ORDER[idx-1];
       var pb = document.createElement("button"); pb.type="button"; pb.className="btn";
-      pb.textContent = "← " + SECTION_LABELS[prevKey];
+      pb.innerHTML = ti("arrow-left") + " " + esc(SECTION_LABELS[prevKey]);
       (function(k){ pb.addEventListener("click", function(){ setView(k); }); })(prevKey);
       box.appendChild(pb);
     } else {
@@ -8041,7 +8092,7 @@ function renderPrevNext(){
     if(idx < SECTION_ORDER.length-1){
       var nextKey = SECTION_ORDER[idx+1];
       var nb = document.createElement("button"); nb.type="button"; nb.className="btn primary";
-      nb.textContent = SECTION_LABELS[nextKey] + " →";
+      nb.innerHTML = esc(SECTION_LABELS[nextKey]) + " " + ti("arrow-right");
       (function(k){ nb.addEventListener("click", function(){ setView(k); }); })(nextKey);
       box.appendChild(nb);
     }
