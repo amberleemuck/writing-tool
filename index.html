@@ -80,7 +80,7 @@ button{cursor:pointer}
      pass done", modal and Prev/Next buttons. 48px tall, full touch
      target, icon size var(--icon-std).
    SMALL (.btn.small / .btn-sm, .tagbtn, .schemebtn, .fontbtn, .swatch):
-     scene-list actions — plot-beat tag buttons, Blessing/Setback
+     scene-list actions — plot-beat tag buttons, Plot point
      buttons in the scene list, secondary Edit/Close buttons, and the
      font / colour pickers. 36px tall, icon size var(--icon-sm).
    EXTRA SMALL (.btn-xs, .pencilbtn, .arrowbtn, .beatnav buttons,
@@ -281,6 +281,17 @@ table.scale tr.hl td{background:var(--surface2);font-weight:600}
 /* Setup & Backup button lists: one consistent column — same width, same gap. */
 .btnlist{display:flex;flex-direction:column;gap:var(--sp3);align-items:stretch}
 .btnlist .btn{width:100%;text-align:center}
+/* Setup & Backup — backup reminder + prominent all-projects download.
+   The reminder reuses .warnbox colours; the download sits in its own
+   tinted block inside the backup card so a first-time user finds it
+   before the per-project Export / Import buttons below it. */
+.backup-nudge{margin:0 0 var(--sp5)}
+.backup-nudge strong{display:block;margin-bottom:2px}
+.backup-nudge p{margin:0}
+.backup-all-wrap{background:var(--surface2);border-radius:var(--radius);padding:var(--sp4);margin:0 0 var(--sp4)}
+.backup-all-wrap .btn{width:100%;text-align:center}
+.backup-all-btn{min-height:56px;font-size:1.02rem}
+.backup-all-hint{margin:var(--sp2) 0 0;font-size:.88rem;color:var(--ink2);line-height:1.45;text-align:center}
 .passnum{flex:0 0 28px;width:28px;height:28px;font-size:.85rem;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;background:var(--surface2)}
 .node.done .passnum{background:var(--good);border-color:var(--good);color:#fff}
 @media (prefers-color-scheme: dark){.node.done .passnum{color:#10160f}}
@@ -387,7 +398,7 @@ select{width:100%;padding:14px var(--sp3);border:1px solid var(--line);border-ra
 .mh-scene .scenetitle{display:block;font-weight:700;white-space:normal;overflow-wrap:anywhere}
 .mlab{position:sticky;left:0;z-index:4;background:var(--surface);font-size:.9rem;box-shadow:none;border-right:1px solid var(--line)}
 .mplus{padding:var(--sp2);display:flex;align-items:center;justify-content:center;background:var(--surface2)}
-.mplus button{flex:0 0 auto;width:auto;min-width:44px;min-height:32px;padding:4px 14px;border:1.5px dashed var(--line);border-radius:999px;background:none;color:var(--ink2);font-size:1rem;font-weight:700;cursor:pointer;line-height:1.25}
+.mplus button{flex:0 0 auto;width:auto;min-width:44px;min-height:32px;padding:4px 14px;border:none;border-radius:999px;background:none;color:var(--ink2);font-size:1rem;font-weight:700;cursor:pointer;line-height:1.25}
 .mplus button:active{background:var(--chip)}
 .mplus-side{position:sticky;left:0;z-index:4}
 .mplus-big button{font-size:1.15rem;min-height:40px;padding:6px 20px}
@@ -404,7 +415,7 @@ select{width:100%;padding:14px var(--sp3);border:1px solid var(--line);border-ra
    (~15px): no border, no background, no button padding, just the glyph
    itself. The left icon sits on the LEFT side of its component and the
    right icon on the RIGHT side (see .beatnav / .colnav below) — beats,
-   Blessings/Setbacks, and scenes all behave the same way. */
+   Plot points, and scenes all behave the same way. */
 .mapicon{background:none;border:0;padding:3px;margin:0;color:inherit;font-size:15px;font-weight:700;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;font-family:inherit}
 .mapicon:disabled{opacity:.35;cursor:default}
 .beatnav{display:flex;gap:var(--sp1);margin-top:var(--sp2);align-items:center;justify-content:space-between;width:100%}
@@ -559,10 +570,10 @@ img.calico-gone{display:none!important}
 .namerow .nm{flex:1;min-width:0}
 .nameedit input{flex:1;min-width:90px;padding:6px 8px;min-height:36px;font-size:.95rem}
 .nameedit button{min-width:28px;min-height:28px;width:28px;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-weight:700;font-size:var(--icon-xs);line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
-/* Blessing / Setback entries: editable text entries, like beats. In the
+/* Plot point entries: editable text entries, like beats. In the
    scene editor each entry is a small block with its own input, a Remove
    button, and a no-dropdown move stepper; in the map each entry is a card
-   titled Blessing or Setback with its text underneath and < > move buttons. */
+   titled Plot point with its text underneath and < > move buttons. */
 .bs-entry{border:none;border-radius:8px;background:var(--bg);padding:var(--sp3);margin-top:var(--sp2)}
 .bs-entry-head{display:flex;gap:var(--sp2);align-items:center;flex-wrap:nowrap}
 .bs-entry-head strong{font-family:Georgia,serif;font-size:.92rem;flex:0 0 auto}
@@ -580,7 +591,7 @@ img.calico-gone{display:none!important}
 .bs-cell-stack{display:flex;flex-direction:column;gap:var(--sp2)}
 .bs-cell-stack .beatcard{margin-bottom:0}
 /* ONE centred + per map BS cell (EXTRA SMALL tier, icon size fixed by
-   the tier) opening a small dropdown of Blessing / Setback choices. */
+   the tier) adding a Plot point directly. */
 .bs-map-add{display:flex;justify-content:center;margin-top:0;position:relative}
 .bs-plus-btn{width:auto;height:32px;min-width:44px;min-height:32px;padding:4px 14px;border:1.5px dashed var(--line);border-radius:999px;background:none;color:var(--ink2);font-weight:700;font-size:.95rem;line-height:1.25;display:inline-flex;align-items:center;justify-content:center;box-shadow:none}
 .bs-menu{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);z-index:8;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:var(--sp1);display:flex;flex-direction:column;gap:var(--sp1);min-width:128px}
@@ -593,13 +604,13 @@ img.calico-gone{display:none!important}
 /* Phone scene map — ALIGNED ROWS + PERSISTENT LABELS (narrow screens
    only, switched in renderSceneMap). One grid inside ONE horizontal
    scroller: column 1 is the arc label column (arc name + that arc's
-   persistent key question, and a final Blessings and Setbacks label),
+   persistent key question, and a final Plot points label),
    position:sticky at the left so it NEVER scrolls sideways; the other
    columns are scenes in story order. Because labels and beat/BS cells
    share the same grid rows, the Arc 1 / Arc 2 / Arc 3 / BS rows sit at
    exactly the same vertical positions in every scene column — the
    tallest cell in a row drives that row's height. Only the beat and
-   Blessing/Setback cells scroll sideways with their scene. Scene
+   Plot point cells scroll sideways with their scene. Scene
    columns are ~88% of the width remaining after the label column, so
    the next scene peeks in, with scroll-snap settling a column into
    place. No scene-reordering controls live here. */
@@ -661,7 +672,7 @@ img.calico-gone{display:none!important}
 .phone-map>.kbd-note{margin:var(--sp3) 0 0;line-height:1.5}
 #sceneMapWrap>.kbd-note{margin-top:var(--sp3);margin-bottom:0;line-height:1.5}
 #sceneMapWrap>.warnbox{margin:var(--sp3) 0 0}
-/* Blessing/Setback cards fit their content tightly, in the phone view
+/* Plot point cards fit their content tightly, in the phone view
    and the grid alike: no inherited min-height on the head, one 8px gap
    between the text and the button row, buttons vertically centred in
    that row, and the pencil flush to the card's right edge (kept there
@@ -693,14 +704,25 @@ img.calico-gone{display:none!important}
 .feelfields .hf{flex:1 1 220px;min-width:0}
 .feelfields label{display:block;font-weight:700;font-size:.8rem;margin-bottom:var(--sp1)}
 .feelfields textarea{min-height:64px;padding:10px 12px;resize:vertical;width:100%;line-height:1.45}
-.castrow textarea{flex:1 1 160px;min-width:0;min-height:56px;padding:10px 12px;resize:vertical;line-height:1.45}
+.castrow textarea{width:100%;min-width:0;min-height:56px;padding:10px 12px;resize:vertical;line-height:1.45}
 /* Scene & Sequel collapsed summary line */
 .loopsummary{display:flex;gap:var(--sp2);align-items:flex-start;flex-wrap:wrap;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:var(--sp3) var(--sp4);margin-top:var(--sp2)}
 .loopsummary .ls-text{flex:1;min-width:180px;font-size:.92rem;white-space:pre-wrap;word-break:break-word}
 /* Cast editor rows */
-.castrows{display:flex;flex-direction:column;gap:var(--sp2);margin-top:var(--sp2)}
-.castrow{display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap}
-.castrow .castname{font-weight:700;font-size:.9rem}
+.castrows{display:flex;flex-direction:column;gap:var(--sp3);margin-top:var(--sp2)}
+/* One cast member per block: a header line (name, POV pill, remove)
+   on its own row, then the two feeling fields side by side below it
+   (stacking only when the row is too narrow). Nothing shares a line
+   with the remove button, so long feelings wrap inside their own
+   field instead of around the chrome. */
+.castrow{display:flex;flex-direction:column;gap:var(--sp2);align-items:stretch}
+.castrow-head{display:flex;gap:var(--sp2);align-items:center}
+.castrow-head .castname{flex:1;min-width:0}
+.castrow .castname{font-weight:700;font-size:.95rem}
+.castrow .castfeel-note{font-size:.88rem;color:var(--ink2)}
+.castfeels{display:flex;gap:var(--sp2);flex-wrap:wrap}
+.castfeels .castfeel{flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:var(--sp1)}
+.castfeels .castfeel label{font-size:.78rem;font-weight:700;color:var(--ink2)}
 .castrow input{flex:1 1 180px;min-width:0;padding:10px 12px;min-height:44px}
 .castadd{display:flex;gap:var(--sp2);flex-wrap:wrap;margin-top:var(--sp3);align-items:center}
 /* Beat-tag picker (behind the one "Tag a beat" button) */
@@ -733,13 +755,23 @@ input[type="file"]{display:none}
 /* Stage-directions reference block (scene editor): a read-only block
    above the Stage instructions input, visually distinct from an input
    — darker inset, no border — listing this scene's beat(s) and
-   Blessing/Setback(s) live, with a button to insert them into the
+   Plot point(s) live, with a button to insert them into the
    Stage instructions as bracketed lines. */
 .stageref{padding:var(--sp4);margin-top:var(--sp5)}
 .stageref .sr-title{font-family:Georgia,serif;font-weight:700;font-size:.92rem;display:block;margin-bottom:var(--sp2)}
 .stageref .sr-line{display:block;font-size:.92rem;white-space:pre-wrap;word-break:break-word;margin-top:2px}
 .stageref .sr-line.empty-t{color:var(--ink2);font-style:italic}
 .stageref .btn{margin-top:var(--sp3)}
+.style-entry{border:none;border-radius:8px;background:var(--surface2);padding:var(--sp3);margin-top:var(--sp2)}
+.style-warn{margin:var(--sp2) 0 0;font-size:.88rem;font-weight:700;color:var(--warn)}
+.tenet-row{border-top:1px dashed var(--line);padding:var(--sp3) 0}
+.tenet-row:first-of-type{border-top:none}
+.tenet-top{display:flex;gap:var(--sp3);align-items:flex-start;flex-wrap:wrap}
+.tenet-txt{flex:1 1 260px;font-size:.95rem}
+.tenet-btns{display:flex;gap:var(--sp2);flex:0 0 auto}
+.tenet-row input[type="text"]{margin-top:var(--sp2);min-height:44px;padding:10px 12px}
+.style-audit-row{display:flex;gap:var(--sp2);align-items:flex-start;padding:var(--sp2) 0;border-bottom:1px dashed var(--line);flex-wrap:wrap}
+.style-audit-row.flagged{background:var(--warn-bg);border-radius:8px;padding:var(--sp2)}
 .noproject{text-align:left;padding:24px 10px 40px;color:var(--ink2);vertical-align:top}
 .stakesmark{font-size:.78rem;font-weight:700;color:var(--warn);padding:2px 8px 6px}
 .framearc{border-style:dashed}
@@ -823,9 +855,17 @@ select{padding-right:32px}
 /* Editing passes: the info icon sits inline, right beside the pass
    title at title size — never dropped onto its own line under the
    number — and the done check sits in the small pass number above. */
-.node-head .node-main{display:flex;align-items:center;gap:var(--sp2);flex-wrap:wrap}
-.node-head .node-main .pass{flex:0 1 auto}
-.node-head .node-main .infoicon{margin-left:0;align-self:center}
+.node-head .node-main.pass-main{display:flex;align-items:center;gap:var(--sp2);flex-wrap:wrap}
+.node-head .node-main.pass-main .pass{flex:0 1 auto}
+.node-head .node-main.pass-main .infoicon{margin-left:0;align-self:center}
+/* Every other node header stacks: title first, then its question /
+   preview lines underneath, all left-aligned on the same edge. This
+   flex row is ONLY for editing passes (above) — applied generally it
+   put a character's name and its "No question yet" line (and an arc's
+   title and its "No arc question" line) side by side on one row,
+   centred against each other, instead of stacked. */
+.node-head .node-main.stack-main{display:block;text-align:left}
+.node-head .node-main.stack-main .ntitle{align-items:baseline}
 /* Secret revealed tag — shown on the regular visual map, the phone
    map heading, and scene cards: no separate secrets map any more. */
 .secrettag{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.75rem;font-weight:700;background:var(--warn-bg);color:var(--ink);border:1px solid var(--warn);white-space:nowrap}
@@ -879,7 +919,7 @@ button.chainchip:hover{border-color:var(--accent)}
 .ready-sub:first-child{border-top:none;padding-top:0;margin-top:0}
 
 /* ===== One pill / tag style across the Scenes page =====
-   Beat pills, Blessing/Setback counts, cast pills, secret tags and
+   Beat pills, Plot point counts, cast pills, secret tags and
    badges share one size, padding, radius and wrap behaviour, so a
    tag never overflows a narrow column: its text wraps INSIDE the
    pill instead of running past the pill's edge and getting cut. */
@@ -925,6 +965,7 @@ button.chainchip:hover{border-color:var(--accent)}
   <button class="navitem" type="button" data-nav="characters">Characters</button>
   <button class="navitem" type="button" data-nav="map">Story Arcs</button>
   <button class="navitem" type="button" data-nav="scenes">Scenes</button>
+  <button class="navitem" type="button" data-nav="style">How It's Told</button>
   <button class="navitem" type="button" data-nav="readiness">Readiness check</button>
   <button class="navitem" type="button" data-nav="editing">Editing</button>
   <button class="btn primary newproj" id="drawerNewBtn" type="button">+ New project</button>
@@ -945,7 +986,7 @@ button.chainchip:hover{border-color:var(--accent)}
   <!-- PROJECTS (homepage) -->
   <section class="view" id="view-projects">
     <h2 class="sec">Your projects</h2>
-    <p class="lede">Stored only in this browser, on this device. Use Export in Setup &amp; Backup to move a project to another device or keep a backup copy.</p>
+    <p class="lede">Stored only in this browser, on this device. Use Download backup in Setup &amp; Backup to keep a copy of all your projects, or Export to move one project to another device.</p>
     <div id="projectList"></div>
     <button class="btn primary" id="newProjBtn" type="button" style="margin-top:6px">+ New project</button>
     <button class="btn dd-arrow" id="demoToggleBtn" type="button" style="margin-top:6px" aria-expanded="false" aria-controls="demoPicker" aria-haspopup="true">Load a demo story</button>
@@ -1029,6 +1070,17 @@ button.chainchip:hover{border-color:var(--accent)}
     <div class="prevnext" data-pn="scenes"></div>
   </section>
 
+  <!-- STYLE — HOW IT'S TOLD: the telling layer. Planning fields only,
+       no prose. Reads the theme from Intake, the closed world from
+       Worldbuilding, and the per-scene telling notes from Scenes, and
+       adds its own layer on top — nothing here duplicates those pages. -->
+  <section class="view" id="view-style">
+    <h2 class="sec">Style — How It's Told</h2>
+    <p class="lede">Everything about the story should support the theme because of how it is told — prose, devices, the narrator's limits, characters and what they do all point the same way. Anything that doesn't can be seen here, and fixed. Skeleton only: no prose is written on this page.</p>
+    <div id="styleBody"></div>
+    <div class="prevnext" data-pn="style"></div>
+  </section>
+
   <!-- READINESS CHECK: the pre-draft pass between Scenes and Editing.
        Planning gaps (missing beats, blank scene fields, unanswered
        questions) are caught HERE, before prose exists — so the
@@ -1057,16 +1109,24 @@ button.chainchip:hover{border-color:var(--accent)}
     <p class="lede">This tool is one self-contained web page. No server, no account, nothing you type leaves the device unless you export it yourself.</p>
     <div id="setupNoProjectNote"></div>
 
+    <div class="warnbox backup-nudge" role="note">
+      <strong>Your projects live in this browser only</strong>
+      <p>Clearing browser data, using a private / Incognito window, or switching browser or computer will lose them unless you have a backup file — download one below.</p>
+    </div>
+
     <div class="card">
       <h3 class="serif" style="margin-top:0">Back up &amp; move projects</h3>
-      <p>Projects save automatically in this browser's storage on this device only — clearing browser data or using a private tab can erase them, so export regularly.</p>
+      <p>Projects save automatically as you work — there is nothing to press to save. Download a backup to keep a copy of everything, or export just this project below.</p>
+      <div class="backup-all-wrap">
+        <button class="btn primary backup-all-btn" id="exportAllBtn" type="button">Download backup — all projects (.json)</button>
+        <p class="backup-all-hint">One file with every project in it. Keep it somewhere safe — Files, iCloud Drive, Google Drive or Dropbox — and restore it any time with Import below.</p>
+      </div>
       <div class="btnlist">
-        <button class="btn primary" id="exportOneBtn" type="button">Export this project (.json)</button>
-        <button class="btn" id="exportAllBtn" type="button">Export all projects (.json)</button>
+        <button class="btn" id="exportOneBtn" type="button">Export this project (.json)</button>
         <button class="btn" id="importBtn" type="button">Import projects (.json)</button>
         <input type="file" id="importFile" accept=".json,application/json" />
       </div>
-      <p class="kbd-note">On mobile and larger screens, Export opens the share sheet — tap <strong>Save to Files</strong> and choose a folder (for example iCloud Drive or On My Device). The file is named like <code>your-project-20261101-0930.json</code> — project name, date, and time — so searching Files for “json” finds it, and saving again later the same day makes a new file instead of overwriting the earlier one. If you close the share sheet without saving, no file is saved. Where file sharing isn't available, Export starts a download instead — look in Files › Downloads. Move a project: Export on one device → save the file to Files / iCloud Drive → open this tool on the other device → Import. Importing never overwrites: a project with the same name arrives as a copy.</p>
+      <p class="kbd-note">On mobile and larger screens, Download backup and Export open the share sheet — tap <strong>Save to Files</strong> and choose a folder (for example iCloud Drive or On My Device). The file is named like <code>your-project-20261101-0930.json</code> — project name, date, and time — so searching Files for “json” finds it, and saving again later the same day makes a new file instead of overwriting the earlier one. If you close the share sheet without saving, no file is saved. Where file sharing isn't available, they start a download instead — look in Files › Downloads. Move a project: Export on one device → save the file to Files / iCloud Drive → open this tool on the other device → Import. Importing never overwrites: a project with the same name arrives as a copy.</p>
     </div>
 
     <div class="card">
@@ -1209,7 +1269,7 @@ var PASSES = [
 ];
 var PASS_INFO = {
   rest:"Stephen King suggests six weeks; one to two weeks is common. Make the page strange on return: print it, change the font, or have it read aloud.",
-  structural:"This pass assumes the prose is written. Planning gaps — unwritten beats, unanswered questions, blank scene fields — belong to the Readiness check, which runs BEFORE drafting; finding them here would be too little, too late. What belongs here is what only a draft can show:\n\n• Reverse outline first: one sentence per scene (what happens, what changes), stacked to find gaps, repeats, and scenes that wander.\n\n• Order and causality: beats placed out of story order, two beats crowding one scene, scenes that carry nothing (no beat, no Blessing/Setback, no stated job), and beats that connect with \"and then\" instead of \"but / therefore\".\n\n• The Scene & Sequel chain, judged not just filled in: you wrote Stage instructions first while drafting — now check each scene for a Goal, a Conflict and a real Disaster, and a Sequel (Reaction → Dilemma → Decision) whose Decision actually sets the next scene's Goal. Broken joins are the usual sagging-middle problem. The editor and the visual chain below are one tool: edit in the editor, read the result in the chain.\n\nWorked example — The Fire Swamp (The Princess Bride): Goal — reach Westley's ship and safety. Conflict — flame spurts, lightning sand and an ROUS. Disaster — no-and-furthermore: they survive the swamp and are captured at its edge. Reaction — Buttercup bargains: her marriage for Westley's life. Dilemma — surrender to save him, or run and watch him die? Decision — she surrenders, and Humperdinck lies to her face. That Decision is what sets up the next scene.\n\nThe issue list in this pass is built automatically from your own inputs, in that narrower scope. Each issue jumps to the place that fixes it, or can be marked \"Not an issue\" — dismissed issues wait in the Dismissed section at the bottom of the list, and any of them can be restored.",
+  structural:"This pass assumes the prose is written. Planning gaps — unwritten beats, unanswered questions, blank scene fields — belong to the Readiness check, which runs BEFORE drafting; finding them here would be too little, too late. What belongs here is what only a draft can show:\n\n• Reverse outline first: one sentence per scene (what happens, what changes), stacked to find gaps, repeats, and scenes that wander.\n\n• Order and causality: beats placed out of story order, two beats crowding one scene, scenes that carry nothing (no beat, no plot point, no stated job), and beats that connect with \"and then\" instead of \"but / therefore\".\n\n• The Scene & Sequel chain, judged not just filled in: you wrote Stage instructions first while drafting — now check each scene for a Goal, a Conflict and a real Disaster, and a Sequel (Reaction → Dilemma → Decision) whose Decision actually sets the next scene's Goal. Broken joins are the usual sagging-middle problem. The editor and the visual chain below are one tool: edit in the editor, read the result in the chain.\n\nWorked example — The Fire Swamp (The Princess Bride): Goal — reach Westley's ship and safety. Conflict — flame spurts, lightning sand and an ROUS. Disaster — no-and-furthermore: they survive the swamp and are captured at its edge. Reaction — Buttercup bargains: her marriage for Westley's life. Dilemma — surrender to save him, or run and watch him die? Decision — she surrenders, and Humperdinck lies to her face. That Decision is what sets up the next scene.\n\nThe issue list in this pass is built automatically from your own inputs, in that narrower scope. Each issue jumps to the place that fixes it, or can be marked \"Not an issue\" — dismissed issues wait in the Dismissed section at the bottom of the list, and any of them can be restored.",
   beta:"Ask specifics, not \"did you like it?\": where were you lost or bored, where did belief break, which question were you most invested in? Look for patterns — you don't have to take every note.",
   line:"Read aloud and mark stumbles. Cut vagueness; split tangled sentences. This is the pass where voice is protected: a correct-but-flat line is still a problem.",
   copy:"Grammar, spelling, punctuation, usage. Keep the style sheet (below) current: name spellings, timelines, ages, places, recurring details. The text is basically final here — no new scenes.",
@@ -1224,7 +1284,10 @@ var LOOP = [
   {key:"decision", title:"Decision → next Goal", group:"Sequel"}
 ];
 var TAGS = ["none","blessing","setback","both"];
-var TAG_LABEL = {none:"No tag", blessing:"Blessing", setback:"Setback", both:"Both"};
+/* Legacy scene tags (none / blessing / setback / both) survive only as
+   stored data for old files — TAGS above is the read-compat list used
+   on import. They have no labels and are never shown: on screen every
+   such entry is a Plot point. */
 
 function uid(){ return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
 function blankBeats(){ var o={}; BEATS.forEach(function(b){ o[b.key]={text:"",question:""}; }); return o; }
@@ -1421,11 +1484,11 @@ function newProject(title){
   var arc0 = makeArc("Main story", 0, blankBeats());
   return { id:uid(), title:title||"Untitled project", scheme:"ember", titleFont:"serif", createdAt:Date.now(), updatedAt:Date.now(),
     intake:{premise:"", targetWords:"", avgScene:"1300", keyQuestion:"", stakes:"", theme:"", counterTheme:"", framing:"", voiceTone:"", genrePromise:"", openingLine:"", endingLine:"", keyIdeas:"", secrets:"", keyObjects:"", factsToCheck:"", synopsis:"", synopsisStamp:"", finalLength:"", gateNotes:{gate1:"",gate2:""}},
-    characters:[], arcs:[arc0], scenes:[], chapters:[], styleSheet:"", readinessNotes:"", editing:blankEdit(), dismissedChecks:{}, world:{template:"", sections:{}} };
+    characters:[], arcs:[arc0], scenes:[], chapters:[], styleSheet:"", readinessNotes:"", editing:blankEdit(), dismissedChecks:{}, world:{template:"", sections:{}}, style:blankStyle() };
 }
 function blankScene(n){
   return { id:uid(), title:"Scene " + n, chapter:"", pov:"", where:"", when:"", what:"", question:"", does:"", wordTarget:"", status:"planned", kind:"story", feelStart:"", feelEnd:"", stage:"", bs:[], beatTags:[], cast:[],
-    sequel:{goal:"",conflict:"",disaster:"",reaction:"",dilemma:"",decision:""} };
+    styleNote:"", styleFlag:"", sequel:{goal:"",conflict:"",disaster:"",reaction:"",dilemma:"",decision:""} };
 }
 /* Beat tags: a scene's beatTags is a list of {arcId, beat} — at most one beat
    per arc on a scene, and one scene per (arc, beat) across the project. The
@@ -1487,18 +1550,25 @@ function cleanBeatTags(p){
     s.beatTags = out;
   });
 }
-/* Blessing / Setback ENTRIES (not binary tags): each scene carries a list
-   s.bs of {id, type:"blessing"|"setback", text}. Entries are optional and
-   unlimited per scene. Migration: a scene saved with only the old binary
-   s.tag gets one entry per tagged kind with empty text, so nothing is lost
-   and the writer is prompted to fill the text in. s.tag is kept in sync as
-   a derived legacy value (none/blessing/setback/both) for old exports. */
-/* Blessing/Setback arc links (Option A): an entry's arcId names the arc
-   it belongs to, or is null when unlinked — every entry written before
-   arc-linking, and any entry whose arc was deleted. Unlinked entries
-   are kept and shown in a small "Unlinked" section in the map and the
-   scene list, never deleted, and can be linked to an arc later from
-   the entry's editor. */
+/* Plot point ENTRIES (stored on each scene as s.bs, the legacy key):
+   each scene carries a list s.bs of {id, type, text, arcId}. The UI
+   calls every entry a Plot point — something that happens in the scene
+   that is not one of the arc's Seven-Point beats — and never shows or
+   asks for a kind. The stored type is legacy data only: entries written
+   before Plot points keep type "blessing" or "setback" in the project
+   file and in JSON exports, untouched, so the old kind can be restored
+   later; new entries are created with type "plotpoint". Nothing in the
+   UI reads the type except the colour code's fallback, and colours no
+   longer encode it (one palette, one arc variation). Migration: a scene
+   saved with only the old binary s.tag gets one entry per tagged kind
+   with empty text, so nothing is lost and the writer is prompted to
+   fill the text in. */
+/* Plot point arc links: an entry's arcId names the arc it belongs to,
+   or is null when unlinked — every entry written before arc-linking,
+   and any entry whose arc was deleted. Unlinked entries are kept and
+   shown in a small "Unlinked" section in the map and the scene list,
+   never deleted, and can be linked to an arc later from the entry's
+   editor. */
 function cleanBSArcs(p){
   if(!p || !Array.isArray(p.scenes)) return;
   var ids = {};
@@ -1514,12 +1584,14 @@ function bsArcOf(p, e){
   (p.arcs || []).forEach(function(a){ if(a.id === e.arcId) found = a; });
   return found;
 }
-/* Create a Blessing/Setback entry (optionally linked to an arc) and open
-   it for in-place text editing in the map, exactly like the old BS add
-   flow: no navigation, no page jump. */
+/* Create a Plot point entry (optionally linked to an arc) and open
+   it for in-place text editing in the map: no navigation, no page
+   jump. New entries are always stored with type "plotpoint" — the
+   legacy type argument is accepted and ignored, so no caller ever
+   picks a Plot point kind again. */
 function addBSEntry(p, s, type, arcId){
   ensureSceneBS(s);
-  var ne = {id:uid(), type:type, text:"", arcId: arcId || null};
+  var ne = {id:uid(), type:"plotpoint", text:"", arcId: arcId || null};
   s.bs.push(ne);
   ui.bsMapEditId = ne.id;
   touch(p); save();
@@ -1533,8 +1605,8 @@ function deriveTagFromBS(s){
 function ensureSceneBS(s){
   if(!s) return;
   if(Array.isArray(s.bs)){
-    s.bs = s.bs.filter(function(e){ return e && (e.type === "blessing" || e.type === "setback"); });
-    s.bs.forEach(function(e){ if(!e.id) e.id = uid(); if(typeof e.text !== "string") e.text = String(e.text == null ? "" : e.text); if(typeof e.arcId !== "string" || !e.arcId) e.arcId = null; });
+    s.bs = s.bs.filter(function(e){ return !!e && typeof e === "object"; });
+    s.bs.forEach(function(e){ if(e.type !== "blessing" && e.type !== "setback") e.type = "plotpoint"; if(!e.id) e.id = uid(); if(typeof e.text !== "string") e.text = String(e.text == null ? "" : e.text); if(typeof e.arcId !== "string" || !e.arcId) e.arcId = null; });
   } else {
     s.bs = [];
     if(s.tag === "blessing" || s.tag === "both") s.bs.push({id:uid(), type:"blessing", text:"", arcId:null});
@@ -1542,26 +1614,22 @@ function ensureSceneBS(s){
   }
   if("tag" in s) delete s.tag; /* legacy derived value: read above for migration, never written back */
 }
-function bsTypeLabel(t){ return t === "blessing" ? "Blessing" : "Setback"; }
-/* Blessing / Setback colours for UNLINKED entries: Blessings cycle
-   through positive hues (green, blue, purple, teal); Setbacks cycle through
-   negative hues (red, orange, pink). Each entry gets the next colour for its
-   type, so entries never share a colour until the cycle wraps. Pairs are
-   [background, readable text] chosen for light and dark themes alike; the
-   colour is a background FILL (no outline), and the entry text is italic.
-   Entries LINKED to an arc instead use a close variation of that arc's
+/* The only label a Plot point ever shows. The stored legacy type
+   (blessing / setback on old entries) is deliberately NOT read here:
+   it stays in the data, never on screen. */
+function bsTypeLabel(t){ return "Plot point"; }
+/* Plot point colours for UNLINKED entries: one palette, cycled by
+   the entry's position in its scene's list — colour carries position
+   only, never the stored legacy type. Pairs are [background, readable
+   text] chosen for light and dark themes alike; the colour is a
+   background FILL (no outline), and the entry text is italic. Entries
+   LINKED to an arc instead use a close variation of that arc's
    colour — see bsArcColors below. */
-var BS_PAL_LIGHT = {
-  blessing:[["#cdeac0","#1e4620"],["#c3dcf5","#173a5e"],["#ddd0f7","#3c2568"],["#bfe6da","#12453a"]],
-  setback:[["#f7cdc4","#5e1f16"],["#f9dfae","#5e3d0e"],["#f7c6da","#5e1f3d"],["#f3bfc9","#5e1c28"]]
-};
-var BS_PAL_DARK = {
-  blessing:[["#2e5c33","#c8edc6"],["#2a4d75","#c2dcf7"],["#4a3575","#ddd0fa"],["#215247","#bde8da"]],
-  setback:[["#75352b","#f9cdc2"],["#74512a","#f7dfae"],["#74334f","#f7c6da"],["#6e2f3a","#f3bfc9"]]
-};
+var BS_PAL_LIGHT = { plotpoint:[["#cdeac0","#1e4620"],["#c3dcf5","#173a5e"],["#ddd0f7","#3c2568"],["#bfe6da","#12453a"],["#f9dfae","#5e3d0e"],["#f7c6da","#5e1f3d"],["#e8e8e8","#333333"],["#d5e5e4","#1f3a3a"]] };
+var BS_PAL_DARK = { plotpoint:[["#2e5c33","#c8edc6"],["#2a4d75","#c2dcf7"],["#4a3575","#ddd0fa"],["#215247","#bde8da"],["#74512a","#f7dfae"],["#74334f","#f7c6da"],["#3a3a3a","#e8e8e8"],["#31484a","#cfe6e3"]] };
 function bsPalette(type, idx){
   var table = colorModeDark() ? BS_PAL_DARK : BS_PAL_LIGHT;
-  var pal = table[type] || table.blessing;
+  var pal = table.plotpoint;
   var c = pal[Math.abs(idx || 0) % pal.length];
   return { bg:c[0], fg:c[1] };
 }
@@ -1612,40 +1680,23 @@ function hslToHex(h, s, l){
   function hx(c){ var v = Math.round(Math.max(0, Math.min(1, c)) * 255).toString(16); return v.length === 1 ? "0" + v : v; }
   return "#" + hx(r) + hx(g) + hx(b);
 }
-/* Blessing/Setback colours for an entry LINKED to an arc: Blessings and
-   Setbacks now live inside arcs, so the card keeps a background FILL,
-   but the fill is a very close variation of THAT ARC's colour —
-   Blessing slightly lighter and cooler (hue nudged toward blue),
-   Setback slightly darker and warmer (hue nudged toward red/orange) —
-   per arc colour, in both layouts and both colour modes.
-   The variation is NEVER inverted from the arc's beat cards: beat
-   cards sit on the page background (dark in dark mode, light in light
-   mode) with mode-appropriate text, so the BS fill is built in the
-   MODE's lightness range, not the raw arc colour's — in DARK mode the
-   fill is a DARK variation of the arc colour with LIGHT text, and in
-   LIGHT mode a LIGHT variation with DARK text. (Deriving the fill from
-   the raw arc colour inverted it, because dark-mode arc colours are
-   pastels and light-mode ones are mid-tones.) Blessing and Setback
-   stay distinguishable WITHIN that range — Blessing the lighter of the
-   two in both modes, Setback the darker — never by flipping one of
-   them across to the opposite lightness. If the starting lightness
-   still misses 4.5:1 against the mode's text colour, the fill is
-   stepped further INTO the mode's range (darker in dark mode, lighter
-   in light mode) until it passes; verified across all 70 arc colours
-   × both types × both modes, worst case ≈ 5.3:1. Unlinked entries
-   keep the cycling palettes above, which are already mode-correct
-   (dark fills/light text in BS_PAL_DARK, light fills/dark text in
-   BS_PAL_LIGHT). */
+/* Plot point colours for an entry LINKED to an arc: the card keeps
+   a background FILL, a close variation of THAT ARC's colour — the
+   same variation for every entry, so colour never encodes the stored
+   legacy type. The fill is built in the MODE's lightness range, not
+   the raw arc colour's — in DARK mode a DARK variation with LIGHT
+   text, in LIGHT mode a LIGHT variation with DARK text — and stepped
+   further into the mode's range until it passes 4.5:1 against the
+   mode's text colour. Unlinked entries keep the cycling palette
+   above, which is already mode-correct. */
 function bsArcColors(p, entry){
   var arc = bsArcOf(p, entry);
   if(!arc) return null;
   var hsl = hexToHsl(getArcColor(p, arc));
   var h = hsl.h, s = hsl.s;
-  if(entry.type === "blessing") h = h - 10; else h = h + 10;
   var dark = colorModeDark();
   var fg = dark ? "#ffffff" : "#161616";
-  var l = dark ? (entry.type === "blessing" ? 0.30 : 0.24)
-               : (entry.type === "blessing" ? 0.83 : 0.76);
+  var l = dark ? 0.27 : 0.80;
   var bg = hslToHex(h, s, l);
   for(var i = 0; i < 24; i++){
     if(contrastRatio(bg, fg) >= 4.5) break;
@@ -1655,7 +1706,7 @@ function bsArcColors(p, entry){
   }
   return { bg:bg, fg:fg };
 }
-/* The colours a Blessing/Setback card or editor block actually uses:
+/* The colours a Plot point card or editor block actually uses:
    the arc variation when linked, the type palette when unlinked. */
 function bsCardColors(p, entry, typeIdx){
   return bsArcColors(p, entry) || bsPalette(entry.type, typeIdx);
@@ -1681,7 +1732,7 @@ function arcDotsEl(p, arc){
   wrapEl.setAttribute("aria-label", placedCount + " of 7 beats placed for " + arc.name);
   return wrapEl;
 }
-/* Focus a Blessing/Setback input without moving the page at all. */
+/* Focus a Plot point input without moving the page at all. */
 function focusBSInput(id){
   setTimeout(function(){
     var el = document.querySelector('[data-bs-input="' + id + '"]');
@@ -1703,7 +1754,7 @@ function moveBSEntry(p, fromIdx, entryId, delta){
   return toIdx;
 }
 /* Move a beat's tag one scene earlier or later — beats move between
-   scenes exactly like Blessing/Setback entries do (same ‹ › icons,
+   scenes exactly like Plot point entries do (same ‹ › icons,
    same behaviour). If the destination scene already carries a
    DIFFERENT beat of the same arc, the two beats swap scenes, since a
    scene holds at most one beat per arc. Returns the destination scene
@@ -1805,7 +1856,7 @@ function castNamesOf(p, s){
 }
 /* ---------- honest coverage ----------
    Anchor-vs-budget coverage: scenes planned against the number the
-   target length affords, the total Blessing/Setback count, and whether
+   target length affords, the total Plot point count, and whether
    beats share scenes — so a full row of arc dots (7/7 placed) never
    reads as a finished plan. Demo projects are labelled as what they
    are: anchor scenes for their target length, not a complete list. */
@@ -1824,7 +1875,7 @@ function coverageText(p){
   if(b) parts.push(b.have + " of ~" + b.afford + " scenes planned (frame bookends excluded)");
   else parts.push(p.scenes.length + " scene" + (p.scenes.length === 1 ? "" : "s") + " planned (set a target length in Intake for a scene budget)");
   var bs = totalBS(p);
-  parts.push(bs + " Blessing" + (bs === 1 ? "" : "s") + "/Setback" + (bs === 1 ? "" : "s") + " in total");
+  parts.push(bs + " Plot point" + (bs === 1 ? "" : "s") + " in total");
   var sh = sharedBeatSceneCount(p);
   if(sh) parts.push(sh + " scene" + (sh === 1 ? " carries" : "s carry") + " more than one beat");
   var txt = parts.join(" · ");
@@ -2054,10 +2105,91 @@ function ensureWorld(p){
   });
 }
 function wbSection(p, key){ ensureWorld(p); return p.world.sections[key]; }
+/* ---------- Style — How It's Told: data model ----------
+   p.style holds the telling layer (see renderStyle). Every field is a
+   planning note — no prose is stored here, like the rest of the tool.
+   Old projects have no p.style at all: ensureStyle fills the defaults
+   in place, so nothing needs a migration step and nothing is lost.
+   Per-scene audit data lives on the scene (styleNote / styleFlag),
+   defaulted here too. */
+var STYLE_TENETS = [
+  "One consciousness, limited on purpose — and the limit named.",
+  "Every repeated device changes slightly each time it returns.",
+  "Naming is a plot event.",
+  "The body carries what the dialogue cannot say.",
+  "A closed world with rules, and a rule that gets tested.",
+  "The ending is given (or hidden) on purpose; the meaning is withheld either way.",
+  "Love: subject or engine — decided, not drifted into.",
+  "The ending is a question, a debt, or a name — or a deliberate, named exception.",
+  "A witness who is not fooled exists."
+];
+function blankStyle(){
+  return {
+    thesis:"",
+    stance:{pov:"", povNote:"", tense:"", tenseNote:"", limitation:"", reliability:""},
+    themeMap:[],
+    devices:[],
+    motifs:[],
+    naming:{unnamed:"", renamed:"", scene:"", power:""},
+    body:{kind:"", note:""},
+    closedWorld:{sealed:"", breakWhich:"", breakWhere:"", breakCost:"", rules:[]},
+    ending:{knownEarly:"", withheld:"", mode:""},
+    witness:{who:"", sees:"", does:"", fate:""},
+    voice:{diction:"", rhythm:"", tic:"", allusion:""},
+    tenets:{}
+  };
+}
+function styleStr(v){ return v == null ? "" : String(v); }
+function ensureStyle(p){
+  if(!p) return null;
+  if(!p.style || typeof p.style !== "object") p.style = blankStyle();
+  var st = p.style, d = blankStyle();
+  if(typeof st.thesis !== "string") st.thesis = styleStr(st.thesis);
+  ["stance","naming","body","closedWorld","ending","witness","voice"].forEach(function(k){
+    if(!st[k] || typeof st[k] !== "object") st[k] = d[k];
+    Object.keys(d[k]).forEach(function(f){
+      if(f === "rules") return;
+      if(typeof st[k][f] !== "string") st[k][f] = styleStr(st[k][f]);
+    });
+  });
+  if(!Array.isArray(st.closedWorld.rules)) st.closedWorld.rules = [];
+  st.closedWorld.rules = st.closedWorld.rules.filter(function(r){ return !!r && typeof r === "object"; });
+  st.closedWorld.rules.forEach(function(r){ if(!r.id) r.id = uid(); if(typeof r.text !== "string") r.text = styleStr(r.text); });
+  function fixList(list, fields){
+    if(!Array.isArray(list)) return [];
+    return list.filter(function(e){ return !!e && typeof e === "object"; }).map(function(e){
+      if(!e.id) e.id = uid();
+      fields.forEach(function(f){ if(typeof e[f] !== "string") e[f] = styleStr(e[f]); });
+      return e;
+    });
+  }
+  st.themeMap = fixList(st.themeMap, ["theme","device","scenes"]);
+  st.devices = fixList(st.devices, ["device","kind","first","changes","endMeaning","theme"]);
+  st.motifs = fixList(st.motifs, ["motif","first","development","payoff"]);
+  if(!st.tenets || typeof st.tenets !== "object") st.tenets = {};
+  STYLE_TENETS.forEach(function(txt, i){
+    var k = String(i + 1), tv = st.tenets[k];
+    if(!tv || typeof tv !== "object") tv = st.tenets[k] = {answer:"", note:""};
+    if(["yes","no"].indexOf(tv.answer) < 0) tv.answer = "";
+    if(typeof tv.note !== "string") tv.note = styleStr(tv.note);
+  });
+  (p.scenes || []).forEach(function(s){
+    if(!s || typeof s !== "object") return;
+    if(typeof s.styleNote !== "string") s.styleNote = styleStr(s.styleNote);
+    if(["serves","against"].indexOf(s.styleFlag) < 0) s.styleFlag = "";
+  });
+  return st;
+}
+function sanitizeStyle(raw){
+  var holder = {style: (raw && typeof raw === "object") ? raw : {}, scenes: []};
+  ensureStyle(holder);
+  return holder.style;
+}
+
 
 var state = { projects:[], currentId:null };
-var ui = { view:"projects", openBeat:null, openScene:null, openChar:null, openPass:null, openGate:null, openArc:null, openBeatCard:null, openLoopStep:null, beatConflict:null, tagArcSel:null, tagBeatSel:null, dragSceneId:null, mapScrollLeft:0, refOpen:false, charRefOpen:false, openQuestion:null, showFullScale:false, openBSEntry:null, bsMapEditId:null, phoneSceneId:null, phoneTagPicker:null, mapBeatEdit:null, gridTagPicker:null, openWorld:null, wbGuide:false, tagPickerScene:null, loopOpenScenes:{}, stageRefScenes:{}, optOpen:{}, seqSceneId:null, layerPanel:false, addMaps:{questions:false, decisions:false}, readyOpen:{}, chainEdit:null };
-var SECTION_LABELS = { projects:"Projects", overview:"Overview", intake:"Intake", world:"Worldbuilding", map:"Story Arcs", scenes:"Scenes", characters:"Characters", readiness:"Readiness check", editing:"Editing", setup:"Setup & Backup" };
+var ui = { view:"projects", openBeat:null, openScene:null, openChar:null, openPass:null, openGate:null, openArc:null, openBeatCard:null, openLoopStep:null, beatConflict:null, tagArcSel:null, tagBeatSel:null, dragSceneId:null, mapScrollLeft:0, refOpen:false, charRefOpen:false, openQuestion:null, showFullScale:false, openBSEntry:null, bsMapEditId:null, phoneSceneId:null, phoneTagPicker:null, mapBeatEdit:null, gridTagPicker:null, openWorld:null, wbGuide:false, tagPickerScene:null, loopOpenScenes:{}, stageRefScenes:{}, optOpen:{}, seqSceneId:null, layerPanel:false, addMaps:{questions:false, decisions:false}, readyOpen:{}, chainEdit:null, styleOpen:{} };
+var SECTION_LABELS = { projects:"Projects", overview:"Overview", intake:"Intake", world:"Worldbuilding", map:"Story Arcs", scenes:"Scenes", style:"How It's Told", characters:"Characters", readiness:"Readiness check", editing:"Editing", setup:"Setup & Backup" };
 
 function load(){
   try{
@@ -2072,7 +2204,7 @@ function load(){
     if(p.intake && typeof p.intake.finalLength !== "string") p.intake.finalLength = "";
     if(p.intake && typeof p.intake.stakes !== "string") p.intake.stakes = "";
     if(p.intake) ["counterTheme","voiceTone","genrePromise","openingLine","endingLine","secrets","keyObjects","factsToCheck","synopsisStamp"].forEach(function(k){ if(typeof p.intake[k] !== "string") p.intake[k] = ""; });
-    ensurePasses(p);
+    ensurePasses(p); ensureStyle(p);
     ensureChapters(p);
     if(Array.isArray(p.characters)) p.characters.forEach(function(c){ if(!c) return; if(typeof c.changeStart !== "string") c.changeStart = ""; if(typeof c.changeEnd !== "string") c.changeEnd = ""; if(typeof c.wantNeed !== "string") c.wantNeed = ""; if(typeof c.relationships !== "string") c.relationships = ""; if(typeof c.answer !== "string") c.answer = ""; c.antagonist = !!c.antagonist; c.questionOnly = !!c.questionOnly; });
     if(p.intake && p.intake.gateNotes && "gate3" in p.intake.gateNotes) delete p.intake.gateNotes.gate3;
@@ -2157,6 +2289,21 @@ function editToggle(renderFn, sel){
   try{ window.scrollTo(0, y); }catch(e){}
   if(sel){ pendingScrollSel = sel; setTimeout(doPendingScroll, 0); }
 }
+/* Enter-to-save for the small in-place block editors (map beats,
+   Plot point cards and entries, decision-chain steps, Story
+   Arcs beat rows, Scene & Sequel steps): plain Enter confirms the
+   block exactly like tapping its ✓ / Done button; Shift+Enter still
+   inserts a newline, so multi-sentence text is never trapped. Larger
+   writing fields keep plain Enter for new lines and use Ctrl/Cmd+Enter
+   as their save shortcut (see field() and the global listener below). */
+function bindEnterSave(el, saveFn){
+  if(!el || !saveFn) return;
+  el.addEventListener("keydown", function(e){
+    if(e.key !== "Enter" || e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return;
+    e.preventDefault();
+    saveFn();
+  });
+}
 function scrollElIntoTop(el){ revealEl(el); }
 
 /* ---------- modal ---------- */
@@ -2183,6 +2330,9 @@ document.getElementById("modalCancel").addEventListener("click", hideModal);
 document.getElementById("modalOk").addEventListener("click", function(){
   var v = document.getElementById("modalInput").value;
   var cb = modalCb; hideModal(); if(cb) cb(v);
+});
+document.getElementById("modalInput").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){ e.preventDefault(); document.getElementById("modalOk").click(); }
 });
 
 /* ---------- navigation: hamburger drawer; Projects is the homepage ---------- */
@@ -2305,7 +2455,33 @@ document.getElementById("menuBtn").addEventListener("click", openDrawer);
 document.getElementById("drawerClose").addEventListener("click", closeDrawer);
 document.getElementById("drawerBack").addEventListener("click", closeDrawer);
 document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeDrawer(); });
-/* The map's Blessing/Setback add dropdown closes on any outside tap. */
+/* Enter-to-save, everywhere else: single-line inputs save on Enter
+   (their text is already written on every keystroke — Enter flushes
+   the save and leaves the field, the visible confirmation), and any
+   input or textarea saves on Ctrl/Cmd+Enter without losing plain
+   Enter for new lines in longer text. Fields that handle Enter
+   themselves (inline name edits, the modal, the small block editors
+   bound with bindEnterSave) are left to their own handlers. */
+document.addEventListener("keydown", function(e){
+  if(e.key !== "Enter") return;
+  var t = e.target;
+  if(!t || !t.tagName) return;
+  if(t.id === "modalInput") return;
+  if(t.closest && t.closest(".nameedit")) return;
+  if(e.metaKey || e.ctrlKey){
+    if(t.tagName === "TEXTAREA" || t.tagName === "INPUT"){
+      e.preventDefault();
+      save();
+      try{ t.blur(); }catch(err){}
+    }
+    return;
+  }
+  if(t.tagName === "INPUT" && (t.type === "text" || t.type === "number" || t.type === "date")){
+    save();
+    try{ t.blur(); }catch(err){}
+  }
+});
+/* The map's Plot point add dropdown closes on any outside tap. */
 document.addEventListener("click", function(e){
   if(e.target && e.target.closest && e.target.closest(".bs-map-add")) return;
   document.querySelectorAll(".bs-menu").forEach(function(m){ m.remove(); });
@@ -2361,7 +2537,7 @@ try{
 function closeAllEditorsAndSave(){
   ui.openBeat = null; ui.openScene = null; ui.openChar = null; ui.openPass = null;
   ui.openGate = null; ui.openArc = null; ui.openBeatCard = null; ui.openLoopStep = null;
-  ui.openQuestion = null; ui.beatConflict = null; ui.openBSEntry = null; ui.bsMapEditId = null; ui.mapBeatEdit = null; ui.gridTagPicker = null; ui.openWorld = null;
+  ui.openQuestion = null; ui.beatConflict = null; ui.openBSEntry = null; ui.bsMapEditId = null; ui.mapBeatEdit = null; ui.gridTagPicker = null; ui.openWorld = null; ui.styleOpen = {};
   if(saveTimer){ clearTimeout(saveTimer); saveTimer = null; }
   if(cur()) save();
 }
@@ -2664,7 +2840,7 @@ function buildDemoProject(){
   p.editing.rest.done = true;
   p.editing.rest.notes = "Demo note: after the first full telling, let it rest — the frame story's grandson gets a day; the tale gets six weeks.";
   p.editing.structural.done = true;
-  p.editing.structural.notes = "Demo note: the eight anchor scenes were reverse-outlined against both Seven-Point maps, and every one is a scene the film actually shows, in order — the scene list is the list of scenes to write, nothing invented to hold information. Domingo's murder and Inigo's childhood vow are not a scene: they live in Inigo's character fields and the Secrets note in Key ideas, surface in his fight with Westley, and pay off in his duel with Rugen. The Fire Swamp scene deliberately carries no Main-story beat — it earns the Blessing that makes the ending work.";
+  p.editing.structural.notes = "Demo note: the eight anchor scenes were reverse-outlined against both Seven-Point maps, and every one is a scene the film actually shows, in order — the scene list is the list of scenes to write, nothing invented to hold information. Domingo's murder and Inigo's childhood vow are not a scene: they live in Inigo's character fields and the Secrets note in Key ideas, surface in his fight with Westley, and pay off in his duel with Rugen. The Fire Swamp scene deliberately carries no Main-story beat — it earns the plot point that makes the ending work.";
   touch(p);
   return p;
 }
@@ -2676,7 +2852,7 @@ function buildDemoProject(){
    at short-story scale on purpose). Each builds a complete, ordinary
    project exactly the way the Princess Bride demo does — filled intake,
    characters with one question each, full Seven-Point arcs, scenes with
-   the whole Scene & Sequel loop and arc-linked Blessing/Setback entries,
+   the whole Scene & Sequel loop and arc-linked Plot point entries,
    worldbuilding, and editing notes — and each is editable, exportable,
    importable and deletable like any other project. Nothing here runs
    until the reader picks a story in the dropdown and taps Load. */
@@ -3569,8 +3745,8 @@ document.addEventListener("click", function(e){
   var dp = document.getElementById("demoPicker");
   if(dp && !dp.hidden && !(e.target && e.target.closest && (e.target.closest("#demoPicker") || e.target.closest("#demoToggleBtn")))) closeDemoPicker();
 });
-/* Scrolling closes open popovers too: the Layers panel, any Blessing/
-   Setback menu, and the demo picker — a menu left open while the page
+/* Scrolling closes open popovers too: the Layers panel and
+   the demo picker — a menu left open while the page
    moves underneath it reads as a bug, and tapping elsewhere to dismiss
    it should not be the only way out. Small scrolls (a few px of jitter
    while tapping) do not count. */
@@ -3723,7 +3899,7 @@ var WB_INFO = {
   culBeliefs:{t:"Rituals are beliefs you can photograph: choose the visible acts, not just the doctrines.", l:"• Le Guin: belief in fiction convinces when it is practised — calendars, gestures, and obligations, not theology lectures.\n• Tolkien: invented faith works best implied through custom and song — the depth impression again."},
   culDaily:{t:"One ordinary day, hour by hour, will teach you more than a festival list.", l:"• Le Guin built the Kesh (Always Coming Home) from daily texture — food, work, and mourning as worldbuilding's real substance.\n• Sanderson: test any culture by asking what its people eat, owe, and celebrate — if you can answer, scenes can be set there."},
   culEvent:{t:"Pick the event people still argue about; consensus history is dead history.", l:"• Tolkien's depth effect depends on a past that feels lived in — events with ruins, songs, and grievances attached.\n• Sanderson: a defining event is a system's or a people's Pinch 2 — the lowest point whose consequences the present is still paying."},
-  culFearValue:{t:"What they protect and what they dread are the two levers every scene with them can pull.", l:"• John Truby, The Anatomy of Story: a culture, like a character, has a want and a need — what it protects aloud and what it fears underneath.\n• Dan Wells: fears and values are beat fuel — a Pinch threatens the value, a Blessing endangers it differently, by making it losable."},
+  culFearValue:{t:"What they protect and what they dread are the two levers every scene with them can pull.", l:"• John Truby, The Anatomy of Story: a culture, like a character, has a want and a need — what it protects aloud and what it fears underneath.\n• Dan Wells: fears and values are beat fuel — a Pinch threatens the value; a plot point can endanger it differently, by making it losable."},
   geoMapNotes:{t:"Sketch roughly and honestly — precision comes later, and a wrong precise map is worse than a vague true one.", l:"• Tolkien drew the map early and treated it as a contract: distances and directions decided on the map bind every journey in the text.\n• Sanderson's lectures: the map is a promise to the reader — travel times and borders shown there will be checked against the plot."},
   geoRegions:{t:"Name places by what travellers would call them, and note the one thing each is known for.", l:"• Tolkien's place-names carry language and history — a name in the local tongue implies the people who named it.\n• Le Guin, 'From Elfland to Poughkeepsie': names must belong to the world that speaks them, or the whole construction wobbles."},
   geoFeatures:{t:"Rivers connect, mountains divide, borders do both badly — mark all three.", l:"• Sanderson: geography is causal — rivers make trade cities, mountains make isolated cultures, and borders make smugglers.\n• Tolkien's journeys are geography lessons: every range and river on the map ends up shaping the plot's options."},
@@ -3759,6 +3935,20 @@ function field(label, hint, val, oninput, opts){
   else { el = document.createElement("input"); el.type="text"; }
   el.id = id; el.value = val || ""; el.placeholder = opts.placeholder || "";
   el.addEventListener("input", function(){ oninput(el.value); });
+  /* Enter saves this field: for a single-line input (and for a
+     one-row textarea, which is a single line in intent) Enter flushes
+     the save and leaves the field instead of doing nothing; for a
+     longer textarea plain Enter still makes a new line and
+     Ctrl/Cmd+Enter is the save. */
+  el.addEventListener("keydown", function(e){
+    if(e.key !== "Enter") return;
+    if(e.metaKey || e.ctrlKey){
+      e.preventDefault(); oninput(el.value); save(); try{ el.blur(); }catch(err){}
+    } else if(el.tagName === "INPUT" || opts.rows === 1){
+      if(e.shiftKey) return;
+      e.preventDefault(); oninput(el.value); save(); try{ el.blur(); }catch(err){}
+    }
+  });
   wrap.appendChild(el);
   return wrap;
 }
@@ -3940,7 +4130,7 @@ function renderGateInto(g, slot){
     }
     /* Honest coverage beside the budget verdict: beats placed is not
        scenes planned — show the anchor-vs-budget count, the total
-       Blessing/Setback count, and any beats sharing a scene. */
+       Plot point count, and any beats sharing a scene. */
     var cov = document.createElement("p");
     cov.style.cssText = "margin:0 0 var(--sp2);font-size:.92rem";
     cov.innerHTML = "<strong>Coverage:</strong> " + esc(coverageText(p));
@@ -4250,7 +4440,7 @@ function renderCharacters(){
     var node = document.createElement("div"); node.className="node";
     node.setAttribute("data-char-id", c.id);
     var b = document.createElement("div"); b.className="node-head";
-    var cmain = document.createElement("div"); cmain.className="node-main";
+    var cmain = document.createElement("div"); cmain.className="node-main stack-main";
     cmain.innerHTML = '<span class="ntitle"><span>'+esc(c.name||"Unnamed character")+'</span></span>'
       + (c.question ? '<span class="nprev">'+esc(c.question)+'</span>' : '<span class="nprev empty-t">No question yet — every major character needs one the ending answers.</span>')
       + (c.antagonist ? '<span class="nprev"><span class="tagpill">Antagonist</span></span>' : '')
@@ -4393,6 +4583,7 @@ function makeBeatCard(p, arc, key, scene, opts){
     var cxB = document.createElement("button"); cxB.type = "button"; cxB.className = "icon-xs-btn"; cxB.innerHTML = ti("x");
     cxB.title = "Cancel"; cxB.setAttribute("aria-label", "Cancel beat edit");
     cxB.addEventListener("click", function(){ ui.mapBeatEdit = null; editToggle(renderScenes, null); });
+    bindEnterSave(bta, function(){ okB.click(); });
     erow.appendChild(okB); erow.appendChild(cxB); ew2.appendChild(erow);
     card.appendChild(ew2);
     setTimeout(function(){ try{ bta.focus({preventScroll:true}); bta.select(); }catch(e){} }, 0);
@@ -4414,11 +4605,11 @@ function makeBeatCard(p, arc, key, scene, opts){
     return acts;
   }
   if(open) card.appendChild(buildBeatActions());
-  /* Move icons, standardised with Blessing/Setback cards: the beat can
+  /* Move icons, standardised with Plot point cards: the beat can
      be moved one scene earlier or later with the same icon-only ‹ ›
      glyphs — ‹ on the LEFT side of the card, › on the RIGHT side.
      Hidden while this beat's text is being edited in place, exactly
-     like a Blessing/Setback card hides its arrows while editing. */
+     like a Plot point card hides its arrows while editing. */
   if(scene && opts && typeof opts.sceneIdx === "number" && !editingBeat){
     var bnav = document.createElement("div"); bnav.className = "beatnav";
     var blb = document.createElement("button"); blb.type = "button"; blb.className = "mapicon"; blb.innerHTML = ti("chevron-left");
@@ -4443,7 +4634,7 @@ function makeBeatCard(p, arc, key, scene, opts){
   }
   return card;
 }
-/* A Blessing/Setback card for the visual map — it sits in its linked arc's row, or in the Unlinked row. It follows the
+/* A Plot point card for the visual map — it sits in its linked arc's row, or in the Unlinked row. It follows the
    same editing rules as every other editable section: COLLAPSED by
    default — title plus an italic text preview, with a pencil icon
    button (✎, the map's Edit) — and expanded IN PLACE only while
@@ -4453,7 +4644,8 @@ function makeBeatCard(p, arc, key, scene, opts){
    Move and edit controls in collapsed mode are icon-only glyphs (no
    button chrome), standardised with beat cards: ‹ on the left side of
    the card, › on the right side, and the edit pencil in the card's
-   TOP RIGHT corner. */
+   TOP RIGHT corner. The card's title is always just "Plot point" —
+   the entry's stored legacy type is never shown. */
 function makeBSCard(p, s, entry, sceneIdx, typeIdx){
   var pal = bsCardColors(p, entry, typeIdx);
   var card = document.createElement("div"); card.className = "beatcard bs-card";
@@ -4467,7 +4659,7 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
     var ew = document.createElement("div"); ew.className = "bs-map-edit";
     var ta = document.createElement("textarea"); ta.rows = 3; ta.className = "bs-ta";
     ta.value = entry.text || "";
-    ta.placeholder = entry.type === "blessing" ? "What goes right, and what does it make possible?" : "What goes wrong, and how does it change the plan?";
+    ta.placeholder = "What happens here that is not an arc beat?";
     ta.setAttribute("aria-label", bsTypeLabel(entry.type) + " text");
     ta.setAttribute("data-noscroll", "1");
     ta.setAttribute("data-bs-input", entry.id);
@@ -4484,6 +4676,7 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
     doneB.title = "Done"; doneB.setAttribute("aria-label", "Done editing this " + bsTypeLabel(entry.type));
     doneB.style.background = "var(--surface)"; doneB.style.color = "var(--ink)";
     doneB.addEventListener("click", function(){ ui.bsMapEditId = null; editToggle(renderScenes, null); });
+    bindEnterSave(ta, function(){ doneB.click(); });
     iconRow.appendChild(doneB);
     var rmB = document.createElement("button"); rmB.type = "button"; rmB.className = "icon-xs-btn"; rmB.innerHTML = ti("trash");
     rmB.title = "Remove"; rmB.setAttribute("aria-label", "Remove this " + bsTypeLabel(entry.type));
@@ -4532,9 +4725,9 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
   }
   return card;
 }
-/* The Blessing/Setback editor for one scene (scene list edit area). Each
+/* The Plot point editor for one scene (scene list edit area). Each
    entry follows the same editing rules as every other editable section:
-   a collapsible block, collapsed by default, showing the Blessing/Setback
+   a collapsible block, collapsed by default, showing the Plot point
    title plus an italic text preview, with a right-aligned Edit/Close
    button in its header; the text input, Remove, and the move controls
    appear only when it is expanded, in place. Moving shows ONLY the
@@ -4543,49 +4736,32 @@ function makeBSCard(p, s, entry, sceneIdx, typeIdx){
    scrolls or jumps the page: the render preserves the scroll position
    exactly and the new input is focused with preventScroll. Entries carry
    the same background colours and italic text as in the map. */
-/* One "Blessing / Setback" button opening a small Blessing / Setback
-   menu (the map's dropdown pattern) — used wherever the scene list adds
-   an entry, instead of two separate add buttons. The wrapper carries
-   the .bs-map-add class so the app-wide outside-tap handler closes the
-   menu; choosing an option calls onPick("blessing"|"setback"). */
+/* One "Plot point" button that adds an entry straight away — there is
+   no kind to pick, so there is no menu. The callback receives
+   "plotpoint" for signature compatibility with the old menu version. */
 function bsAddMenu(label, ariaLabel, onPick){
   var wrapM = document.createElement("div"); wrapM.className = "bs-map-add scene-bs-add";
   var btn = document.createElement("button"); btn.type = "button"; btn.className = "tagbtn"; btn.textContent = label;
-  btn.setAttribute("aria-label", ariaLabel); btn.setAttribute("aria-haspopup", "true"); btn.setAttribute("aria-expanded", "false");
-  btn.addEventListener("click", function(ev){
-    ev.stopPropagation();
-    var existing = wrapM.querySelector(".bs-menu");
-    document.querySelectorAll(".bs-menu").forEach(function(m){ m.remove(); });
-    if(existing){ btn.setAttribute("aria-expanded", "false"); return; }
-    var menu = document.createElement("div"); menu.className = "bs-menu"; menu.setAttribute("role", "menu");
-    menu.style.cssText = "left:0;transform:none";
-    [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
-      var mb = document.createElement("button"); mb.type = "button"; mb.textContent = pair[1]; mb.setAttribute("role", "menuitem");
-      mb.setAttribute("aria-label", "Add a " + pair[1]);
-      mb.addEventListener("click", function(ev2){ ev2.stopPropagation(); onPick(pair[0]); });
-      menu.appendChild(mb);
-    });
-    wrapM.appendChild(menu);
-    btn.setAttribute("aria-expanded", "true");
-  });
+  btn.setAttribute("aria-label", ariaLabel);
+  btn.addEventListener("click", function(ev){ ev.stopPropagation(); onPick("plotpoint"); });
   wrapM.appendChild(btn);
   return wrapM;
 }
 function buildBSEditor(p, s, sceneIdx){
   var wrapEl = document.createElement("div"); wrapEl.style.marginTop = "var(--sp3)";
   var lab = document.createElement("label"); lab.className = "flabel";
-  lab.innerHTML = "Blessings &amp; Setbacks <span class='hint'>Part of this scene's Tags, not a separate section: optional entries with their own text, like the beats above — a Setback must change the plan, not just be bad news. They appear in the visual map, in the row of the arc each one is linked to — or under Unlinked.</span>";
-  lab.appendChild(makeInfoIcon("Blessings & Setbacks", "A Blessing: what goes right, and what it makes possible that was not possible before. A Setback: what goes wrong, and how it changes the plan — if the plan is unchanged afterwards, it is not a Setback yet, it is just bad news. Entries are optional and unlimited; link each one to the arc it belongs to, or leave it Unlinked."));
+  lab.textContent = "Plot points";
+  lab.appendChild(makeInfoIcon("Plot points", "Something that happens in this scene that is not one of the arc's Seven-Point beats. There is no kind to pick — just write what happens. Entries are optional and unlimited; link each one to the arc it belongs to, or leave it Unlinked."));
   wrapEl.appendChild(lab);
   ensureSceneBS(s);
   if(!s.bs.length){
     var none = document.createElement("p"); none.style.cssText = "color:var(--ink2);font-size:.92rem;margin:0";
-    none.textContent = "No Blessings or Setbacks on this scene yet.";
+    none.textContent = "No plot points on this scene yet.";
     wrapEl.appendChild(none);
   }
-  var typeCounts = {blessing:0, setback:0};
+  var ppCount = 0;
   s.bs.forEach(function(entry){
-    var pal = bsCardColors(p, entry, typeCounts[entry.type]++);
+    var pal = bsCardColors(p, entry, ppCount++);
     var open = ui.openBSEntry === entry.id;
     var box = document.createElement("div"); box.className = "bs-entry";
     box.style.background = pal.bg; box.style.color = pal.fg;
@@ -4619,7 +4795,7 @@ function buildBSEditor(p, s, sceneIdx){
     if(open){
       var ta = document.createElement("textarea"); ta.rows = 3; ta.className = "bs-ta";
       ta.value = entry.text || "";
-      ta.placeholder = entry.type === "blessing" ? "What goes right, and what does it make possible?" : "What goes wrong, and how does it change the plan?";
+      ta.placeholder = "What happens here that is not an arc beat?";
       ta.setAttribute("aria-label", bsTypeLabel(entry.type) + " text");
       ta.setAttribute("data-noscroll", "1");
       ta.setAttribute("data-bs-input", entry.id);
@@ -4661,6 +4837,7 @@ function buildBSEditor(p, s, sceneIdx){
         if(ui.openBSEntry === entry.id) ui.openBSEntry = null;
         editToggle(renderScenes, null);
       });
+      bindEnterSave(ta, function(){ doneB.click(); });
       foot.appendChild(doneB);
       var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-sm-btn"; rm.innerHTML = ti("trash");
       rm.title = "Remove"; rm.style.background = "var(--surface)"; rm.style.color = "var(--ink)";
@@ -4695,8 +4872,8 @@ function buildBSEditor(p, s, sceneIdx){
     wrapEl.appendChild(box);
   });
   var addRow = document.createElement("div"); addRow.className = "bs-addrow";
-  addRow.appendChild(bsAddMenu("Blessing / Setback", "Add a Blessing or Setback to this scene", function(type){
-    var ne = {id:uid(), type:type, text:"", arcId:null};
+  addRow.appendChild(bsAddMenu("Plot point", "Add a plot point to this scene", function(type){
+    var ne = {id:uid(), type:"plotpoint", text:"", arcId:null};
     s.bs.push(ne);
     ui.openBSEntry = ne.id;
     touch(p); save(); editToggle(renderScenes, null); focusBSInput(ne.id);
@@ -4770,22 +4947,50 @@ function makePencilBtn(label, onClick){
 /* Inline rename in the visual map: tap the pencil, edit the name in place,
    confirm with ✓ / Enter, cancel with ✕ / Escape. onSave receives the
    trimmed name, or null on cancel; the caller saves and re-renders so the
-   new name shows everywhere it is referenced. */
-function inlineNameEdit(container, current, onSave){
+   new name shows everywhere it is referenced.
+   CHAINING: scene (and arc) titles can be edited one after another.
+   Only one name edit is ever open: tapping another title's pencil
+   while an edit is open SAVES the text typed so far in the open edit
+   first — exactly as if its ✓ had been tapped — and only then opens
+   the tapped title for editing, so titles can be worked through in
+   sequence with one tap each and no typed text is ever lost to the
+   re-render that saving causes. Saving the previous edit re-renders
+   the map, so the tapped title's row is re-found after that render by
+   its data-nameedit-key (callers pass chainKey and stamp it on their
+   row); the data objects the new edit writes to are the same objects
+   across the render, so the fresh row edits the same scene / arc. */
+var activeNameEdit = null;
+function inlineNameEdit(container, current, onSave, chainKey){
+  if(activeNameEdit && activeNameEdit.container !== container){
+    var prev = activeNameEdit;
+    activeNameEdit = null;
+    var prevVal = prev.input ? prev.input.value.trim() : "";
+    prev.onSave(prevVal || null);
+    if(chainKey){
+      var fresh = null;
+      try{ fresh = document.querySelector('[data-nameedit-key="' + chainKey + '"]'); }catch(e){}
+      if(fresh) container = fresh;
+    }
+  }
   container.innerHTML = "";
   var wrapEl = document.createElement("div"); wrapEl.className = "nameedit";
   var inp = document.createElement("input"); inp.type = "text"; inp.value = current || "";
   inp.setAttribute("aria-label", "Name");
   var ok = document.createElement("button"); ok.type = "button"; ok.innerHTML = ti("check"); ok.setAttribute("aria-label", "Save name");
   var cx = document.createElement("button"); cx.type = "button"; cx.innerHTML = ti("x"); cx.setAttribute("aria-label", "Cancel rename");
-  ok.addEventListener("click", function(){ onSave(inp.value.trim()); });
-  cx.addEventListener("click", function(){ onSave(null); });
+  function finish(v){
+    if(activeNameEdit && activeNameEdit.input === inp) activeNameEdit = null;
+    onSave(v);
+  }
+  ok.addEventListener("click", function(){ finish(inp.value.trim()); });
+  cx.addEventListener("click", function(){ finish(null); });
   inp.addEventListener("keydown", function(e){
-    if(e.key === "Enter"){ e.preventDefault(); onSave(inp.value.trim()); }
-    else if(e.key === "Escape"){ onSave(null); }
+    if(e.key === "Enter"){ e.preventDefault(); finish(inp.value.trim()); }
+    else if(e.key === "Escape"){ finish(null); }
   });
   wrapEl.appendChild(inp); wrapEl.appendChild(ok); wrapEl.appendChild(cx);
   container.appendChild(wrapEl);
+  activeNameEdit = { container:container, input:inp, onSave:onSave };
   try{ inp.focus(); inp.select(); }catch(e){}
 }
 /* The visual map, in Scenes. By scene only: one column per scene (there may
@@ -4827,7 +5032,7 @@ function phoneSelectedScene(p){
    updates ui.phoneSceneId directly WITHOUT re-rendering, so the slide
    is continuous, focus and any in-progress edit are never destroyed,
    and the page never jumps. Re-renders (tagging a beat, editing a
-   Blessing/Setback) position the container back on ui.phoneSceneId. */
+   Plot point) position the container back on ui.phoneSceneId. */
 function addPhoneScene(p){
   var s = blankScene(p.scenes.length + 1);
   p.scenes.push(s);
@@ -4858,16 +5063,14 @@ function buildPhoneTagControl(p, arc, sc){
       });
       picker.appendChild(b);
     });
-    [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
-      var pb2 = document.createElement("button"); pb2.type = "button"; pb2.textContent = pair[1];
-      pb2.setAttribute("aria-label", "Add a " + pair[1] + " linked to " + arc.name + " at this scene");
-      pb2.addEventListener("click", function(){
-        ui.phoneSceneId = sc.id; ui.phoneTagPicker = null;
-        var ne4 = addBSEntry(p, sc, pair[0], arc.id);
-        editToggle(renderScenes, null); focusBSInput(ne4.id);
-      });
-      picker.appendChild(pb2);
+    var pb2 = document.createElement("button"); pb2.type = "button"; pb2.textContent = "Plot point";
+    pb2.setAttribute("aria-label", "Add a plot point linked to " + arc.name + " at this scene");
+    pb2.addEventListener("click", function(){
+      ui.phoneSceneId = sc.id; ui.phoneTagPicker = null;
+      var ne4 = addBSEntry(p, sc, "plotpoint", arc.id);
+      editToggle(renderScenes, null); focusBSInput(ne4.id);
     });
+    picker.appendChild(pb2);
     var cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "ptp-cancel"; cancel.innerHTML = ti("x");
     cancel.setAttribute("aria-label", "Close beat picker");
     cancel.addEventListener("click", function(){ ui.phoneTagPicker = null; editToggle(renderScenes, null); });
@@ -4885,46 +5088,28 @@ function buildPhoneTagControl(p, arc, sc){
   wrapEl.appendChild(plus);
   return wrapEl;
 }
-/* One scene's Blessing/Setback stack for a phone BS cell: the same
+/* One scene's Plot point stack for a phone cell: the same
    makeBSCard cards (background fills, italic text, pencil to edit,
-   \u2713 / trash while editing, \u2039 \u203a move arrows in collapsed
-   mode) plus the same single centred + opening the Blessing/Setback
-   dropdown. Choosing adds in place and opens the new entry for
-   editing right here, with no page jump. */
+   ✓ / trash while editing, ‹ › move arrows in collapsed
+   mode) plus a single centred + that adds a plot point in place and
+   opens the new entry for editing right here, with no page jump. */
 function buildPhoneBSCellStack(p, sc, idx, onlyUnlinked){
   var stack = document.createElement("div"); stack.className = "bs-cell-stack";
   ensureSceneBS(sc);
-  var bsCounts = {blessing:0, setback:0};
+  var ppN = 0;
   (sc.bs || []).forEach(function(entry){
-    var cnt2 = bsCounts[entry.type]++;
+    var cnt2 = ppN++;
     if(onlyUnlinked && entry.arcId) return;
     stack.appendChild(makeBSCard(p, sc, entry, idx, cnt2));
   });
   var bsAdd = document.createElement("div"); bsAdd.className = "bs-map-add";
   var plusB = document.createElement("button"); plusB.type = "button"; plusB.className = "bs-plus-btn"; plusB.innerHTML = ti("plus");
-  plusB.setAttribute("aria-label", "Add a Blessing or Setback to " + (sc.title || ("Scene " + (idx + 1))));
-  plusB.setAttribute("aria-haspopup", "true"); plusB.setAttribute("aria-expanded", "false");
+  plusB.setAttribute("aria-label", "Add a plot point to " + (sc.title || ("Scene " + (idx + 1))));
   plusB.addEventListener("click", function(ev){
     ev.stopPropagation();
-    var existing = bsAdd.querySelector(".bs-menu");
-    document.querySelectorAll(".bs-menu").forEach(function(m){ m.remove(); });
-    document.querySelectorAll(".bs-plus-btn").forEach(function(b){ b.setAttribute("aria-expanded", "false"); });
-    if(existing) return;
-    var menu = document.createElement("div"); menu.className = "bs-menu"; menu.setAttribute("role", "menu");
-    [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
-      var mb = document.createElement("button"); mb.type = "button"; mb.textContent = pair[1];
-      mb.setAttribute("role", "menuitem");
-      mb.setAttribute("aria-label", "Add a " + pair[1] + " to " + (sc.title || ("Scene " + (idx + 1))));
-      mb.addEventListener("click", function(ev2){
-        ev2.stopPropagation();
-        var ne = addBSEntry(p, sc, pair[0], null);
-        ui.phoneSceneId = sc.id;
-        editToggle(renderScenes, null); focusBSInput(ne.id);
-      });
-      menu.appendChild(mb);
-    });
-    bsAdd.appendChild(menu);
-    plusB.setAttribute("aria-expanded", "true");
+    var ne = addBSEntry(p, sc, "plotpoint", null);
+    ui.phoneSceneId = sc.id;
+    editToggle(renderScenes, null); focusBSInput(ne.id);
   });
   bsAdd.appendChild(plusB);
   stack.appendChild(bsAdd);
@@ -4938,12 +5123,12 @@ function buildPhoneBSCellStack(p, sc, idx, onlyUnlinked){
    updates LIVE while the map scrolls; (3) ONE grid in ONE horizontal
    scroller (scrollbar hidden, scroll-snap): column 1 is a sticky left
    label column holding, per row, the arc name + that arc's persistent
-   key question, and finally the Blessings and Setbacks label — it
+   key question, and finally the Plot points label — it
    never scrolls sideways. Each remaining column is one scene (~88% of
    the width left after the label column, so the next scene peeks in)
    holding, in the same row order, that scene's beat card (or only a
    + tag button when untagged) for each arc, then that scene's
-   Blessing/Setback cards. Shared grid rows align every row across
+   Plot point cards. Shared grid rows align every row across
    scenes: the tallest cell drives its row's height. Only the beat/BS
    cells scroll sideways; vertical dragging still scrolls the page.
    Scrolling never reorders scenes, and there are NO scene
@@ -5079,9 +5264,9 @@ function renderPhoneSceneMap(p, wrap){
       var beatKey = sceneTagFor(sc, arc.id);
       var cellStack = document.createElement("div"); cellStack.className = "bs-cell-stack";
       if(beatKey && mapLayersOf(p).beats) cellStack.appendChild(makeBeatCard(p, arc, beatKey, sc, {inline:true, sceneIdx: si}));
-      var pbsCounts = {blessing:0, setback:0};
+      var ppN2 = 0;
       (sc.bs || []).forEach(function(entry){
-        var cnt = pbsCounts[entry.type]++;
+        var cnt = ppN2++;
         if(entry.arcId === arc.id && mapLayersOf(p).blessings) cellStack.appendChild(makeBSCard(p, sc, entry, si, cnt));
       });
       if(mapLayersOf(p).beats) cellStack.appendChild(buildPhoneTagControl(p, arc, sc));
@@ -5090,13 +5275,13 @@ function renderPhoneSceneMap(p, wrap){
       if(ai === 0) firstColCells[si] = cell;
     });
   });
-  /* Unlinked Blessings/Setbacks get one small row at the bottom — only
+  /* Unlinked Plot points get one small row at the bottom — only
      when any exist. Linked entries live in their arc's row, above. */
   if(hasUnlinkedP){
     var bsRow = p.arcs.length + 1;
     var bsLab = document.createElement("div"); bsLab.className = "phone-label-cell phone-label-bs";
     bsLab.style.gridColumn = "1"; bsLab.style.gridRow = String(bsRow);
-    bsLab.innerHTML = "<span class='pa-name'>Unlinked</span><span class='pa-q'>Blessings &amp; Setbacks not linked to an arc</span>";
+    bsLab.innerHTML = "<span class='pa-name'>Unlinked</span><span class='pa-q'>Plot points not linked to an arc</span>";
     grid.appendChild(bsLab);
     p.scenes.forEach(function(sc2, si2){
       var bcell = document.createElement("div"); bcell.className = "phone-cell";
@@ -5190,8 +5375,8 @@ function renderPhoneSceneMap(p, wrap){
 
 /* Tag control for the iPad-layout grid map: ONLY a + button (Extra
    Small tier) in a cell — tapping it shows the dropdown list of the
-   seven beats PLUS Blessing and Setback (which add a Blessing/Setback
-   entry linked to this arc, in this arc's row). ui.gridTagPicker holds
+   seven beats PLUS Plot point (which adds a Plot point entry linked
+   to this arc, in this arc's row). ui.gridTagPicker holds
    "arcId|sceneId" while the list is open; UI-only, never saved. */
 function buildGridTagControl(p, arc, sc){
   var key = arc.id + "|" + sc.id;
@@ -5209,16 +5394,14 @@ function buildGridTagControl(p, arc, sc){
       });
       picker.appendChild(gb);
     });
-    [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
-      var bb2 = document.createElement("button"); bb2.type = "button"; bb2.textContent = pair[1];
-      bb2.setAttribute("aria-label", "Add a " + pair[1] + " linked to " + arc.name + " at this scene");
-      bb2.addEventListener("click", function(){
-        ui.gridTagPicker = null;
-        var ne3 = addBSEntry(p, sc, pair[0], arc.id);
-        editToggle(renderScenes, null); focusBSInput(ne3.id);
-      });
-      picker.appendChild(bb2);
+    var bb2 = document.createElement("button"); bb2.type = "button"; bb2.textContent = "Plot point";
+    bb2.setAttribute("aria-label", "Add a plot point linked to " + arc.name + " at this scene");
+    bb2.addEventListener("click", function(){
+      ui.gridTagPicker = null;
+      var ne3 = addBSEntry(p, sc, "plotpoint", arc.id);
+      editToggle(renderScenes, null); focusBSInput(ne3.id);
     });
+    picker.appendChild(bb2);
     var gcancel = document.createElement("button"); gcancel.type = "button"; gcancel.className = "ptp-cancel"; gcancel.innerHTML = ti("x");
     gcancel.setAttribute("aria-label", "Close beat picker");
     gcancel.addEventListener("click", function(){ ui.gridTagPicker = null; editToggle(renderScenes, null); });
@@ -5227,7 +5410,7 @@ function buildGridTagControl(p, arc, sc){
   }
   var wrapEl = document.createElement("div"); wrapEl.className = "phone-tag-add";
   var plus = document.createElement("button"); plus.type = "button"; plus.className = "phone-tag-btn"; plus.innerHTML = ti("plus");
-  plus.setAttribute("aria-label", "Tag a beat or add a Blessing or Setback for " + arc.name + " at this scene");
+  plus.setAttribute("aria-label", "Tag a beat or add a plot point for " + arc.name + " at this scene");
   plus.setAttribute("aria-haspopup", "true");
   plus.addEventListener("click", function(){
     ui.gridTagPicker = key;
@@ -5247,19 +5430,19 @@ function buildGridTagControl(p, arc, sc){
    combination at a glance. Turning a layer off removes it entirely —
    no leftover empty rows. */
 /* TRUE layers — overlays on the main map itself, combined freely:
-   beats, Blessings/Setbacks, cast. Questions, Secrets and Decisions are
+   beats, Plot points, cast. Questions, Secrets and Decisions are
    NOT layers: they are separate maps with their own job, rendered as
    expandable sections BELOW the main map (see renderSceneMap). Their
    keys stay in p.mapLayers for storage compatibility but the panel
    below only offers the three real overlays. */
 var MAP_LAYERS = [
   ["beats", "Beats / arcs"],
-  ["blessings", "Blessings / Setbacks"],
+  ["blessings", "Plot points"],
   ["cast", "Cast"]
 ];
 /* Map layers belong to the project: they persist in project data,
    survive reload, and travel with export/import. Defaults: Beats/arcs
-   and Blessings/Setbacks on; Questions, Cast, Secrets, Decisions off. */
+   and Plot points on; Questions, Cast, Secrets, Decisions off. */
 var MAP_LAYER_DEFAULTS = {beats:true, blessings:true, questions:false, cast:false, secrets:false, decisions:false};
 function mapLayersOf(p){
   if(!p) return {beats:true, blessings:true, questions:false, cast:false, secrets:false, decisions:false};
@@ -5282,7 +5465,7 @@ function buildLayerPicker(p, wrap){
   sum.textContent = "On: " + (onNames.length ? onNames.join(" · ") : "none");
   sum.setAttribute("aria-label", "Map layers currently on: " + (onNames.length ? onNames.join(", ") : "none"));
   row.appendChild(sum);
-  row.appendChild(makeInfoIcon("Map layers", "These three are true layers — overlays on this one map, in any combination. Beats/arcs is the Seven-Point grid. Blessings/Setbacks shows those entry cards inside the grid. Cast shows who is present in each scene's map header. A secret's reveal is not a layer either: it is a \"Secret revealed\" tag on the scene that reveals it, in this map's header and on the scene card. Questions and Decisions are not layers: they are separate maps, each with its own job, in the expandable sections below this map. Your layer choices are saved with this project. The panel closes when you tap elsewhere or scroll."));
+  row.appendChild(makeInfoIcon("Map layers", "These three are true layers — overlays on this one map, in any combination. Beats/arcs is the Seven-Point grid. Plot points shows those entry cards inside the grid. Cast shows who is present in each scene's map header. A secret's reveal is not a layer either: it is a \"Secret revealed\" tag on the scene that reveals it, in this map's header and on the scene card. Questions and Decisions are not layers: they are separate maps, each with its own job, in the expandable sections below this map. Your layer choices are saved with this project. The panel closes when you tap elsewhere or scroll."));
   bar.appendChild(row);
   if(ui.layerPanel){
     var panel = document.createElement("div"); panel.className = "layerpanel";
@@ -5578,6 +5761,7 @@ function buildDecisionChain(p){
         var okB = document.createElement("button"); okB.type = "button"; okB.className = "icon-xs-btn"; okB.innerHTML = ti("check");
         okB.title = "Done — save this step"; okB.setAttribute("aria-label", "Save " + step.title);
         (function(scene, key){ okB.addEventListener("click", function(){ scene.sequel[key] = eta.value; ui.chainEdit = null; touch(p); save(); rerenderChain(false); }); })(s, step.key);
+        bindEnterSave(eta, function(){ okB.click(); });
         var cxB = document.createElement("button"); cxB.type = "button"; cxB.className = "icon-xs-btn"; cxB.innerHTML = ti("x");
         cxB.title = "Cancel"; cxB.setAttribute("aria-label", "Cancel editing " + step.title);
         cxB.addEventListener("click", function(){ ui.chainEdit = null; rerenderChain(false); });
@@ -5745,10 +5929,11 @@ function renderGridBeatLayer(p, wrap){
     var h = document.createElement("div"); h.className = "mapcell3 mh mh-scene";
     h.style.gridColumn = String(i + 1);
     var ht = document.createElement("div"); ht.className = "namerow";
+    ht.setAttribute("data-nameedit-key", "scene:" + s.id);
     var hname = document.createElement("span"); hname.className = "scenetitle nm"; hname.textContent = (i + 1) + ". " + (s.title || "Untitled scene");
     ht.appendChild(hname);
     ht.appendChild(makePencilBtn("Edit scene name", function(){
-      inlineNameEdit(ht, s.title || "", function(v){ if(v){ s.title = v; touch(p); save(); } renderAll(); });
+      inlineNameEdit(ht, s.title || "", function(v){ if(v){ s.title = v; touch(p); save(); } renderAll(); }, "scene:" + s.id);
     }));
     h.appendChild(ht);
     if(s.kind === "frame"){ var hFr = document.createElement("span"); hFr.className = "castline"; hFr.textContent = "Frame scene"; h.appendChild(hFr); }
@@ -5824,10 +6009,11 @@ function renderGridBeatLayer(p, wrap){
     lab.style.gridColumn = "1"; lab.style.gridRow = String(rowIdx);
     lab.style.borderLeft = "6px solid " + arcColor;
     var labName = document.createElement("div"); labName.className = "namerow";
+    labName.setAttribute("data-nameedit-key", "arc:" + arc.id);
     var labStrong = document.createElement("strong"); labStrong.className = "nm"; labStrong.textContent = arc.name;
     labName.appendChild(labStrong);
     labName.appendChild(makePencilBtn("Edit arc name", function(){
-      inlineNameEdit(labName, arc.name, function(v){ if(v){ arc.name = v; touch(p); save(); } renderAll(); });
+      inlineNameEdit(labName, arc.name, function(v){ if(v){ arc.name = v; touch(p); save(); } renderAll(); }, "arc:" + arc.id);
     }));
     lab.appendChild(labName);
     var labMeta = document.createElement("div");
@@ -5842,9 +6028,9 @@ function renderGridBeatLayer(p, wrap){
       var beatKey = sceneTagFor(s, arc.id);
       var cellStack2 = document.createElement("div"); cellStack2.className = "bs-cell-stack";
       if(beatKey && mapLayersOf(p).beats) cellStack2.appendChild(makeBeatCard(p, arc, beatKey, s, {inline:true, sceneIdx: si}));
-      var gbsCounts = {blessing:0, setback:0};
+      var ppN3 = 0;
       (s.bs || []).forEach(function(entry){
-        var cnt3 = gbsCounts[entry.type]++;
+        var cnt3 = ppN3++;
         if(entry.arcId === arc.id && mapLayersOf(p).blessings) cellStack2.appendChild(makeBSCard(p, s, entry, si, cnt3));
       });
       if(mapLayersOf(p).beats) cellStack2.appendChild(buildGridTagControl(p, arc, s));
@@ -5852,7 +6038,7 @@ function renderGridBeatLayer(p, wrap){
       grid.appendChild(cell);
     });
   });
-  /* Unlinked Blessings and Setbacks row — only when unlinked entries
+  /* Unlinked Plot points row — only when unlinked entries
      exist. Linked entries live in their arc's row (inside the arc cells
      above); this row keeps pre-linking entries visible and editable,
      and its + adds new unlinked entries. */
@@ -5860,43 +6046,26 @@ function renderGridBeatLayer(p, wrap){
   var bsRowIdx = p.arcs.length + 1;
   var bsLab = document.createElement("div"); bsLab.className = "mapcell3 mlab mlab-bs";
   bsLab.style.gridColumn = "1"; bsLab.style.gridRow = String(bsRowIdx);
-  bsLab.innerHTML = "<strong>Unlinked</strong><div style=\"font-weight:400;font-size:.82rem;color:var(--ink2);margin-top:2px\">Blessings &amp; Setbacks not linked to an arc</div>";
+  bsLab.innerHTML = "<strong>Unlinked</strong><div style=\"font-weight:400;font-size:.82rem;color:var(--ink2);margin-top:2px\">Plot points not linked to an arc</div>";
   grid.appendChild(bsLab);
   p.scenes.forEach(function(s2, si2){
     var bcell = document.createElement("div"); bcell.className = "mapcell3";
     bcell.style.gridColumn = String(si2 + 3); bcell.style.gridRow = String(bsRowIdx);
     ensureSceneBS(s2);
     var stack = document.createElement("div"); stack.className = "bs-cell-stack";
-    var bsCounts = {blessing:0, setback:0};
+    var ppN4 = 0;
     (s2.bs || []).forEach(function(entry){
-      var cnt4 = bsCounts[entry.type]++;
+      var cnt4 = ppN4++;
       if(entry.arcId) return;
       stack.appendChild(makeBSCard(p, s2, entry, si2, cnt4));
     });
     var bsAdd = document.createElement("div"); bsAdd.className = "bs-map-add";
     var plusB = document.createElement("button"); plusB.type = "button"; plusB.className = "bs-plus-btn"; plusB.innerHTML = ti("plus");
-    plusB.setAttribute("aria-label", "Add an unlinked Blessing or Setback to " + (s2.title || ("Scene " + (si2 + 1))));
-    plusB.setAttribute("aria-haspopup", "true"); plusB.setAttribute("aria-expanded", "false");
+    plusB.setAttribute("aria-label", "Add an unlinked plot point to " + (s2.title || ("Scene " + (si2 + 1))));
     plusB.addEventListener("click", function(ev){
       ev.stopPropagation();
-      var existing = bsAdd.querySelector(".bs-menu");
-      document.querySelectorAll(".bs-menu").forEach(function(m){ m.remove(); });
-      document.querySelectorAll(".bs-plus-btn").forEach(function(b){ b.setAttribute("aria-expanded", "false"); });
-      if(existing) return;
-      var menu = document.createElement("div"); menu.className = "bs-menu"; menu.setAttribute("role", "menu");
-      [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
-        var mb = document.createElement("button"); mb.type = "button"; mb.textContent = pair[1];
-        mb.setAttribute("role", "menuitem");
-        mb.setAttribute("aria-label", "Add an unlinked " + pair[1] + " to " + (s2.title || ("Scene " + (si2 + 1))));
-        mb.addEventListener("click", function(ev2){
-          ev2.stopPropagation();
-          var ne5 = addBSEntry(p, s2, pair[0], null);
-          editToggle(renderScenes, null); focusBSInput(ne5.id);
-        });
-        menu.appendChild(mb);
-      });
-      bsAdd.appendChild(menu);
-      plusB.setAttribute("aria-expanded", "true");
+      var ne5 = addBSEntry(p, s2, "plotpoint", null);
+      editToggle(renderScenes, null); focusBSInput(ne5.id);
     });
     bsAdd.appendChild(plusB);
     stack.appendChild(bsAdd);
@@ -5919,7 +6088,7 @@ function renderGridBeatLayer(p, wrap){
   var headH = headbar.getBoundingClientRect().height || 0;
   var rowMin = Math.max(128, Math.ceil(headH) + 16);
   /* Only the ARC rows carry the taller-than-header minimum height. The
-     Blessings and Setbacks row sizes to its content instead, so its
+     Plot points row sizes to its content instead, so its
      cards and the centred + below them are not stranded in a tall,
      mostly-empty cell with a large blank area underneath. */
   grid.style.gridTemplateRows = "repeat(" + Math.max(1, p.arcs.length) + ", minmax(" + rowMin + "px, auto))" + (hasUnlinkedG ? " minmax(64px, auto)" : "");
@@ -5961,7 +6130,7 @@ function renderBeats(){
     var mirrorName = ""; p.arcs.forEach(function(a2){ if(a2.id === arc.mirrorOf) mirrorName = a2.name; });
     node.className = "node arcnode" + (arc.kind === "frame" ? " framearc" : "");
     node.style.borderLeft = "6px solid " + getArcColor(p, arc);
-    var amain = document.createElement("div"); amain.className = "node-main";
+    var amain = document.createElement("div"); amain.className = "node-main stack-main";
     amain.innerHTML = '<span class="ntitle"><span>' + esc(arc.name) + '</span><span class="badge">' + (arc.kind === "frame" ? filled + ' beats — frame, as needed' : filled + ' / 7 beats') + '</span></span>'
       + (arc.question ? '<span class="nprev"><span style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2)">Arc question — this arc only</span><br>' + esc(arc.question) + '</span>' : '<span class="nprev empty-t">No arc question yet for this arc — add one in Edit.</span>')
       + (function(){ var placedKeys = BEAT_ORDER.filter(function(k){ return p.scenes.some(function(s){ return sceneTagFor(s, arc.id) === k; }); }); var unplaced = BEAT_ORDER.filter(function(k){ return placedKeys.indexOf(k) < 0; }).map(function(k){ return BEAT_BY_KEY[k].title; }); return '<span class="arccov">Placed ' + placedKeys.length + ' / 7 beats on the map' + (unplaced.length ? ' · Not placed: ' + esc(unplaced.join(", ")) : ' · All beats placed') + (filledStr(arc.answer) ? ' · Answer written' : ' · No answer written yet') + '</span>'; })()
@@ -6068,7 +6237,7 @@ function renderBeats(){
         if(bOpen){
           var bed = document.createElement("div"); bed.className = "beatrow-ed";
           var bf = field("Beat text", bt.sub + (key === "midpoint" && filledStr(p.intake.theme) ? " Your theme: “" + p.intake.theme + "” — the decision here should argue with it before it moves the plot." : ""), d.text, function(v){ d.text = v; touch(p); saveSoon(); }, {rows:3, placeholder:"What happens here, and what question does it move?"});
-          var bta = bf.querySelector("textarea"); if(bta) bta.setAttribute("data-beat-input", bOpenKey);
+          var bta = bf.querySelector("textarea"); if(bta){ bta.setAttribute("data-beat-input", bOpenKey); bindEnterSave(bta, function(){ d.text = bta.value; ui.openBeat = null; touch(p); save(); editToggle(renderBeats, '[data-arc-id="' + arc.id + '"]'); }); }
           bed.appendChild(bf);
           bn.appendChild(bed);
         }
@@ -6108,8 +6277,8 @@ document.getElementById("addArcBtn").addEventListener("click", function(){
 function buildCastEditor(p, s){
   var wrapC = document.createElement("div"); wrapC.className = "fieldwrap";
   var lab = document.createElement("label"); lab.className = "flabel";
-  lab.innerHTML = "Cast — who is present <span class='hint'>POV (in the header row above) is the one character whose eyes we are in. Cast is everyone in the room — presence, not viewpoint. The POV character's feelings are the scene's Feeling line above; every other cast member can carry their own start → end feelings here.</span>";
-  lab.appendChild(makeInfoIcon("Cast — who is present", "Cast is presence, not viewpoint: list everyone physically in the scene, even if they barely speak — their presence changes what can be said and done. The POV character is the only one whose senses filter the scene. Non-POV cast members can carry their own start → end feelings here, which is how you track a quiet character arc inside someone else's scene."));
+  lab.textContent = "Cast — who is present";
+  lab.appendChild(makeInfoIcon("Cast — who is present", "Cast is everyone in the room — presence, not viewpoint. POV (in the header row above) is the one character whose eyes we are in. List everyone physically in the scene, even if they barely speak — their presence changes what can be said and done. The POV character's feelings are edited in the feeling fields above; every other cast member can carry their own start → end feelings here, which is how you track a quiet character arc inside someone else's scene."));
   wrapC.appendChild(lab);
   syncPovCast(p, s);
   var povChar = charForPov(p, s.pov);
@@ -6129,26 +6298,16 @@ function buildCastEditor(p, s){
     var c = charById(p, entry.charId); if(!c) return;
     var isPov = !!(povChar && povChar.id === c.id);
     var row = document.createElement("div"); row.className = "castrow";
+    /* Header line first: name (+ POV pill) on the left, remove on the
+       right — nothing else shares this line. The feeling fields sit
+       on their own row below, each labelled, so a long name or a long
+       feeling can never wrap around the button. */
+    var head = document.createElement("div"); head.className = "castrow-head";
     var nm = document.createElement("span"); nm.className = "castname"; nm.textContent = c.name || "Unnamed character";
-    row.appendChild(nm);
+    head.appendChild(nm);
     if(isPov){
       var pv = document.createElement("span"); pv.className = "tagpill"; pv.textContent = "POV";
-      row.appendChild(pv);
-      var note = document.createElement("span"); note.className = "hint"; note.style.cssText = "flex:1 1 180px;margin:0";
-      note.textContent = "Feeling: " + ((s.feelStart || s.feelEnd) ? (s.feelStart || "…") + " → " + (s.feelEnd || "…") : "not written yet") + " — edit it in the feeling fields above.";
-      row.appendChild(note);
-    } else {
-      /* Two multi-line textareas (start / end) — same change as the
-         POV feeling above: never squeezed onto one line. */
-      function castFeel(placeholder, val, apply){
-        var ta = document.createElement("textarea"); ta.rows = 2; ta.value = val || "";
-        ta.placeholder = placeholder;
-        ta.setAttribute("aria-label", (c.name || "Character") + " — " + placeholder);
-        ta.addEventListener("input", function(){ apply(ta.value); touch(p); saveSoon(); });
-        return ta;
-      }
-      row.appendChild(castFeel("Feeling at start", entry.feelStart, function(v){ entry.feelStart = v; }));
-      row.appendChild(castFeel("Feeling at end", entry.feelEnd, function(v){ entry.feelEnd = v; }));
+      head.appendChild(pv);
     }
     var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-sm-btn"; rm.innerHTML = ti("x");
     rm.title = "Remove from this scene's cast"; rm.setAttribute("aria-label", "Remove " + (c.name || "character") + " from this scene's cast");
@@ -6156,7 +6315,33 @@ function buildCastEditor(p, s){
       s.cast = s.cast.filter(function(e){ return e.charId !== entry.charId; });
       touch(p); save(); editToggle(renderScenes, null);
     });
-    row.appendChild(rm);
+    head.appendChild(rm);
+    row.appendChild(head);
+    if(isPov){
+      /* The POV character's feelings live in the scene's own feeling
+         fields above — this line only mirrors them, on its own row. */
+      var note = document.createElement("span"); note.className = "castfeel-note";
+      note.textContent = "Feeling: " + ((s.feelStart || s.feelEnd) ? (s.feelStart || "…") + " → " + (s.feelEnd || "…") : "not written yet");
+      row.appendChild(note);
+    } else {
+      /* Two labelled multi-line textareas (start / end) on their own
+         row — never squeezed onto the name's line. The labels carry
+         the meaning; the placeholders carry an example. */
+      var feels = document.createElement("div"); feels.className = "castfeels";
+      function castFeel(labelText, placeholder, val, apply){
+        var fw = document.createElement("div"); fw.className = "castfeel";
+        var fl = document.createElement("label"); fl.textContent = labelText; fw.appendChild(fl);
+        var ta = document.createElement("textarea"); ta.rows = 2; ta.value = val || "";
+        ta.placeholder = placeholder;
+        ta.setAttribute("aria-label", (c.name || "Character") + " — " + labelText);
+        ta.addEventListener("input", function(){ apply(ta.value); touch(p); saveSoon(); });
+        fw.appendChild(ta);
+        return fw;
+      }
+      feels.appendChild(castFeel("Feeling at start", "e.g. Cocky, impatient", entry.feelStart, function(v){ entry.feelStart = v; }));
+      feels.appendChild(castFeel("Feeling at end", "e.g. Shaken, quietly furious", entry.feelEnd, function(v){ entry.feelEnd = v; }));
+      row.appendChild(feels);
+    }
     rows.appendChild(row);
   });
   wrapC.appendChild(rows);
@@ -6247,23 +6432,23 @@ function renderScenes(){
     if(typeof s.where !== "string") s.where = "";
     if(typeof s.when !== "string") s.when = "";
     /* Tags sit at the TOP of the collapsed card, beside the title: the
-       Blessing/Setback pill and one pill per beat tag (in its arc's colour). */
-    /* Pills (Blessing/Setback counts + one beat pill per arc tag) render
+       Plot point pill and one pill per beat tag (in its arc's colour). */
+    /* Pills (Plot point counts + one beat pill per arc tag) render
        on their OWN line below the title — never inline with it, however
        long or wrapped the title is. Each beat pill's text colour comes
        from readableOn so it stays readable on its arc colour in both
        colour modes. */
     var topTags = "";
     ensureSceneBS(s);
-    var nBless = (s.bs || []).filter(function(e){ return e.type === "blessing"; }).length;
-    var nSet = (s.bs || []).filter(function(e){ return e.type === "setback"; }).length;
-    if(nBless || nSet) topTags += '<span class="bscount">' + (nBless ? nBless + (nBless === 1 ? " Blessing" : " Blessings") : "") + (nBless && nSet ? " \u00b7 " : "") + (nSet ? nSet + (nSet === 1 ? " Setback" : " Setbacks") : "") + '</span>';
+    var nPP = (s.bs || []).length;
+    if(nPP) topTags += '<span class="bscount">' + nPP + (nPP === 1 ? " Plot point" : " Plot points") + '</span>';
     (s.beatTags || []).forEach(function(t){
       var arc = null;
       p.arcs.forEach(function(a){ if(a.id === t.arcId) arc = a; });
       if(arc && BEAT_BY_KEY[t.beat]){ var ac = pillBg(getArcColor(p, arc)); topTags += '<span class="beatpill" style="background:' + esc(ac) + ';color:' + esc(readableOn(ac)) + '">' + esc(BEAT_BY_KEY[t.beat].title) + ' · ' + esc(arc.name) + '</span>'; }
     });
     secretsRevealedIn(p, i).forEach(function(en){ topTags += '<span class="secrettag" title="' + esc(en.text) + '">Secret revealed</span>'; });
+    if(s.styleFlag === "against") topTags += '<span class="bscount" style="background:var(--warn-bg);color:var(--warn)">Telling works against the theme</span>';
     /* Cast pills on their own line under the beat/BS pills: who is
        present, the POV character badged — presence, not viewpoint. */
     syncPovCast(p, s);
@@ -6325,17 +6510,17 @@ function renderScenes(){
         hf.appendChild(ta);
         return hf;
       }
-      feelRow.appendChild(feelField("POV feeling — at start", s.feelStart, "How does the POV character feel as the scene opens? As much room as it needs.", function(v){ s.feelStart = v; }));
-      feelRow.appendChild(feelField("POV feeling — at end", s.feelEnd, "How do they feel as the scene closes?", function(v){ s.feelEnd = v; }));
+      feelRow.appendChild(feelField("POV feeling — at start", s.feelStart, "e.g. Bored numbness — nothing has mattered in years", function(v){ s.feelStart = v; }));
+      feelRow.appendChild(feelField("POV feeling — at end", s.feelEnd, "e.g. Cold fear — and a spark of hope", function(v){ s.feelEnd = v; }));
       ed.appendChild(feelRow);
-      var hdrHint = document.createElement("p"); hdrHint.className = "hint"; hdrHint.style.marginTop = "var(--sp2)";
-      hdrHint.textContent = "The two feeling fields are the POV character's — start of scene and end of scene — and each has room for more than one line. Where and When are optional continuity notes and live in Optional scene details at the end of this editor, with the other optional fields.";
-      ed.appendChild(hdrHint);
+      /* No paragraph under the feeling fields: the two labels say
+         whose feelings these are and when, and Where / When live in
+         Optional scene details at the end of this editor. */
       /* Cast is MAIN, not optional: who is present, with their feelings,
          belongs with the POV and feeling fields above — before the
          optional details at the end of this editor. */
       ed.appendChild(buildCastEditor(p, s));
-      var doesField = field("What this scene does", "One line: what this scene is for — plot, character, world, pleasure, or a mix. Not a sub-scene type: a scene that is mostly a pleasure to read still earns its place, and this line just says so out loud.", s.does, function(v){ s.does = v; touch(p); saveSoon(); }, {rows:1, placeholder:"e.g. Plot + pleasure — the chase that also shows the city"});
+      var doesField = field("What this scene does", "One line: what this scene is for.", s.does, function(v){ s.does = v; touch(p); saveSoon(); }, {rows:1, placeholder:"e.g. Plot + pleasure — the chase that also shows the city"});
       var statRow = document.createElement("div"); statRow.className = "scenehdr";
       var stF = document.createElement("div"); stF.className = "hf";
       var stL = document.createElement("label"); stL.textContent = "Status"; stL.appendChild(makeInfoIcon("Status", "Where this scene stands: Planned (not drafted yet), Drafted (prose exists in your prose editor), or Done (drafted and settled). It drives the status pill on the scene card and the counts on Overview — nothing else reads it, so keep it honest rather than hopeful.")); stF.appendChild(stL);
@@ -6391,15 +6576,15 @@ function renderScenes(){
       }
       /* Built now, placed later: What must happen now lives in the combined
          area AFTER Scene & Sequel (see below), so it is not appended here. */
-      var questionField = field("Scene question", "The small question this scene asks and answers — badly (the Disaster is the bad answer). One line. The question belongs to the scene the reader is in. Scene questions appear as a row in the Questions map below the visual map.", s.question || "", function(v){ s.question=v; touch(p); saveSoon(); }, {rows:1, placeholder:"What does the reader want to know by the end of this scene?"});
-      var whatField = field("What must happen", "One or two sentences only — the short summary of this scene, more like notes. The detail goes in Stage instructions, in the same area below.", s.what, function(v){ s.what=v; touch(p); saveSoon(); }, {rows:2, placeholder:"e.g. Maya confronts Tomas about the letter and decides to leave town tonight."});
+      var questionField = field("Scene question", "One line.", s.question || "", function(v){ s.question=v; touch(p); saveSoon(); }, {rows:1, placeholder:"What does the reader want to know by the end of this scene?"});
+      var whatField = field("What must happen", "1–2 sentences — detail goes in Stage instructions.", s.what, function(v){ s.what=v; touch(p); saveSoon(); }, {rows:2, placeholder:"e.g. Maya confronts Tomas about the letter and decides to leave town tonight."});
 
       /* Story beat tag: which Seven-Point beat (for which arc) this scene
          carries. This is what places the beat on the visual map above. */
       var btWrap = document.createElement("div"); btWrap.className = "fieldwrap";
       var btLab = document.createElement("label"); btLab.className = "flabel";
-      btLab.innerHTML = "Tags — for what must happen <span class='hint'>Tagged beats show as pills — tap a pill to remove it. Tap “Tag a beat” to place a Seven-Point beat for an arc; it applies instantly and shows on the map. A scene can carry beats from several arcs. (Question movement is read from where beats are placed — see the Questions layer on the map.)</span>";
-      btLab.appendChild(makeInfoIcon("Tags — beats, Blessings and Setbacks", "A beat tag places one Seven-Point beat, for one arc, on this scene — one scene per beat per arc. Blessing and Setback are different: they are entries with their own text. A Blessing is what goes right and what it makes possible; a Setback is what goes wrong and how it changes the plan — a Setback that does not change the plan is just bad news."));
+      btLab.textContent = "Tags";
+      btLab.appendChild(makeInfoIcon("Tags — beats and Plot points", "A beat tag places one Seven-Point beat, for one arc, on this scene — one scene per beat per arc. Plot points are different: they are entries with their own text, for anything that happens in the scene that is not an arc beat — no kind to pick, just write what happens."));
       btWrap.appendChild(btLab);
       (s.beatTags || []).forEach(function(t){
         var arc = null;
@@ -6448,7 +6633,7 @@ function renderScenes(){
         picker.appendChild(selRow);
         var btnRow = document.createElement("div"); btnRow.className = "beatbtns";
         BEAT_ORDER.forEach(function(k){
-          /* The exact same component as Blessing / Setback below: .tagbtn. */
+          /* The exact same component as Plot point below: .tagbtn. */
           var bb = document.createElement("button"); bb.type = "button"; bb.className = "tagbtn"; bb.textContent = BEAT_BY_KEY[k].title;
           var active = selArcId && sceneTagFor(s, selArcId) === k;
           bb.setAttribute("aria-pressed", active ? "true" : "false");
@@ -6457,20 +6642,18 @@ function renderScenes(){
         });
         picker.appendChild(btnRow);
         var bsBtnRow = document.createElement("div"); bsBtnRow.className = "beatbtns";
-        [["blessing", "Blessing"], ["setback", "Setback"]].forEach(function(pair){
-          var sb = document.createElement("button"); sb.type = "button"; sb.className = "tagbtn"; sb.textContent = pair[1] + " (this arc)";
-          sb.setAttribute("aria-label", "Add a " + pair[1] + " linked to the selected arc");
-          sb.addEventListener("click", function(){
-            if(!selArcId){ toast("Add an arc first"); return; }
-            var ne2 = addBSEntry(p, s, pair[0], selArcId);
-            ui.openBSEntry = ne2.id; ui.bsMapEditId = null;
-            editToggle(renderScenes, null); focusBSInput(ne2.id);
-          });
-          bsBtnRow.appendChild(sb);
+        var sb = document.createElement("button"); sb.type = "button"; sb.className = "tagbtn"; sb.textContent = "Plot point (this arc)";
+        sb.setAttribute("aria-label", "Add a plot point linked to the selected arc");
+        sb.addEventListener("click", function(){
+          if(!selArcId){ toast("Add an arc first"); return; }
+          var ne2 = addBSEntry(p, s, "plotpoint", selArcId);
+          ui.openBSEntry = ne2.id; ui.bsMapEditId = null;
+          editToggle(renderScenes, null); focusBSInput(ne2.id);
         });
+        bsBtnRow.appendChild(sb);
         picker.appendChild(bsBtnRow);
         var bsBtnHint = document.createElement("span"); bsBtnHint.className = "hint";
-        bsBtnHint.textContent = "Blessing / Setback here adds an entry linked to the arc selected above — it shows in that arc's row on the map, alongside the beat card. Unlinked entries use the Blessing / Setback menu below.";
+        bsBtnHint.textContent = "Adds an entry linked to the arc selected above.";
         picker.appendChild(bsBtnHint);
         btWrap.appendChild(picker);
       }
@@ -6478,7 +6661,7 @@ function renderScenes(){
       btWrap.appendChild(buildBSEditor(p, s, i));
 
       var loopTitle = document.createElement("label"); loopTitle.className="flabel";
-      loopTitle.innerHTML = "Scene &amp; Sequel <span class='hint'>Swain: Goal → Conflict → Disaster, then Reaction → Dilemma → Decision. The Decision sets the next scene's Goal. Write Stage instructions first; judge this in Editing Pass 1.</span>";
+      loopTitle.textContent = "Scene & Sequel";
       loopTitle.appendChild(makeInfoIcon("Scene & Sequel", "Dwight V. Swain, Techniques of the Selling Writer: a Scene is Goal → Conflict → Disaster; a Sequel is Reaction → Dilemma → Decision, and that Decision becomes the next scene's Goal.\n\nWorked example — The Fire Swamp (The Princess Bride): Goal — reach Westley's ship. Conflict — flame spurts, lightning sand, an ROUS. Disaster — no-and-furthermore: they survive and are captured. Reaction — Buttercup bargains: her marriage for Westley's life. Dilemma — surrender to save him, or run and watch him die? Decision — she surrenders, and Humperdinck lies.\n\nTiming: write Stage instructions first while drafting. Treat Scene & Sequel as an editing lens in Pass 1 — Structural — where missing disasters and missing sequels are easiest to spot and fix."));
       /* Collapsed by default: a one-line summary — Goal → Disaster, or
          the Decision when those are not written yet — and the full six
@@ -6535,6 +6718,16 @@ function renderScenes(){
               if(sp) sp.textContent = ta.value.trim() ? ta.value : "Not written yet";
               ln.classList.toggle("filled", !!ta.value.trim());
             });
+            /* Enter saves and closes this step in place, exactly like
+               tapping its Close button — text is already written on
+               every keystroke, so closing IS the save confirmation. */
+            bindEnterSave(ta, function(){
+              s.sequel[step.key] = ta.value; touch(p); save();
+              var existing2 = ln.querySelector(".loopstep-ed");
+              if(existing2) existing2.remove();
+              ui.openLoopStep = null;
+              lEdit.textContent = "Edit"; lEdit.setAttribute("aria-expanded", "false");
+            });
           }
           sed.appendChild(fld);
           return sed;
@@ -6559,7 +6752,7 @@ function renderScenes(){
         if(li===2){
           var ar = document.createElement("div"); ar.className="looparrow"; ar.innerHTML = ti("arrow-down") + " then the Sequel " + ti("arrow-down"); loop.appendChild(ar);
         } else if(li < LOOP.length - 1){
-          var ar2 = document.createElement("div"); ar2.className = "looparrow step-arrow"; ar2.innerHTML = ti("arrow-down") + " edit this first, then the next step " + ti("arrow-down"); loop.appendChild(ar2);
+          var ar2 = document.createElement("div"); ar2.className = "looparrow step-arrow"; ar2.innerHTML = ti("arrow-down"); loop.appendChild(ar2);
         }
       });
       }
@@ -6570,7 +6763,7 @@ function renderScenes(){
          together in this single area instead of in separate sections. */
       var combo = document.createElement("div"); combo.className = "tagarea"; combo.style.marginTop = "var(--sp5)";
       var comboLab = document.createElement("label"); comboLab.className = "flabel";
-      comboLab.innerHTML = "What happens &amp; stage instructions <span class='hint'>One block, one job — plan the scene: its question, the 1–2 sentence version of what must happen, its tags (beats and Blessings/Setbacks together), then the Stage instructions that carry the detail, one instruction per line. The beats &amp; Blessings/Setbacks reference sits under the Stage instructions, behind its toggle, for when the summary above feels redundant.</span>";
+      comboLab.textContent = "What happens & stage instructions";
       comboLab.appendChild(makeInfoIcon("What happens & stage instructions", "Keep the two layers separate: What must happen is the 1–2 sentence summary; Stage instructions are the step-by-step detail you will draft from, one instruction per line, written first while planning. Scene & Sequel is the judgement layer — check it later, in Editing Pass 1, rather than trying to perfect all three at once."));
       combo.appendChild(comboLab);
       combo.appendChild(questionField);
@@ -6578,7 +6771,7 @@ function renderScenes(){
       combo.appendChild(btWrap);
       /* Stage directions — reference block + Insert (option 2): a
          separate READ-ONLY block above the Stage instructions input,
-         showing this scene's beat(s) and Blessing/Setback(s) live (it
+         showing this scene's beat(s) and Plot point(s) live (it
          re-renders with the scene, so map changes show here), visually
          distinct from an input. Nothing is auto-inserted: the Insert
          button appends them to the Stage instructions as PLAIN lines
@@ -6586,16 +6779,16 @@ function renderScenes(){
          Copying for your prose editor and the scene sheets add each line's
          brackets when you copy. Inserting writes into the existing
          stage text — no new data field. */
-      var stageField = field("Stage instructions", "One instruction per line — write each step on its own line. When you copy for your prose editor and in the scene sheets, each line gets its own [brackets], with a blank line between lines.", s.stage, function(v){ s.stage=v; touch(p); saveSoon(); }, {rows:10, xtall:true, placeholder:"One instruction per line:\nShe crosses to the window.\nShe reads the letter twice.\nShe sits down, slowly."});
+      var stageField = field("Stage instructions", "One instruction per line.", s.stage, function(v){ s.stage=v; touch(p); saveSoon(); }, {rows:10, xtall:true, placeholder:"One instruction per line:\nShe crosses to the window.\nShe reads the letter twice.\nShe sits down, slowly."});
       var stageTa = stageField.querySelector("textarea");
-      /* The beats & Blessing/Setback reference block sits behind a
+      /* The beats & Plot point reference block sits behind a
          toggle — it is reference, not an input, and collapsed it
          leaves the Stage instructions input room to breathe. */
       var srOpen = !!(ui.stageRefScenes && ui.stageRefScenes[s.id]);
       var srToggle = document.createElement("button"); srToggle.type = "button"; srToggle.className = "btn small sectoggle";
-      srToggle.textContent = srOpen ? "Hide beats & BS for this scene" : "Show beats & BS for this scene — reference while writing the stage instructions above";
+      srToggle.textContent = srOpen ? "Hide beats & plot points for this scene" : "Show beats & plot points for this scene";
       srToggle.setAttribute("aria-expanded", srOpen ? "true" : "false");
-      srToggle.setAttribute("aria-label", (srOpen ? "Hide" : "Show") + " the beats and Blessings/Setbacks reference for this scene");
+      srToggle.setAttribute("aria-label", (srOpen ? "Hide" : "Show") + " the beats and plot points reference for this scene");
       srToggle.addEventListener("click", function(){ ui.stageRefScenes[s.id] = !srOpen; editToggle(renderScenes, null); });
 
       var sref2 = null;
@@ -6624,7 +6817,7 @@ function renderScenes(){
         });
         var insBtn = document.createElement("button"); insBtn.type = "button"; insBtn.className = "btn small";
         insBtn.textContent = "Insert into stage instructions";
-        insBtn.setAttribute("aria-label", "Insert this scene's beats and Blessings/Setbacks into the stage instructions as plain lines — brackets are added when you copy");
+        insBtn.setAttribute("aria-label", "Insert this scene's beats and plot points into the stage instructions as plain lines — brackets are added when you copy");
         insBtn.addEventListener("click", function(){
           var cur2 = String(s.stage || "");
           var block = srLines.join("\n");
@@ -6636,7 +6829,7 @@ function renderScenes(){
         sref2.appendChild(insBtn);
       } else {
         var srNone = document.createElement("span"); srNone.className = "sr-line empty-t";
-        srNone.textContent = "No beat tagged and no Blessing or Setback on this scene yet — tag one above and it will show here for reference while you write the stage instructions.";
+        srNone.textContent = "No beat or plot point on this scene yet.";
         sref2.appendChild(srNone);
       }
       }
@@ -6647,6 +6840,7 @@ function renderScenes(){
       ed.appendChild(loopTitle);
       ed.appendChild(sumRow);
       ed.appendChild(loop);
+      ed.appendChild(buildSceneStyleAudit(p, s));
       ed.appendChild(optBlock);
 
       var row = document.createElement("div"); row.style.cssText="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px";
@@ -6973,12 +7167,12 @@ function structuralChecks(p){
   p.scenes.forEach(function(s, i){
     var nm = "Scene " + (i + 1) + (s.title ? " — " + s.title : "");
     function goSeq(){ return function(){ ui.seqSceneId = s.id; ui.openPass = "structural"; renderEditing(); requestScroll('[data-pass-key="structural"]'); }; }
-    if(!(s.beatTags || []).length && !(s.bs || []).length && !filledStr(s.does)) out.push({id:"wandering:" + s.id, title:nm + ": carries nothing — no beat, no Blessing/Setback, no stated job", detail:"A wandering scene: in the draft it will read as a pause the story did not earn. Give it a job (in its Optional details), tag it, or cut it. Pleasure counts as a job — say so in What this scene does and dismiss this.", go:(function(sid){ return function(){ jumpToSceneEditor(sid); }; })(s.id), goLabel:"Go to the scene"});
+    if(!(s.beatTags || []).length && !(s.bs || []).length && !filledStr(s.does)) out.push({id:"wandering:" + s.id, title:nm + ": carries nothing — no beat, no plot point, no stated job", detail:"A wandering scene: in the draft it will read as a pause the story did not earn. Give it a job (in its Optional details), tag it, or cut it. Pleasure counts as a job — say so in What this scene does and dismiss this.", go:(function(sid){ return function(){ jumpToSceneEditor(sid); }; })(s.id), goLabel:"Go to the scene"});
     if(!filledStr(s.sequel && s.sequel.disaster)) out.push({id:"nodisaster:" + s.id, title:nm + ": Scene has no Disaster", detail:"Use the Scene & Sequel editor in this pass, or open the scene. A scene that simply succeeds has no Disaster — and usually no reason to exist.", go:goSeq(), goLabel:"Open in the editor below"});
     else if(!filledStr(s.sequel && s.sequel.decision)) out.push({id:"nodecision:" + s.id, title:nm + ": Disaster has no Decision after it", detail:"The Sequel is Reaction → Dilemma → Decision; without the Decision the chain breaks here and the next scene starts from nothing.", go:goSeq(), goLabel:"Open in the editor below"});
     if(i < p.scenes.length - 1 && filledStr(s.sequel && s.sequel.decision) && !filledStr(p.scenes[i + 1].sequel && p.scenes[i + 1].sequel.goal)) out.push({id:"chaingap:" + s.id, title:nm + ": its Decision sets nothing — the next scene has no Goal", detail:"Swain's chain: a Decision becomes the next scene's Goal. Either the next scene's Goal is this Decision (write it), or the join is a deliberate break (dismiss).", go:goSeq(), goLabel:"Open in the editor below"});
     ensureSceneBS(s);
-    (s.bs || []).forEach(function(e){ if(!e.arcId) out.push({id:"bsunlinked:" + e.id, title:nm + ": a " + bsTypeLabel(e.type) + " is not linked to an arc", detail:"Scenes — unlinked entries still show on the map under Unlinked, but linking it tells the pacing which arc's try/fail chain it belongs to.", go:(function(sid){ return function(){ jumpToSceneEditor(sid); }; })(s.id), goLabel:"Go to the scene"}); });
+    (s.bs || []).forEach(function(e){ if(!e.arcId) out.push({id:"bsunlinked:" + e.id, title:nm + ": a " + bsTypeLabel(e.type) + " is not linked to an arc", detail:"Scenes — unlinked entries still show on the map under Unlinked, but linking it tells the pacing which arc it belongs to.", go:(function(sid){ return function(){ jumpToSceneEditor(sid); }; })(s.id), goLabel:"Go to the scene"}); });
   });
   var gen2 = genSynopsis(p);
   if(gen2 && p.intake.synopsisStamp && p.intake.synopsisStamp !== beatStamp(p)) out.push({id:"synstale", title:"Beats synopsis is stale against the current plan", detail:"Intake — if the plan changed during drafting, re-sync the synopsis so the reverse outline in this pass is honest.", go:function(){ setView("intake"); }, goLabel:"Go to Intake"});
@@ -6991,7 +7185,7 @@ function buildIssuesList(p){
   var dismissed = checks.filter(function(c){ return !!p.dismissedChecks[c.id]; });
   var lab = document.createElement("label"); lab.className = "flabel";
   lab.textContent = "Issues found (" + active.length + ")";
-  lab.appendChild(makeInfoIcon("Issues found", "Built automatically from your own inputs each time this pass opens — in this pass's narrower, post-draft scope: beats out of story order, written beats that never land on a scene, beats crowding one scene, wandering scenes that carry nothing, Scene & Sequel breaks (a missing Disaster, a Disaster with no Decision, a Decision that sets no next Goal), unlinked Blessings/Setbacks, and a stale synopsis. Planning gaps — blank fields, unwritten beats, unanswered questions — are deliberately NOT here: they belong to the Readiness check, before drafting.\n\nTap Go to jump to the place that fixes an issue. Tap \"Not an issue\" when a flag is deliberate — the issue moves to Dismissed issues below, where it can be restored at any time. Dismissals are saved with the project and survive export and import."));
+  lab.appendChild(makeInfoIcon("Issues found", "Built automatically from your own inputs each time this pass opens — in this pass's narrower, post-draft scope: beats out of story order, written beats that never land on a scene, beats crowding one scene, wandering scenes that carry nothing, Scene & Sequel breaks (a missing Disaster, a Disaster with no Decision, a Decision that sets no next Goal), unlinked Plot points, and a stale synopsis. Planning gaps — blank fields, unwritten beats, unanswered questions — are deliberately NOT here: they belong to the Readiness check, before drafting.\n\nTap Go to jump to the place that fixes an issue. Tap \"Not an issue\" when a flag is deliberate — the issue moves to Dismissed issues below, where it can be restored at any time. Dismissals are saved with the project and survive export and import."));
   wrap.appendChild(lab);
   if(!checks.length){
     var none = document.createElement("p"); none.className = "hint"; none.style.margin = "0";
@@ -7111,7 +7305,7 @@ function renderEditing(){
     var node = document.createElement("div"); node.className="node"+(data.done?" done":"");
     node.setAttribute("data-pass-key", ps.key);
     var b = document.createElement("div"); b.className="node-head";
-    var pmain = document.createElement("div"); pmain.className = "node-main";
+    var pmain = document.createElement("div"); pmain.className = "node-main pass-main";
     /* Title row only: number + title + Edit/Close. The description goes in
        a body block BELOW the row, at the card's full width — inside the
        flex title row it was squeezed into a narrow column beside the
@@ -7378,6 +7572,7 @@ function buildOverallSheet(p){
       });
     }
   }
+  styleSheetLines(p).forEach(function(x){ L.push(x); });
   L.push("## Characters");
   L.push("");
   if(!p.characters.length){ L.push("(no characters yet)"); L.push(""); }
@@ -7478,6 +7673,7 @@ function buildSceneSheet(p, s, i){
   var spr2 = passesForScene(p, s.id); if(spr2.length) L.push("Editing passes: " + spr2.map(function(x){ return x.pass.title + (x.note ? " — " + x.note : ""); }).join("; "));
   bsExportLines(s, p).forEach(function(x){ L.push(x); });
   sceneBeatTagLines(p, s).forEach(function(x){ L.push(x); });
+  if(mdText(s.styleNote) || s.styleFlag) L.push("Telling: " + (mdText(s.styleNote) || "(no telling note)") + (s.styleFlag === "against" ? " [works against the theme]" : s.styleFlag === "serves" ? " [serves the theme]" : ""));
   if(mdText(s.what)){ L.push(""); L.push("What must happen: " + mdText(s.what)); }
   var decision = s.sequel ? mdText(s.sequel.decision) : "";
   if(decision){ L.push(""); L.push("Scene & Sequel — Decision: " + decision); }
@@ -7520,6 +7716,7 @@ function sceneSheetHtml(p, s, i){
   var feel = sceneFeelText(s); if(feel) H.push(para("Feeling: " + feel));
   bsExportLines(s, p).forEach(function(x){ H.push(para(x)); });
   sceneBeatTagLines(p, s).forEach(function(x){ H.push(para(x)); });
+  if(mdText(s.styleNote) || s.styleFlag) H.push(para("Telling: " + (mdText(s.styleNote) || "(no telling note)") + (s.styleFlag === "against" ? " [works against the theme]" : s.styleFlag === "serves" ? " [serves the theme]" : "")));
   if(mdText(s.what)) H.push(para("What must happen: " + mdText(s.what)));
   var decision = s.sequel ? mdText(s.sequel.decision) : "";
   if(decision) H.push(para("Scene & Sequel — Decision: " + decision));
@@ -7681,20 +7878,21 @@ function sanitizeProject(raw){
     ensureArcs(p);
     if(Array.isArray(raw.scenes)) raw.scenes.forEach(function(rs, i){
       if(!rs) return; var s = blankScene(i+1);
-      ["title","chapter","pov","where","when","what","question","does","wordTarget","feelStart","feelEnd","stage"].forEach(function(k){ if(rs[k]!=null) s[k]=String(rs[k]); });
+      ["title","chapter","pov","where","when","what","question","does","wordTarget","feelStart","feelEnd","stage","styleNote"].forEach(function(k){ if(rs[k]!=null) s[k]=String(rs[k]); });
+      if(["serves","against"].indexOf(rs.styleFlag) >= 0) s.styleFlag = rs.styleFlag;
       if(["planned","drafted","done"].indexOf(rs.status) >= 0) s.status = rs.status;
       if(rs.kind === "frame") s.kind = "frame";
       var legacyTag = (TAGS.indexOf(rs.tag)>=0) ? rs.tag : "none"; if(legacyTag!=="none") s.tag = legacyTag; /* temporary, for ensureSceneBS migration below; deleted there */
       if(Array.isArray(rs.bs)) rs.bs.forEach(function(re){
-        if(re && (re.type === "blessing" || re.type === "setback")) s.bs.push({id:uid(), type:re.type, text:re.text != null ? String(re.text) : "", arcId:(typeof re.arcId === "string" && re.arcId) ? re.arcId : null});
+        if(re && typeof re === "object") s.bs.push({id:(typeof re.id === "string" && re.id) ? re.id : uid(), type:(re.type === "blessing" || re.type === "setback") ? re.type : "plotpoint", text:re.text != null ? String(re.text) : "", arcId:(typeof re.arcId === "string" && re.arcId) ? re.arcId : null});
       });
       /* Legacy files (exports from before BS entries existed) carry a
-         scene's Blessings/Setbacks ONLY as its binary tag. blankScene()
+         scene's Plot points ONLY as its binary tag. blankScene()
          seeds bs as an empty array, and ensureSceneBS only migrates the
          tag when bs is not an array at all — so without this, the tag is
          copied in, no entries are built, and ensureSceneBS then re-derives
          the tag from the empty entry list, wiping it to "none": the
-         Blessings/Setbacks silently vanish. When no entries arrived but
+         Plot points silently vanish. When no entries arrived but
          the tag names one, hand the scene over with bs unset so the
          migration rebuilds the entries. */
       if(!s.bs.length && legacyTag !== "none") s.bs = null;
@@ -7729,6 +7927,7 @@ function sanitizeProject(raw){
       if(Array.isArray(re.sceneRefs)) re.sceneRefs.forEach(function(rr){ if(rr && typeof rr.sceneId === "string") p.editing[ps.key].sceneRefs.push({sceneId:rr.sceneId, note:rr.note != null ? String(rr.note) : ""}); });
     });
     if(typeof raw.styleSheet === "string") p.styleSheet = raw.styleSheet;
+    if(raw.style && typeof raw.style === "object") p.style = sanitizeStyle(raw.style);
     if(typeof raw.readinessNotes === "string") p.readinessNotes = raw.readinessNotes;
     if(raw.dismissedChecks && typeof raw.dismissedChecks === "object") Object.keys(raw.dismissedChecks).forEach(function(k){ if(raw.dismissedChecks[k]) p.dismissedChecks[k] = true; });
     if(raw.mapLayers && typeof raw.mapLayers === "object"){ p.mapLayers = {}; Object.keys(MAP_LAYER_DEFAULTS).forEach(function(k){ p.mapLayers[k] = typeof raw.mapLayers[k] === "boolean" ? raw.mapLayers[k] : MAP_LAYER_DEFAULTS[k]; }); }
@@ -7986,14 +8185,14 @@ function renderOverview(){
       {label: bc.have+" scene"+(bc.have===1?"":"s")+" planned", done:bc.have>0},
       {label: "Budget ≈"+bc.afford+" scenes ("+bc.words.toLocaleString()+" words ÷ "+bc.avg.toLocaleString()+")", done:true},
       {label: bc.have>bc.afford ? "Over budget — merge, cut, or raise the target" : "Within budget", done:bc.have>0 && bc.have<=bc.afford},
-      {label: totalBS(p)+" Blessings/Setbacks across all scenes", done:totalBS(p)>0}
+      {label: totalBS(p)+" Plot points across all scenes", done:totalBS(p)>0}
     ];
   } else {
     sceneLabel = p.scenes.length+" scenes · no budget set";
     scenePct = p.scenes.length ? 40 : 0;
     sceneChecks = [
       {label: p.scenes.length+" scene"+(p.scenes.length===1?"":"s")+" planned", done:p.scenes.length>0},
-      {label: totalBS(p)+" Blessings/Setbacks across all scenes", done:totalBS(p)>0},
+      {label: totalBS(p)+" Plot points across all scenes", done:totalBS(p)>0},
       {label:"Set target length + average scene length in Intake for a budget", done:false}
     ];
   }
@@ -8011,6 +8210,17 @@ function renderOverview(){
     {label: wbT2 ? wbDone + " of " + wbSecs.length + " sections written" : "Pick an approach on the Worldbuilding page", done: wbT2 ? (wbSecs.length > 0 && wbDone === wbSecs.length) : false}
   ];
   grid.appendChild(ovCard("Worldbuilding", wbT2 ? wbDone + " / " + wbSecs.length + " sections" : "not started", wbT2 && wbSecs.length ? wbDone / wbSecs.length * 100 : 0, wbChecks, "world"));
+  /* Style — How It's Told */
+  ensureStyle(p);
+  var styleChecks = [
+    {label:"Style thesis", done:filledStr(p.style.thesis)},
+    {label:"Limitation named — what the telling hides", done:filledStr(p.style.stance.limitation)},
+    {label: p.style.devices.length ? p.style.devices.length + " device" + (p.style.devices.length === 1 ? "" : "s") + " in the inventory" : "No devices yet", done:p.style.devices.length > 0},
+    {label: p.style.themeMap.length ? p.style.themeMap.length + " theme-device row" + (p.style.themeMap.length === 1 ? "" : "s") : "No theme-device rows yet", done:p.style.themeMap.length > 0 && p.style.themeMap.every(function(e){ return filledStr(e.theme) && filledStr(e.device) && filledStr(e.scenes); })},
+    {label: STYLE_TENETS.filter(function(x, ti2){ var tv2 = p.style.tenets[String(ti2 + 1)]; return tv2 && tv2.answer; }).length + " of 9 tenets answered", done:STYLE_TENETS.every(function(x, ti2){ var tv2 = p.style.tenets[String(ti2 + 1)]; return tv2 && tv2.answer; })}
+  ];
+  var styleDone = styleChecks.filter(function(c){ return c.done; }).length;
+  grid.appendChild(ovCard("Style — How It's Told", styleDone + " / " + styleChecks.length + " in place", styleDone / styleChecks.length * 100, styleChecks, "style"));
   /* Editing: x / 6 passes */
   var passDone = PASSES.filter(function(ps){ return p.editing[ps.key] && p.editing[ps.key].done; }).length;
   var passChecks = PASSES.map(function(ps){ return {label:ps.title, done:!!(p.editing[ps.key] && p.editing[ps.key].done)}; });
@@ -8049,13 +8259,13 @@ function renderSetup(){
     else {
       note.style.display = "";
       note.className = "warnbox";
-      note.innerHTML = "<strong>No project yet.</strong> Add or import a project first to use the project exports and reference sheets — Import and Export All below work either way, so you can restore a backup from here even when your Projects list is empty.";
+      note.innerHTML = "<strong>No project yet.</strong> Add or import a project first to use the project exports and reference sheets — Import and Download backup below work either way, so you can restore a backup from here even when your Projects list is empty.";
     }
   }
 }
 
 /* ---------- Prev / Next, in page flow at the end of each section ---------- */
-var SECTION_ORDER = ["overview","intake","world","characters","map","scenes","readiness","editing","setup"];
+var SECTION_ORDER = ["overview","intake","world","characters","map","scenes","style","readiness","editing","setup"];
 function renderPrevNext(){
   document.querySelectorAll(".prevnext").forEach(function(box){
     var v = box.getAttribute("data-pn");
@@ -8099,6 +8309,422 @@ function renderPrevNext(){
   });
 }
 
+/* ---------- Style — How It's Told ----------
+   The telling layer: prose stance, devices, motifs, naming, the body,
+   the closed world, withholding, the witness, and voice — all checked
+   against one style thesis and the Intake theme. Skeleton only, like
+   the rest of the tool: planning fields, no prose field. Style reads
+   from Intake (theme), Scenes (the per-scene telling audit), and
+   Worldbuilding (the closed world's home) instead of duplicating
+   them. Per-scene audit data lives on the scene itself (s.styleNote /
+   s.styleFlag), so the scene editor and this page edit one source. */
+function styleMove(arr, idx, delta){
+  var to = idx + delta;
+  if(idx < 0 || to < 0 || to >= arr.length) return false;
+  var tmp = arr[idx]; arr[idx] = arr[to]; arr[to] = tmp;
+  return true;
+}
+function stylePicker(label, hint, val, options, onchange, infoText){
+  var wrap = document.createElement("div"); wrap.className = "fieldwrap";
+  var lab = document.createElement("label"); lab.className = "flabel";
+  lab.appendChild(document.createTextNode(label));
+  if(infoText) lab.appendChild(makeInfoIcon(label, infoText));
+  if(hint){ var hs = document.createElement("span"); hs.className = "hint"; hs.textContent = hint; lab.appendChild(hs); }
+  wrap.appendChild(lab);
+  var sel = document.createElement("select"); sel.setAttribute("aria-label", label);
+  options.forEach(function(o){
+    var op = document.createElement("option"); op.value = o; op.textContent = o || "Not decided yet";
+    if(val === o) op.selected = true;
+    sel.appendChild(op);
+  });
+  sel.addEventListener("change", function(){ onchange(sel.value); });
+  wrap.appendChild(sel);
+  return wrap;
+}
+/* One movable, collapsible entry block — the same Edit paradigm as the
+   Plot point and beat editors: collapsed it shows a title and a
+   one-line preview; the pencil opens its fields in place, with Done,
+   Remove, and (where order matters) the move arrows in the footer. */
+function buildStyleEntry(cfg){
+  var open = !!ui.styleOpen[cfg.id];
+  var box = document.createElement("div"); box.className = "style-entry";
+  box.setAttribute("data-style-entry", cfg.id);
+  var hd = document.createElement("div"); hd.className = "bs-entry-head";
+  var st = document.createElement("strong"); st.textContent = cfg.title; hd.appendChild(st);
+  var pv = document.createElement("span"); pv.className = "bs-preview";
+  pv.textContent = cfg.preview || "Not written yet.";
+  hd.appendChild(pv);
+  var eBtn = document.createElement("button"); eBtn.type = "button"; eBtn.className = "pencilbtn";
+  eBtn.style.cssText = "margin-left:auto;flex:0 0 auto";
+  eBtn.innerHTML = ti(open ? "x" : "pencil");
+  eBtn.title = open ? "Close" : "Edit";
+  eBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  eBtn.setAttribute("aria-label", (open ? "Close" : "Edit") + " — " + cfg.title);
+  eBtn.addEventListener("click", function(){
+    ui.styleOpen[cfg.id] = !open;
+    editToggle(renderStyle, null);
+  });
+  hd.appendChild(eBtn);
+  box.appendChild(hd);
+  if(cfg.warn){
+    var wn = document.createElement("p"); wn.className = "style-warn"; wn.textContent = cfg.warn;
+    box.appendChild(wn);
+  }
+  if(open){
+    var bodyEl = document.createElement("div");
+    cfg.buildFields(bodyEl);
+    box.appendChild(bodyEl);
+    var foot = document.createElement("div"); foot.style.cssText = "display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap;margin-top:var(--sp3)";
+    var doneB = document.createElement("button"); doneB.type = "button"; doneB.className = "icon-sm-btn"; doneB.innerHTML = ti("check");
+    doneB.title = "Done"; doneB.setAttribute("aria-label", "Done editing — " + cfg.title);
+    doneB.addEventListener("click", function(){ ui.styleOpen[cfg.id] = false; editToggle(renderStyle, null); });
+    foot.appendChild(doneB);
+    var rm = document.createElement("button"); rm.type = "button"; rm.className = "icon-sm-btn"; rm.innerHTML = ti("trash");
+    rm.title = "Remove"; rm.setAttribute("aria-label", "Remove — " + cfg.title);
+    rm.addEventListener("click", function(){ cfg.onRemove(); });
+    foot.appendChild(rm);
+    if(cfg.onMove){
+      var prevB = document.createElement("button"); prevB.type = "button"; prevB.className = "arrowbtn sm"; prevB.innerHTML = ti("chevron-up");
+      prevB.setAttribute("aria-label", "Move up — " + cfg.title); prevB.disabled = !!cfg.isFirst;
+      prevB.addEventListener("click", function(){ cfg.onMove(-1); });
+      var nextB = document.createElement("button"); nextB.type = "button"; nextB.className = "arrowbtn sm"; nextB.innerHTML = ti("chevron-down");
+      nextB.setAttribute("aria-label", "Move down — " + cfg.title); nextB.disabled = !!cfg.isLast;
+      nextB.addEventListener("click", function(){ cfg.onMove(1); });
+      foot.appendChild(prevB); foot.appendChild(nextB);
+    }
+    box.appendChild(foot);
+  }
+  return box;
+}
+function styleListSection(p, card, opts){
+  /* opts: {list, blank, titleOf, previewOf, warnOf, buildFields(entry, bodyEl), addLabel} */
+  opts.list.forEach(function(entry, idx){
+    card.appendChild(buildStyleEntry({
+      id: opts.key + "|" + entry.id,
+      title: opts.titleOf(entry, idx),
+      preview: opts.previewOf(entry),
+      warn: opts.warnOf ? opts.warnOf(entry) : "",
+      buildFields: function(bodyEl){ opts.buildFields(entry, bodyEl); },
+      onRemove: function(){
+        opts.list.splice(idx, 1);
+        delete ui.styleOpen[opts.key + "|" + entry.id];
+        touch(p); save(); editToggle(renderStyle, null);
+        toast("Removed");
+      },
+      onMove: function(delta){
+        if(styleMove(opts.list, idx, delta)){ touch(p); save(); editToggle(renderStyle, null); }
+      },
+      isFirst: idx === 0,
+      isLast: idx === opts.list.length - 1
+    }));
+  });
+  var addRow = document.createElement("div"); addRow.className = "bs-addrow";
+  var addB = document.createElement("button"); addB.type = "button"; addB.className = "tagbtn"; addB.textContent = opts.addLabel;
+  addB.setAttribute("aria-label", opts.addLabel);
+  addB.addEventListener("click", function(){
+    var ne = opts.blank();
+    opts.list.push(ne);
+    ui.styleOpen[opts.key + "|" + ne.id] = true;
+    touch(p); save(); editToggle(renderStyle, null);
+  });
+  addRow.appendChild(addB);
+  card.appendChild(addRow);
+}
+function buildSceneStyleAudit(p, s){
+  var wrapEl = document.createElement("div"); wrapEl.className = "fieldwrap";
+  var lab = document.createElement("label"); lab.className = "flabel";
+  lab.textContent = "Style audit — how this scene is told";
+  lab.appendChild(makeInfoIcon("Style audit — how this scene is told", "One line: how is this scene told, and does the telling serve the theme? Flag it when the telling works against the theme — flagged and unchecked scenes collect in the audit list on the Style page (How It's Told), so what still needs work is visible at a glance."));
+  wrapEl.appendChild(lab);
+  var ta = document.createElement("textarea"); ta.rows = 2;
+  ta.value = s.styleNote || "";
+  ta.placeholder = "e.g. Told only in dialogue — what she feels is in what she does with her hands.";
+  ta.setAttribute("aria-label", "How this scene is told — one line");
+  ta.addEventListener("input", function(){ s.styleNote = ta.value; touch(p); saveSoon(); });
+  wrapEl.appendChild(ta);
+  var sel = document.createElement("select"); sel.setAttribute("aria-label", "Does this scene's telling serve the theme?");
+  sel.style.cssText = "margin-top:var(--sp2)";
+  [["", "Not checked yet"], ["serves", "Serves the theme"], ["against", "Works against the theme"]].forEach(function(o){
+    var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1];
+    if((s.styleFlag || "") === o[0]) op.selected = true;
+    sel.appendChild(op);
+  });
+  sel.addEventListener("change", function(){
+    s.styleFlag = sel.value;
+    touch(p); save(); editToggle(renderScenes, '[data-scene-id="' + s.id + '"]');
+  });
+  wrapEl.appendChild(sel);
+  return wrapEl;
+}
+function renderStyle(){
+  var body = document.getElementById("styleBody"); if(!body) return;
+  body.innerHTML = "";
+  var p = cur();
+  if(!p){ body.innerHTML = '<div class="noproject">No project selected. Create one from the Projects homepage.</div>'; return; }
+  var st = ensureStyle(p);
+  function card(title, infoText){
+    var c = document.createElement("div"); c.className = "card";
+    var h = document.createElement("h3"); h.className = "serif"; h.style.marginTop = "0"; h.textContent = title;
+    if(infoText) h.appendChild(makeInfoIcon(title, infoText));
+    c.appendChild(h);
+    body.appendChild(c);
+    return c;
+  }
+  function note(txt){
+    var el = document.createElement("p"); el.className = "hint"; el.style.margin = "0 0 var(--sp2)"; el.textContent = txt;
+    return el;
+  }
+  function saveSoonField(){ return function(v){ touch(p); saveSoon(); }; }
+
+  /* 1 — Style thesis, beside the Intake theme */
+  var c1 = card("1 · Style thesis", "How is this story told, and what does the telling do for the theme? Everything on this page is checked against this line. If a device cannot be tied back to it, it is decoration.");
+  if(filledStr(p.intake.theme)){
+    var thRef = document.createElement("div"); thRef.className = "refblock"; thRef.style.cssText = "padding:var(--sp3) var(--sp4);margin-bottom:var(--sp3)";
+    thRef.innerHTML = "<strong>Theme (Intake):</strong> " + esc(p.intake.theme);
+    c1.appendChild(thRef);
+  } else {
+    c1.appendChild(note("No theme written yet — write it in Intake. The thesis below is checked against it."));
+  }
+  c1.appendChild(field("Style thesis — one line", "How is this story told, and what does the telling do for the theme?", st.thesis, function(v){ st.thesis = v; touch(p); saveSoon(); }, {rows:2, placeholder:"e.g. Told by the one person who cannot say the central thing, so the reader assembles what the narrator cannot."}));
+
+  /* 2 — The telling (narrative stance) */
+  var c2 = card("2 · The telling — narrative stance", "The stance is the book's machinery: whose eyes, what tense, what the limitation hides, and where the narrator is wrong. The limitation is not a flaw to apologise for — it is the book.");
+  c2.appendChild(stylePicker("Point of view", "", st.stance.pov, ["", "First person", "Close third", "Omniscient", "Other"], function(v){ st.stance.pov = v; touch(p); save(); }));
+  c2.appendChild(field("If first person — is the narrator named?", "A named or unnamed narrator is a decision, not a default.", st.stance.povNote, function(v){ st.stance.povNote = v; touch(p); saveSoon(); }, {rows:1, placeholder:"Named / unnamed — and what the choice does"}));
+  c2.appendChild(stylePicker("Tense and time", "", st.stance.tense, ["", "Present tense", "Retrospective — double voice (then-self and now-self)", "Past tense", "Other"], function(v){ st.stance.tense = v; touch(p); save(); }));
+  c2.appendChild(field("Tense & time — note", "In a retrospective telling there are two voices: the self who lived it and the self who tells it. Note where they disagree.", st.stance.tenseNote, function(v){ st.stance.tenseNote = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What the now-self knows that the then-self did not"}));
+  c2.appendChild(field("What the limitation hides", "The most important field on this page — the limitation IS the book.", st.stance.limitation, function(v){ st.stance.limitation = v; touch(p); saveSoon(); }, {rows:3, placeholder:"e.g. The beloved's interiority — we only ever see what he does, never what he means."}));
+  c2.appendChild(field("Reliability", "What the narrator gets wrong — and whether the reader is meant to see it before the narrator does.", st.stance.reliability, function(v){ st.stance.reliability = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What they get wrong, and when the reader is meant to notice"}));
+
+  /* 3 — Theme-device map */
+  var c3 = card("3 · Theme-device map", "The page's central check. Each row: a theme statement, the device that carries it, and the scene(s) that prove it. A theme with no device and no scene is unproven; a device with no theme is decoration.");
+  c3.appendChild(note("A theme with no device and no scene is unproven. A device with no theme is decoration."));
+  styleListSection(p, c3, {
+    key: "thememap", list: st.themeMap, addLabel: "Add a row",
+    blank: function(){ return {id:uid(), theme:"", device:"", scenes:""}; },
+    titleOf: function(e, i){ return "Row " + (i + 1); },
+    previewOf: function(e){ return [e.theme, e.device].filter(function(x){ return filledStr(x); }).join(" → ") || ""; },
+    warnOf: function(e){
+      if(filledStr(e.theme) && !filledStr(e.device)) return "No device yet — this theme is unproven.";
+      if(filledStr(e.device) && !filledStr(e.theme)) return "No theme — this device is decoration.";
+      if(filledStr(e.theme) && filledStr(e.device) && !filledStr(e.scenes)) return "No scene proves it yet.";
+      return "";
+    },
+    buildFields: function(e, bodyEl){
+      bodyEl.appendChild(field("Theme statement", "", e.theme, function(v){ e.theme = v; touch(p); saveSoon(); }, {rows:1, placeholder:"The theme this row carries"}));
+      bodyEl.appendChild(field("Device that carries it", "", e.device, function(v){ e.device = v; touch(p); saveSoon(); }, {rows:1, placeholder:"The device from the inventory below"}));
+      bodyEl.appendChild(field("Scene(s) that prove it", "", e.scenes, function(v){ e.scenes = v; touch(p); saveSoon(); }, {rows:1, placeholder:"e.g. Scene 4 · Scene 11"}));
+    }
+  });
+
+  /* 4 — Device inventory */
+  var c4 = card("4 · Device inventory", "The story's repeating devices. The key field is How it changes: a device that returns identically is a tic; one that returns with a small change gains weight each time.");
+  styleListSection(p, c4, {
+    key: "device", list: st.devices, addLabel: "Add a device",
+    blank: function(){ return {id:uid(), device:"", kind:"", first:"", changes:"", endMeaning:"", theme:""}; },
+    titleOf: function(e){ return filledStr(e.device) ? e.device : "New device"; },
+    previewOf: function(e){ return e.first || ""; },
+    buildFields: function(e, bodyEl){
+      bodyEl.appendChild(field("Device — what repeats", "", e.device, function(v){ e.device = v; touch(p); saveSoon(); }, {rows:1, placeholder:"What repeats, in a few words"}));
+      bodyEl.appendChild(stylePicker("Kind", "", e.kind, ["", "Chorus / refrain", "Loop / routine", "Private language", "Rule list", "Motif", "Image system", "Body-work", "Other"], function(v){ e.kind = v; touch(p); save(); editToggle(renderStyle, null); }));
+      bodyEl.appendChild(field("First appearance", "Where it shows up first, and what it means then.", e.first, function(v){ e.first = v; touch(p); saveSoon(); }, {rows:2, placeholder:"Where it first appears — and what it means then"}));
+      bodyEl.appendChild(field("How it changes", "The key field: what is different each time it returns.", e.changes, function(v){ e.changes = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What changes each time it returns"}));
+      bodyEl.appendChild(field("What it means at the end", "Versus the first appearance.", e.endMeaning, function(v){ e.endMeaning = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What it means by the end — versus the first time"}));
+      bodyEl.appendChild(field("Theme it serves", "Tie it back to the style thesis — or it is decoration.", e.theme, function(v){ e.theme = v; touch(p); saveSoon(); }, {rows:1, placeholder:"The theme / thesis line it serves"}));
+    }
+  });
+
+  /* 5 — Motif tracker */
+  var c5 = card("5 · Motif tracker", "For images that develop rather than repeat: a motif is tracked by where it starts, how it develops, and where it pays off. Devices repeat; motifs grow.");
+  styleListSection(p, c5, {
+    key: "motif", list: st.motifs, addLabel: "Add a motif",
+    blank: function(){ return {id:uid(), motif:"", first:"", development:"", payoff:""}; },
+    titleOf: function(e){ return filledStr(e.motif) ? e.motif : "New motif"; },
+    previewOf: function(e){ return e.first || ""; },
+    buildFields: function(e, bodyEl){
+      bodyEl.appendChild(field("Motif", "", e.motif, function(v){ e.motif = v; touch(p); saveSoon(); }, {rows:1, placeholder:"The image that develops"}));
+      bodyEl.appendChild(field("First appearance", "", e.first, function(v){ e.first = v; touch(p); saveSoon(); }, {rows:2, placeholder:"Where it first appears"}));
+      bodyEl.appendChild(field("Development", "How it develops — not just returns.", e.development, function(v){ e.development = v; touch(p); saveSoon(); }, {rows:2, placeholder:"How it develops across the story"}));
+      bodyEl.appendChild(field("Payoff", "", e.payoff, function(v){ e.payoff = v; touch(p); saveSoon(); }, {rows:2, placeholder:"Where and how it pays off"}));
+    }
+  });
+
+  /* 6 — Naming */
+  var c6 = card("6 · Naming", "Naming is a plot event. Who is unnamed, who is renamed, and who gets to name whom — naming is power.");
+  c6.appendChild(field("Who is unnamed — and why the blank matters", "", st.naming.unnamed, function(v){ st.naming.unnamed = v; touch(p); saveSoon(); }, {rows:2, placeholder:"Who has no name here, and what the blank does"}));
+  c6.appendChild(field("Who is renamed — and what the new name costs or buys", "", st.naming.renamed, function(v){ st.naming.renamed = v; touch(p); saveSoon(); }, {rows:2, placeholder:"The new name — its cost, or what it buys"}));
+  c6.appendChild(field("Is there a naming scene — and is it the climax?", "", st.naming.scene, function(v){ st.naming.scene = v; touch(p); saveSoon(); }, {rows:1, placeholder:"The naming scene, if there is one — and its place in the story"}));
+  c6.appendChild(field("Who gets to name whom", "Naming as power: who names, who is named, who refuses a name.", st.naming.power, function(v){ st.naming.power = v; touch(p); saveSoon(); }, {rows:2, placeholder:"Who names whom — and who refuses"}));
+
+  /* 7 — The body */
+  var c7 = card("7 · The body", "What body-work does this story use — and what does the body carry that the dialogue cannot say?");
+  c7.appendChild(stylePicker("Body-work", "", st.body.kind, ["", "Language", "Damage", "Currency", "Curriculum", "Otherness", "Intimacy", "Other"], function(v){ st.body.kind = v; touch(p); save(); }));
+  c7.appendChild(field("What the body carries", "What does the body carry that the dialogue cannot say?", st.body.note, function(v){ st.body.note = v; touch(p); saveSoon(); }, {rows:3, placeholder:"What the body says that no one in this story can say aloud"}));
+
+  /* 8 — Closed world and its rules */
+  var c8 = card("8 · Closed world and its rules", "The sealed world and its rules live in Worldbuilding too — this section adds the style layer: the seal, the rules as promises, and the rule that breaks. Each rule is a promise of a scene where it breaks.");
+  var wbBtn = document.createElement("button"); wbBtn.type = "button"; wbBtn.className = "btn small"; wbBtn.textContent = "Open Worldbuilding";
+  wbBtn.addEventListener("click", function(){ setView("world"); });
+  c8.appendChild(wbBtn);
+  c8.appendChild(field("The sealed world", "Place / vocabulary / body with an inside and an outside — and the cost of crossing.", st.closedWorld.sealed, function(v){ st.closedWorld.sealed = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What seals this world — and what crossing costs"}));
+  var rulesLab = document.createElement("label"); rulesLab.className = "flabel"; rulesLab.textContent = "Its rules";
+  c8.appendChild(rulesLab);
+  styleListSection(p, c8, {
+    key: "rule", list: st.closedWorld.rules, addLabel: "Add a rule",
+    blank: function(){ return {id:uid(), text:""}; },
+    titleOf: function(e, i){ return "Rule " + (i + 1); },
+    previewOf: function(e){ return e.text || ""; },
+    buildFields: function(e, bodyEl){
+      bodyEl.appendChild(field("Rule", "Each rule is a promise of a scene where it breaks.", e.text, function(v){ e.text = v; touch(p); saveSoon(); }, {rows:2, placeholder:"The rule, stated plainly"}));
+    }
+  });
+  c8.appendChild(field("The rule that breaks — which rule", "", st.closedWorld.breakWhich, function(v){ st.closedWorld.breakWhich = v; touch(p); saveSoon(); }, {rows:1, placeholder:"Which rule breaks"}));
+  c8.appendChild(field("Where it breaks", "", st.closedWorld.breakWhere, function(v){ st.closedWorld.breakWhere = v; touch(p); saveSoon(); }, {rows:1, placeholder:"The scene where it breaks"}));
+  c8.appendChild(field("What breaking it costs", "", st.closedWorld.breakCost, function(v){ st.closedWorld.breakCost = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What the break costs — and who pays"}));
+
+  /* 9 — Ending and withholding */
+  var c9 = card("9 · Ending and withholding", "Hide or announce: does the story hide the fact — a twist — or announce the fact — dread? Whichever is chosen, the meaning, not the events, is what stays withheld.");
+  c9.appendChild(field("What the reader knows early", "The ending, a death, a myth, a date — given up front, on purpose.", st.ending.knownEarly, function(v){ st.ending.knownEarly = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What is announced early"}));
+  c9.appendChild(field("What meaning is withheld", "Motive, the other person's interior life, guilt.", st.ending.withheld, function(v){ st.ending.withheld = v; touch(p); saveSoon(); }, {rows:2, placeholder:"The meaning that stays withheld"}));
+  c9.appendChild(stylePicker("Hide or announce", "", st.ending.mode, ["", "Hide the fact — a twist", "Announce the fact — dread"], function(v){ st.ending.mode = v; touch(p); save(); }));
+
+  /* 10 — The witness */
+  var c10 = card("10 · The witness", "Who sees through the narrator? The book's moral judgment usually arrives through the witness, not the narrator.");
+  c10.appendChild(field("Who sees through the narrator?", "", st.witness.who, function(v){ st.witness.who = v; touch(p); saveSoon(); }, {rows:1, placeholder:"Name the witness"}));
+  c10.appendChild(field("What they see", "", st.witness.sees, function(v){ st.witness.sees = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What the witness sees that the narrator cannot"}));
+  c10.appendChild(field("What they do about it", "", st.witness.does, function(v){ st.witness.does = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What the witness does with what they see"}));
+  c10.appendChild(field("Their fate", "The witness's fate is usually the book's moral judgment, delivered sideways.", st.witness.fate, function(v){ st.witness.fate = v; touch(p); saveSoon(); }, {rows:2, placeholder:"What happens to the witness"}));
+
+  /* 11 — Voice */
+  var c11 = card("11 · Voice", "The narrator's instrument: the words they are allowed, the rhythm their sentences keep, the tic that is also a clue, and the work this story borrows from.");
+  c11.appendChild(field("Diction & register", "Words this narrator is allowed — and not.", st.voice.diction, function(v){ st.voice.diction = v; touch(p); saveSoon(); }, {rows:2, placeholder:"Allowed words — and forbidden ones"}));
+  c11.appendChild(field("Sentence rhythm", "Long and circling, or short and clipped — and what the rhythm is doing psychologically.", st.voice.rhythm, function(v){ st.voice.rhythm = v; touch(p); saveSoon(); }, {rows:2, placeholder:"The rhythm — and what it is doing psychologically"}));
+  c11.appendChild(field("The narrator's tic that is also a clue", "", st.voice.tic, function(v){ st.voice.tic = v; touch(p); saveSoon(); }, {rows:1, placeholder:"The repeated habit that gives them away"}));
+  c11.appendChild(field("Allusion system", "Whose work this story borrows from — and what one reference does that a paragraph of explanation could not.", st.voice.allusion, function(v){ st.voice.allusion = v; touch(p); saveSoon(); }, {rows:2, placeholder:"The borrowed work — and what one reference does"}));
+
+  /* Tenets */
+  var cT = card("Tenets — the nine checks", "From the patterns the studied books share. Answer each one and note how this story does it — or name the deliberate exception.");
+  STYLE_TENETS.forEach(function(txt, i){
+    var key = String(i + 1);
+    var tv = st.tenets[key];
+    var row = document.createElement("div"); row.className = "tenet-row";
+    var top = document.createElement("div"); top.className = "tenet-top";
+    var tt = document.createElement("span"); tt.className = "tenet-txt";
+    tt.innerHTML = "<strong>" + (i + 1) + ".</strong> " + esc(txt);
+    top.appendChild(tt);
+    var btns = document.createElement("span"); btns.className = "tenet-btns";
+    [["yes", "Yes"], ["no", "No"]].forEach(function(pair){
+      var b = document.createElement("button"); b.type = "button"; b.className = "tagbtn"; b.textContent = pair[1];
+      b.setAttribute("aria-pressed", tv.answer === pair[0] ? "true" : "false");
+      b.setAttribute("aria-label", "Tenet " + (i + 1) + ": " + pair[1]);
+      b.addEventListener("click", function(){
+        tv.answer = tv.answer === pair[0] ? "" : pair[0];
+        touch(p); save(); editToggle(renderStyle, null);
+      });
+      btns.appendChild(b);
+    });
+    top.appendChild(btns);
+    row.appendChild(top);
+    var ni = document.createElement("input"); ni.type = "text"; ni.value = tv.note || "";
+    ni.placeholder = "Note — how this story does it, or the named exception";
+    ni.setAttribute("aria-label", "Tenet " + (i + 1) + " note");
+    ni.addEventListener("input", function(){ tv.note = ni.value; touch(p); saveSoon(); });
+    row.appendChild(ni);
+    cT.appendChild(row);
+  });
+
+  /* 12 — Style audit (per scene) */
+  var c12 = card("12 · Style audit — per scene", "One line per scene: how is this scene told, and does the telling serve the theme? Edit the note and the flag in the scene's own editor in Scenes; this list collects what does not yet serve the theme so it can be seen at a glance.");
+  var against = [], unchecked = [], serving = [];
+  p.scenes.forEach(function(s, i){
+    var item = {s:s, i:i};
+    if(s.styleFlag === "against") against.push(item);
+    else if(s.styleFlag === "serves") serving.push(item);
+    else unchecked.push(item);
+  });
+  var sum = document.createElement("p"); sum.style.cssText = "margin:0 0 var(--sp3);font-weight:700;font-size:.92rem";
+  sum.textContent = p.scenes.length ? (against.length + " flagged as working against the theme · " + unchecked.length + " not checked yet · " + serving.length + " serving the theme") : "No scenes yet — the audit fills in as scenes are added in Scenes.";
+  c12.appendChild(sum);
+  function auditGroup(title, items, flagged){
+    if(!items.length) return;
+    var gh = document.createElement("p"); gh.style.cssText = "margin:var(--sp3) 0 var(--sp2);font-weight:700";
+    gh.textContent = title + " (" + items.length + ")";
+    c12.appendChild(gh);
+    items.forEach(function(item){
+      var row = document.createElement("div"); row.className = "style-audit-row" + (flagged ? " flagged" : "");
+      var tx = document.createElement("div"); tx.className = "issue-txt";
+      tx.innerHTML = "<b>" + esc("Scene " + (item.i + 1) + " — " + (item.s.title || "Untitled scene")) + "</b>"
+        + "<span style='color:var(--ink2)'>" + esc(filledStr(item.s.styleNote) ? item.s.styleNote : "No telling note yet — add one in the scene editor.") + "</span>";
+      row.appendChild(tx);
+      var gb = document.createElement("button"); gb.type = "button"; gb.className = "tagbtn"; gb.textContent = "Open scene";
+      gb.setAttribute("aria-label", "Open scene " + (item.i + 1) + " in the scene editor");
+      gb.addEventListener("click", function(){ jumpToSceneEditor(item.s.id); });
+      row.appendChild(gb);
+      c12.appendChild(row);
+    });
+  }
+  auditGroup("Works against the theme", against, true);
+  auditGroup("Not checked yet", unchecked, false);
+  auditGroup("Serves the theme", serving, false);
+}
+function styleSheetLines(p){
+  var st = ensureStyle(p); if(!st) return [];
+  var parts = [];
+  function line(label, v){ if(mdText(v)) parts.push("- " + label + ": " + mdText(v)); }
+  line("Style thesis", st.thesis);
+  line("Point of view", [st.stance.pov, st.stance.povNote].filter(function(x){ return mdText(x); }).join(" — "));
+  line("Tense and time", [st.stance.tense, st.stance.tenseNote].filter(function(x){ return mdText(x); }).join(" — "));
+  line("What the limitation hides", st.stance.limitation);
+  line("Reliability", st.stance.reliability);
+  st.themeMap.forEach(function(e, i){ if(mdText(e.theme) || mdText(e.device) || mdText(e.scenes)) parts.push("- Theme-device " + (i + 1) + ": " + mdOr(e.theme, "(no theme)") + " → " + mdOr(e.device, "(no device)") + " → " + mdOr(e.scenes, "(no scene yet)")); });
+  st.devices.forEach(function(e){
+    if(!mdText(e.device) && !mdText(e.first) && !mdText(e.changes)) return;
+    parts.push("- Device: " + mdOr(e.device, "Unnamed device") + (mdText(e.kind) ? " (" + mdText(e.kind) + ")" : ""));
+    if(mdText(e.first)) parts.push("  - First: " + mdText(e.first));
+    if(mdText(e.changes)) parts.push("  - Changes: " + mdText(e.changes));
+    if(mdText(e.endMeaning)) parts.push("  - At the end: " + mdText(e.endMeaning));
+    if(mdText(e.theme)) parts.push("  - Theme it serves: " + mdText(e.theme));
+  });
+  st.motifs.forEach(function(e){
+    if(!mdText(e.motif) && !mdText(e.first)) return;
+    parts.push("- Motif: " + mdOr(e.motif, "Unnamed motif"));
+    if(mdText(e.first)) parts.push("  - First: " + mdText(e.first));
+    if(mdText(e.development)) parts.push("  - Development: " + mdText(e.development));
+    if(mdText(e.payoff)) parts.push("  - Payoff: " + mdText(e.payoff));
+  });
+  line("Naming — unnamed", st.naming.unnamed);
+  line("Naming — renamed", st.naming.renamed);
+  line("Naming — naming scene", st.naming.scene);
+  line("Naming — who names whom", st.naming.power);
+  line("Body-work", [st.body.kind, st.body.note].filter(function(x){ return mdText(x); }).join(" — "));
+  line("Sealed world", st.closedWorld.sealed);
+  st.closedWorld.rules.forEach(function(r, i){ if(mdText(r.text)) parts.push("- Rule " + (i + 1) + ": " + mdText(r.text)); });
+  line("Rule that breaks", [st.closedWorld.breakWhich, st.closedWorld.breakWhere, st.closedWorld.breakCost].filter(function(x){ return mdText(x); }).join(" — "));
+  line("Reader knows early", st.ending.knownEarly);
+  line("Meaning withheld", st.ending.withheld);
+  line("Hide or announce", st.ending.mode);
+  line("Witness", [st.witness.who, st.witness.sees, st.witness.does, st.witness.fate].filter(function(x){ return mdText(x); }).join(" — "));
+  line("Voice — diction & register", st.voice.diction);
+  line("Voice — sentence rhythm", st.voice.rhythm);
+  line("Voice — tic that is also a clue", st.voice.tic);
+  line("Voice — allusion system", st.voice.allusion);
+  STYLE_TENETS.forEach(function(txt, i){
+    var tv = st.tenets[String(i + 1)];
+    if(tv && (tv.answer || mdText(tv.note))) parts.push("- Tenet " + (i + 1) + " (" + (tv.answer || "unanswered") + "): " + txt + (mdText(tv.note) ? " — " + mdText(tv.note) : ""));
+  });
+  var auditLines = [];
+  (p.scenes || []).forEach(function(s, i){
+    if(mdText(s.styleNote) || s.styleFlag) auditLines.push("- Scene " + (i + 1) + " — " + mdOr(s.title, "Untitled scene") + ": " + (mdText(s.styleNote) || "(no telling note)") + (s.styleFlag === "against" ? " [works against the theme]" : s.styleFlag === "serves" ? " [serves the theme]" : ""));
+  });
+  if(auditLines.length){ parts.push(""); parts.push("Style audit — per scene:"); parts = parts.concat(auditLines); }
+  if(!parts.length) return [];
+  var L = ["## Style — How It's Told", ""];
+  parts.forEach(function(x){ L.push(x); });
+  L.push("");
+  return L;
+}
+
+
 /* ---------- render all ---------- */
 /* Each view renders in isolation: if one view's render ever throws
    (a bad field in one project, a builder missed in a refactor), the
@@ -8110,7 +8736,7 @@ function safeRender(fn){
 }
 function renderAll(){
   applyTheme();
-  [renderProjects, renderOverview, renderIntake, renderWorld, renderCharacters, renderBeats, renderScenes, renderReadiness, renderEditing, renderGates, renderPrevNext, renderSchemePickers, renderSetup].forEach(safeRender);
+  [renderProjects, renderOverview, renderIntake, renderWorld, renderCharacters, renderBeats, renderScenes, renderStyle, renderReadiness, renderEditing, renderGates, renderPrevNext, renderSchemePickers, renderSetup].forEach(safeRender);
   safeRender(updateBar);
 }
 load();
